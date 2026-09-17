@@ -204,6 +204,13 @@ export default function Home() {
     setSelectedStormId(stormId);
     const track = stormId === 'amphan' ? SEED_AMPHAN_TRACK : SEED_FANI_TRACK;
     setActivePointIndex(Math.min(6, track.track_points.length - 1));
+    if (stormId === 'amphan') {
+      // Hide Earth Engine overlay by default when viewing Amphan (tile pending)
+      setLayerToggles((prev) => ({ ...prev, showEarthEngine: false }));
+    } else {
+      // Restore Earth Engine overlay when viewing Fani (historical SAR extent available)
+      setLayerToggles((prev) => ({ ...prev, showEarthEngine: true }));
+    }
   };
 
   // Default selected district: Kendrapara or Puri

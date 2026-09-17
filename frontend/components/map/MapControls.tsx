@@ -24,6 +24,9 @@ export const MapControls: React.FC<MapControlsProps> = ({
   hasActiveCyclone = false,
 }) => {
   const isLiveMonitoring = mode === 'live' && !hasActiveCyclone;
+  const isAmphan = mode === 'historical' && selectedStormId === 'amphan';
+  const isEEDisabled = isLiveMonitoring || isAmphan;
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/80 backdrop-blur-md border border-slate-800 p-3 rounded-xl">
       {/* Storm Selector / Live Status Indicator */}
@@ -126,13 +129,13 @@ export const MapControls: React.FC<MapControlsProps> = ({
           <span>Odisha Vulnerability</span>
         </button>
 
-        {/* Earth Engine Satellite Overlay Toggle - Disabled in Live Monitoring */}
+        {/* Earth Engine Satellite Overlay Toggle - Disabled in Live Monitoring & Amphan */}
         <button
           id="toggle-layer-earth-engine"
           onClick={() => onToggleLayer('showEarthEngine')}
-          disabled={isLiveMonitoring}
+          disabled={isEEDisabled}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-            isLiveMonitoring
+            isEEDisabled
               ? 'bg-slate-950/60 border-slate-800/60 text-slate-600 cursor-not-allowed opacity-50'
               : layerToggles.showEarthEngine
               ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
@@ -141,6 +144,8 @@ export const MapControls: React.FC<MapControlsProps> = ({
           title={
             isLiveMonitoring
               ? 'Earth Engine flood SAR data disabled during live monitoring (calm basin)'
+              : isAmphan
+              ? 'Flood extent data available for Fani 2019 only — Amphan tile pending'
               : 'Toggle Earth Engine Satellite Overlay'
           }
         >
@@ -149,7 +154,21 @@ export const MapControls: React.FC<MapControlsProps> = ({
           {isLiveMonitoring && (
             <span className="text-[10px] font-mono text-slate-500">(Disabled)</span>
           )}
+          {isAmphan && (
+            <span className="text-[10px] font-mono text-amber-400 font-semibold">(Pending)</span>
+          )}
         </button>
+
+        {/* Small badge explaining pending flood data for Amphan */}
+        {isAmphan && (
+          <span
+            id="amphan-ee-pending-badge"
+            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-mono shadow-sm"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+            <span>Flood extent data available for Fani 2019 only — Amphan tile pending</span>
+          </span>
+        )}
       </div>
     </div>
   );

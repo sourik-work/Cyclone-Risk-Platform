@@ -367,11 +367,15 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   const isLive = mode === 'live';
   const isMonitoring = isLive && !hasActiveCyclone;
 
-  // When mode === 'historical': render Earth Engine overlay, track line, forecast cone, and markers as normal.
+  const isFani = track.name?.toLowerCase().includes('fani') || track.id === 'BOB-02-2019';
+  const isAmphan = track.name?.toLowerCase().includes('amphan') || track.id === 'BOB-01-2020';
+
+  // When mode === 'historical': render Earth Engine overlay (Fani only), track line, forecast cone, and markers as normal.
   // When mode === 'live': hide ALL historical layers.
   // If active_cyclone is null (monitoring status), show ONLY the base Google Map with NO overlays.
   // If active_cyclone is not null, render the live cyclone track instead.
-  const effectiveShowEE = !isLive && layerToggles.showEarthEngine !== false;
+  // Flood extent data is available for Fani 2019 only; Amphan tile pending.
+  const effectiveShowEE = !isLive && isFani && layerToggles.showEarthEngine !== false;
   const effectiveShowTrack = isLive ? (hasActiveCyclone && layerToggles.showTrack) : layerToggles.showTrack;
   const effectiveShowForecastCone = isLive ? (hasActiveCyclone && layerToggles.showForecastCone) : layerToggles.showForecastCone;
   const effectiveShowAiForecast = isLive ? (hasActiveCyclone && Boolean(layerToggles.showAiForecast)) : Boolean(layerToggles.showAiForecast);
@@ -446,7 +450,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
     <div className="relative w-full h-full flex flex-col">
       {/* Map Control Bar */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-        {/* Earth Engine Overlay Active Pill (Historical Mode) */}
+        {/* Earth Engine Overlay Active Pill (Historical Mode - Fani only) */}
         {effectiveShowEE && (
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-mono backdrop-blur-md">
             <span className="relative flex h-2 w-2">
@@ -455,6 +459,17 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             </span>
             <Satellite className="w-3.5 h-3.5" />
             <span>EARTH ENGINE 0.7 OVERLAY ACTIVE</span>
+          </div>
+        )}
+
+        {/* Amphan Flood Extent Pending Badge (Historical Mode) */}
+        {!isLive && isAmphan && (
+          <div
+            id="amphan-ee-pending-pill"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-950/80 border border-amber-500/40 text-amber-300 text-xs font-mono backdrop-blur-md shadow-lg"
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span>Flood extent data available for Fani 2019 only — Amphan tile pending</span>
           </div>
         )}
 
