@@ -13,6 +13,8 @@ interface MapFallbackRadarProps {
   showTrack: boolean;
   showForecastCone: boolean;
   showVulnerability: boolean;
+  mode?: 'historical' | 'live';
+  hasActiveCyclone?: boolean;
 }
 
 import { DistrictProperties } from './types';
@@ -26,6 +28,8 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
   showTrack,
   showForecastCone,
   showVulnerability,
+  mode = 'historical',
+  hasActiveCyclone = false,
 }) => {
   const [hoveredDistrict, setHoveredDistrict] = useState<DistrictProperties | null>(null);
 
@@ -297,22 +301,38 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
             );
           })}
 
-        {/* Active Storm Center Eye Pulse */}
-        <g transform={`translate(${activeX}, ${activeY})`}>
-          {/* Animated radar rings */}
-          <circle r="28" fill="none" stroke="#ef4444" strokeWidth="1.5" opacity="0.6" className="animate-ping" />
-          <circle r="44" fill="url(#radarSweep)" />
-          <circle r="14" fill="#ef4444" opacity="0.3" />
-          <circle r="6" fill="#ef4444" stroke="#ffffff" strokeWidth="2" filter="url(#glow)" />
+        {/* Active Storm Center Eye Pulse (Only when active cyclone or historical) */}
+        {showTrack && (hasActiveCyclone || mode === 'historical') && (
+          <g transform={`translate(${activeX}, ${activeY})`}>
+            {/* Animated radar rings */}
+            <circle r="28" fill="none" stroke="#ef4444" strokeWidth="1.5" opacity="0.6" className="animate-ping" />
+            <circle r="44" fill="url(#radarSweep)" />
+            <circle r="14" fill="#ef4444" opacity="0.3" />
+            <circle r="6" fill="#ef4444" stroke="#ffffff" strokeWidth="2" filter="url(#glow)" />
 
-          {/* Wind Speed Badge */}
-          <g transform="translate(14, -14)">
-            <rect x="0" y="0" width="80" height="22" rx="4" fill="#0f172a" stroke="#ef4444" strokeWidth="1.2" />
-            <text x="6" y="15" fill="#fca5a5" fontSize="10" fontFamily="monospace" fontWeight="bold">
-              {activePoint.wind_speed_kmph || Math.round(activePoint.wind_speed_knots * 1.852)} km/h
+            {/* Wind Speed Badge */}
+            <g transform="translate(14, -14)">
+              <rect x="0" y="0" width="80" height="22" rx="4" fill="#0f172a" stroke="#ef4444" strokeWidth="1.2" />
+              <text x="6" y="15" fill="#fca5a5" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                {activePoint.wind_speed_kmph || Math.round(activePoint.wind_speed_knots * 1.852)} km/h
+              </text>
+            </g>
+          </g>
+        )}
+
+        {/* Basin Monitoring Status Watermark (Live Mode with No Active Cyclones) */}
+        {mode === 'live' && !hasActiveCyclone && (
+          <g transform={`translate(${width / 2}, ${height / 2})`}>
+            <circle r="70" fill="none" stroke="#10b981" strokeWidth="1.2" opacity="0.3" strokeDasharray="6 4" />
+            <circle r="4" fill="#10b981" />
+            <text y="24" textAnchor="middle" fill="#34d399" fontSize="12" fontFamily="monospace" fontWeight="bold">
+              BAY OF BENGAL BASIN • ALL CLEAR
+            </text>
+            <text y="42" textAnchor="middle" fill="#64748b" fontSize="10" fontFamily="monospace">
+              Continuous IMD RSMC telemetry active
             </text>
           </g>
-        </g>
+        )}
       </svg>
 
       {/* Floating Hover Info Pill */}

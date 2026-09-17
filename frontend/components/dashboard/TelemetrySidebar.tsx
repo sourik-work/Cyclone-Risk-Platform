@@ -6,6 +6,7 @@ import {
   CycloneTrack,
   DistrictProperties,
   getAdvisoryTextForLanguage,
+  MultilingualAdvisories,
   SupportedLanguage,
   TrackPoint,
 } from '../map/types';
@@ -21,6 +22,7 @@ import {
   Waves,
   Sparkles,
   Loader2,
+  Cpu,
 } from 'lucide-react';
 
 interface TelemetrySidebarProps {
@@ -68,17 +70,20 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   })();
 
   const nestedAdvisories = effectiveAdvisory.multilingual_advisories;
+  const emergencyMessages = SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.message as Record<string, string>;
+  const emergencyHeadlines = SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.headline as Record<string, string>;
+  const emergencyActions = SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.action as Record<string, string>;
 
   // Picks text from the NEW nested structure: advisory.multilingual_advisories[language]
   const message =
-    (nestedAdvisories && nestedAdvisories[langKey]) ||
+    (nestedAdvisories && nestedAdvisories[langKey as keyof MultilingualAdvisories]) ||
     getAdvisoryTextForLanguage(nestedAdvisories, currentLanguage) ||
     nestedAdvisories?.english ||
-    SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.message[langKey] ||
-    SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.message.english;
+    emergencyMessages[langKey] ||
+    emergencyMessages.english;
 
   const headline =
-    SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.headline[langKey] ||
+    emergencyHeadlines[langKey] ||
     effectiveAdvisory.headline ||
     'ANTICIPATORY ACTION ADVISORY';
 
@@ -332,11 +337,67 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             </div>
           ) : (
             <div className="text-xs text-slate-300 pl-2 border-l-2 border-amber-500/50">
-              {SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.action[langKey] ||
-                SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.action.english ||
-                SEED_MULTILINGUAL_ADVISORIES.EMERGENCY.action.en}
+              {emergencyActions[langKey] ||
+                emergencyActions.english ||
+                emergencyActions.en}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* 4. TrackLSTM Model Validation Card */}
+      <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-xl space-y-3">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div className="flex items-center gap-2 text-yellow-400">
+            <Cpu className="w-4 h-4 text-yellow-400" />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+              MODEL VALIDATION
+            </h3>
+          </div>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 font-semibold">
+            TrackLSTM v1
+          </span>
+        </div>
+
+        {/* Training Badge */}
+        <div className="px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-[11px] text-slate-300 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+          <span className="text-[10px] font-mono leading-tight text-slate-300">
+            Trained on IMD best-track data with synthetic augmentation
+          </span>
+        </div>
+
+        {/* Validation Metric Grids */}
+        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+            <div className="text-[10px] text-slate-400">Position RMSE @ 24h</div>
+            <div className="text-sm font-bold text-yellow-400 mt-0.5">85.6 km</div>
+          </div>
+          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+            <div className="text-[10px] text-slate-400">Position RMSE @ 48h</div>
+            <div className="text-sm font-bold text-amber-400 mt-0.5">155.6 km</div>
+          </div>
+          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+            <div className="text-[10px] text-slate-400">Wind Speed MAE</div>
+            <div className="text-sm font-bold text-cyan-400 mt-0.5">7.3 km/h</div>
+          </div>
+          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+            <div className="text-[10px] text-slate-400">Pressure MAE</div>
+            <div className="text-sm font-bold text-indigo-400 mt-0.5">2.9 hPa</div>
+          </div>
+        </div>
+
+        {/* Model Architecture & Training Metadata */}
+        <div className="pt-2 border-t border-slate-800/80 text-[11px] font-mono text-slate-400 space-y-1">
+          <div className="flex items-center justify-between">
+            <span>Model:</span>
+            <span className="text-slate-200 font-semibold">LSTM 2-layer, 119,872 params</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span>Training samples:</span>
+            <span className="text-slate-200 font-semibold">8,484</span>
+          </div>
         </div>
       </div>
     </aside>

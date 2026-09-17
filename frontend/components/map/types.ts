@@ -79,6 +79,37 @@ export interface MapLayerToggles {
   showWindRadii: boolean;
   showShelters: boolean;
   showEarthEngine?: boolean;
+  showAiForecast?: boolean;
+}
+
+export interface ForecastTrackPoint {
+  lead_hours: number;
+  lat: number;
+  lon: number;
+  wind_kmph: number;
+  pressure_hpa: number;
+}
+
+export interface ForecastTrackResponse {
+  cyclone_id: string;
+  model_forecast: ForecastTrackPoint[];
+  imd_official_forecast: Array<{
+    lead_hours: number;
+    lat: number;
+    lon: number;
+    wind_kmph: number;
+    pressure_hpa: number;
+    category?: string;
+    is_forecast?: boolean;
+    timestamp?: string;
+  }>;
+  rmse_24h_km: number;
+  rmse_48h_km: number;
+  wind_mae_kmph: number;
+  pressure_mae_hpa: number;
+  model_version: string;
+  training_samples: number;
+  model_params: number;
 }
 
 export type SupportedLanguage =
@@ -176,4 +207,12 @@ export const getAdvisoryTextForLanguage = (
   // Direct lookup on advisory.multilingual_advisories[language]
   return advisories[normalizedKey] || advisories.english || '';
 };
+
+export interface LiveCycloneResponse {
+  active_cyclone: CycloneTrack | null;
+  last_updated: string;
+  source: string;
+  status: 'active' | 'monitoring';
+  message: string;
+}
 

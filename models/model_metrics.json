@@ -1,0 +1,15 @@
+{
+  "rmse_6h_km": 16.772311740173656,
+  "rmse_12h_km": 24.73265565875239,
+  "rmse_24h_km": 85.64964425306437,
+  "rmse_48h_km": 155.57880747771335,
+  "wind_mae_kmph": 7.339143911997478,
+  "pressure_mae_hpa": 2.9261652628580705,
+  "training_samples": 8484,
+  "training_samples_used": 7211,
+  "model_params": 119872,
+  "best_val_loss": 0.007908324664458632,
+  "seq_in": 4,
+  "seq_out": 16,
+  "model_version": "track_lstm_v1"
+}

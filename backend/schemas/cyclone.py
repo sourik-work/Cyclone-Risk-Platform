@@ -1,7 +1,7 @@
 """Pydantic schemas for cyclone tracks, vulnerability features, and anticipatory advisories."""
 
 from enum import Enum
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 
@@ -163,3 +163,48 @@ class AnticipatoryAdvisory(BaseModel):
     multilingual_advisories: MultilingualAdvisories
     recommended_actions: List[ActionItem]
     model: str = Field(default="gemini-3.7-flash", description="Model used to generate advisory")
+
+
+class LiveCycloneResponse(BaseModel):
+    """Payload for live real-time cyclone status from IMD RSMC New Delhi."""
+
+    active_cyclone: Optional[CycloneTrack] = None
+    last_updated: str = Field(description="ISO-8601 UTC timestamp of last check")
+    source: str = Field(default="IMD RSMC New Delhi")
+    status: str = Field(description="'active' or 'monitoring'")
+    message: str = Field(description="Human-readable status or warning summary")
+
+
+class ForecastTrackRequest(BaseModel):
+    """Payload to request LSTM track forecast for a specific cyclone."""
+
+    cyclone_id: str = Field(default="BOB-02-2019", description="Cyclone ID or name (e.g. 'BOB-02-2019', 'fani')")
+    recent_point_indices: Optional[List[int]] = Field(
+        default=None,
+        description="4 point indices from historical/live track used as input sequence (default: [0, 1, 2, 3])"
+    )
+
+
+class ForecastTrackPoint(BaseModel):
+    """Individual predicted waypoint from TrackLSTM."""
+
+    lead_hours: int = Field(description="Forecast lead time in hours (3, 6, ..., 48)")
+    lat: float = Field(description="Predicted latitude")
+    lon: float = Field(description="Predicted longitude")
+    wind_kmph: float = Field(description="Predicted sustained surface wind in km/h")
+    pressure_hpa: float = Field(description="Predicted central pressure in hPa")
+
+
+class ForecastTrackResponse(BaseModel):
+    """TrackLSTM trajectory and intensity prediction with validation metrics."""
+
+    cyclone_id: str
+    model_forecast: List[ForecastTrackPoint]
+    imd_official_forecast: List[Dict[str, Any]]
+    rmse_24h_km: float = Field(default=85.6)
+    rmse_48h_km: float = Field(default=155.6)
+    wind_mae_kmph: float = Field(default=7.3)
+    pressure_mae_hpa: float = Field(default=2.9)
+    model_version: str = Field(default="track_lstm_v1")
+    training_samples: int = Field(default=8484)
+    model_params: int = Field(default=119872)

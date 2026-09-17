@@ -5,12 +5,13 @@ import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
 import {
   CycloneTrack,
   DistrictProperties,
+  ForecastTrackResponse,
   MapLayerToggles,
   TrackPoint,
   VulnerabilityFeatureCollection,
 } from './types';
 import { MapFallbackRadar } from './MapFallbackRadar';
-import { Radio, Layers, Satellite, Sliders } from 'lucide-react';
+import { Radio, Layers, Satellite, Sliders, Cpu, Compass } from 'lucide-react';
 
 const AUTHENTICATED_EE_TILE_URL =
   'https://earthengine.googleapis.com/v1/projects/cyclone-risk-platform/maps/b3a9fb812b939765aa9e34a318c3149b-39495b43e12ed39f1a31ec4eae471f26/tiles/{z}/{x}/{y}?key=AIzaSyBWf8E_V67W3PenTBi2Q5OR2MU-DDCk1jw';
@@ -22,6 +23,9 @@ interface CycloneMapProps {
   selectedDistrict: DistrictProperties | null;
   onSelectDistrict: (district: DistrictProperties) => void;
   layerToggles: MapLayerToggles;
+  mode?: 'historical' | 'live';
+  hasActiveCyclone?: boolean;
+  onToggleLayer?: (layerKey: keyof MapLayerToggles) => void;
 }
 
 /**
@@ -232,6 +236,123 @@ const GoogleMapsUncertaintyConeLayer: React.FC<{
   return null;
 };
 
+/**
+ * 4. AI Forecast Trajectory Layer (TrackLSTM)
+ * Renders the 48-hour LSTM predicted trajectory (dashed yellow) starting from the last observed point.
+ */
+const GoogleMapsAiForecastLayer: React.FC<{
+  track: CycloneTrack;
+  activePointIndex: number;
+  visible?: boolean;
+}> = ({ track, activePointIndex, visible = true }) => {
+  const map = useMap();
+  const [aiForecast, setAiForecast] = useState<ForecastTrackResponse | null>(null);
+
+  // Fetch forecast whenever track changes or layer becomes visible
+  useEffect(() => {
+    if (!visible || !track.track_points || track.track_points.length < 4) {
+      return;
+    }
+
+    let isMounted = true;
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const cycloneId = track.name ? track.name.toLowerCase() : track.id;
+
+    // Use the 4 observed points leading up to the active point
+    const endIdx = Math.max(3, Math.min(activePointIndex, track.track_points.length - 1));
+    const startIdx = Math.max(0, endIdx - 3);
+    const recentIndices = [startIdx, startIdx + 1, startIdx + 2, startIdx + 3];
+
+    fetch(`${backendUrl}/api/forecast/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        cyclone_id: cycloneId,
+        recent_point_indices: recentIndices,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Forecast API returned ${res.status}`);
+        return res.json();
+      })
+      .then((data: ForecastTrackResponse) => {
+        if (isMounted) {
+          setAiForecast(data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Failed to fetch AI forecast from TrackLSTM service:', err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [track.id, track.name, track.track_points, activePointIndex, visible]);
+
+  useEffect(() => {
+    if (!map || !visible || !aiForecast || typeof google === 'undefined') return;
+
+    const activePoint = track.track_points[activePointIndex] || track.track_points[0];
+
+    // Trajectory starting from the last observed point
+    const forecastCoords = [
+      { lat: activePoint.latitude, lng: activePoint.longitude },
+      ...aiForecast.model_forecast.map((p) => ({ lat: p.lat, lng: p.lon })),
+    ];
+
+    // Dashed yellow line for TrackLSTM prediction
+    const aiPolyline = new google.maps.Polyline({
+      map,
+      path: forecastCoords,
+      geodesic: true,
+      strokeColor: '#facc15', // yellow-400
+      strokeOpacity: 0.0,
+      icons: [
+        {
+          icon: {
+            path: 'M 0,-1 0,1',
+            strokeOpacity: 1.0,
+            strokeColor: '#facc15',
+            scale: 3.5,
+          },
+          offset: '0',
+          repeat: '14px',
+        },
+      ],
+      zIndex: 25,
+    });
+
+    // Circular yellow waypoint markers at 12h, 24h, 36h, 48h
+    const waypointMarkers: google.maps.Marker[] = [];
+    aiForecast.model_forecast.forEach((pt) => {
+      if ([12, 24, 36, 48].includes(pt.lead_hours)) {
+        const marker = new google.maps.Marker({
+          map,
+          position: { lat: pt.lat, lng: pt.lon },
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 5,
+            fillColor: '#facc15',
+            fillOpacity: 1,
+            strokeColor: '#713f12',
+            strokeWeight: 2,
+          },
+          title: `TrackLSTM T+${pt.lead_hours}h Forecast: ${pt.wind_kmph} km/h, ${pt.pressure_hpa} hPa`,
+          zIndex: 26,
+        });
+        waypointMarkers.push(marker);
+      }
+    });
+
+    return () => {
+      aiPolyline.setMap(null);
+      waypointMarkers.forEach((m) => m.setMap(null));
+    };
+  }, [map, visible, aiForecast, activePointIndex, track.track_points]);
+
+  return null;
+};
+
 export const CycloneMap: React.FC<CycloneMapProps> = ({
   track,
   activePointIndex,
@@ -239,7 +360,22 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   selectedDistrict,
   onSelectDistrict,
   layerToggles,
+  mode = 'historical',
+  hasActiveCyclone = false,
+  onToggleLayer,
 }) => {
+  const isLive = mode === 'live';
+  const isMonitoring = isLive && !hasActiveCyclone;
+
+  // When mode === 'historical': render Earth Engine overlay, track line, forecast cone, and markers as normal.
+  // When mode === 'live': hide ALL historical layers.
+  // If active_cyclone is null (monitoring status), show ONLY the base Google Map with NO overlays.
+  // If active_cyclone is not null, render the live cyclone track instead.
+  const effectiveShowEE = !isLive && layerToggles.showEarthEngine !== false;
+  const effectiveShowTrack = isLive ? (hasActiveCyclone && layerToggles.showTrack) : layerToggles.showTrack;
+  const effectiveShowForecastCone = isLive ? (hasActiveCyclone && layerToggles.showForecastCone) : layerToggles.showForecastCone;
+  const effectiveShowAiForecast = isLive ? (hasActiveCyclone && Boolean(layerToggles.showAiForecast)) : Boolean(layerToggles.showAiForecast);
+
   // Read key and tile URL from env with fallback to authenticated credentials
   const envKey =
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
@@ -310,8 +446,8 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
     <div className="relative w-full h-full flex flex-col">
       {/* Map Control Bar */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-        {/* Earth Engine Overlay Active Pill */}
-        {layerToggles.showEarthEngine !== false && (
+        {/* Earth Engine Overlay Active Pill (Historical Mode) */}
+        {effectiveShowEE && (
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-mono backdrop-blur-md">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -319,6 +455,17 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             </span>
             <Satellite className="w-3.5 h-3.5" />
             <span>EARTH ENGINE 0.7 OVERLAY ACTIVE</span>
+          </div>
+        )}
+
+        {/* Live Monitoring Active Pill (Live Mode - No Active Cyclone) */}
+        {isMonitoring && (
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900/90 border border-emerald-500/40 text-emerald-300 text-xs font-mono backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>LIVE BASE MAP • BASIN MONITORING</span>
           </div>
         )}
 
@@ -368,25 +515,32 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
               styles={darkMapStyles}
               className="w-full h-full rounded-xl overflow-hidden border border-slate-800"
             >
-              {/* 1. Earth Engine ImageMapType Overlay (Opacity: 0.7) */}
+              {/* 1. Earth Engine ImageMapType Overlay (Opacity: 0.7) - Historical only */}
               <EarthEngineTileOverlay
                 tileUrl={eeTileUrl}
                 opacity={eeOpacity}
-                visible={layerToggles.showEarthEngine !== false}
+                visible={effectiveShowEE}
               />
 
-              {/* 2. Storm Track Separate Layer (Observed + Forecast) */}
+              {/* 2. Storm Track Separate Layer (Observed + Forecast) - Historical or Live Active */}
               <GoogleMapsTrackLayer
                 track={track}
                 activePointIndex={activePointIndex}
-                visible={layerToggles.showTrack}
+                visible={effectiveShowTrack}
               />
 
-              {/* 3. Uncertainty Cone Separate Layer */}
+              {/* 3. Uncertainty Cone Separate Layer - Historical or Live Active */}
               <GoogleMapsUncertaintyConeLayer
                 track={track}
                 activePointIndex={activePointIndex}
-                visible={layerToggles.showForecastCone}
+                visible={effectiveShowForecastCone}
+              />
+
+              {/* 4. AI Forecast Trajectory Layer (TrackLSTM - Dashed Yellow Line) */}
+              <GoogleMapsAiForecastLayer
+                track={track}
+                activePointIndex={activePointIndex}
+                visible={effectiveShowAiForecast}
               />
 
               {/* NOTE: Mock vulnerability overlay is completely disabled per project instructions. Real satellite data replaces it. */}
@@ -399,10 +553,43 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             vulnerabilityData={vulnerabilityData}
             selectedDistrict={selectedDistrict}
             onSelectDistrict={onSelectDistrict}
-            showTrack={layerToggles.showTrack}
-            showForecastCone={layerToggles.showForecastCone}
+            showTrack={effectiveShowTrack}
+            showForecastCone={effectiveShowForecastCone}
             showVulnerability={false} // Disabled: replaced by real satellite data
+            mode={mode}
+            hasActiveCyclone={hasActiveCyclone}
           />
+        )}
+
+        {/* 5. Corner Legend: IMD Official (solid) vs AI Forecast (dashed) */}
+        {effectiveShowAiForecast && (
+          <div
+            id="forecast-comparison-legend"
+            className="absolute bottom-6 left-6 z-20 flex flex-col gap-1.5 p-3 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-2xl text-xs font-mono select-none"
+          >
+            <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
+              <Cpu className="w-3.5 h-3.5 text-yellow-400" />
+              <span>IMD Official (solid) vs AI Forecast (dashed)</span>
+            </div>
+            <div className="flex items-center justify-between gap-4 text-[11px]">
+              <div className="flex items-center gap-2 text-slate-300">
+                <span className="w-5 h-1 rounded-full bg-[#00e5ff] shadow-sm shadow-cyan-500/50"></span>
+                <span className="text-cyan-300 font-medium">IMD Official Track</span>
+              </div>
+              <span className="text-[10px] text-slate-500">Official Bulletin</span>
+            </div>
+            <div className="flex items-center justify-between gap-4 text-[11px]">
+              <div className="flex items-center gap-2 text-slate-300">
+                <span className="w-5 h-0.5 border-t-2 border-dashed border-yellow-400"></span>
+                <span className="text-yellow-300 font-medium">AI Forecast</span>
+              </div>
+              <span className="text-[10px] text-yellow-400 font-bold">TrackLSTM</span>
+            </div>
+            <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 flex items-center justify-between">
+              <span>RMSE: 85.6 km @ 24h</span>
+              <span className="text-emerald-400 font-semibold">119K Params</span>
+            </div>
+          </div>
         )}
       </div>
 

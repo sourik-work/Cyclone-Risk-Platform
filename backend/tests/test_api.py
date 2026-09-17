@@ -6,6 +6,7 @@ from backend.api.routes import (
     get_coastal_vulnerability,
     get_cyclone_track,
     get_latest_advisory,
+    get_live_cyclone,
     health_check,
     list_cyclone_tracks,
 )
@@ -59,10 +60,23 @@ def test_api_generate_and_latest_advisory():
     assert latest.model == "gemini-3.7-flash"
 
 
+def test_api_get_live_cyclone():
+    res = get_live_cyclone(refresh=False)
+    assert res.source == "IMD RSMC New Delhi"
+    assert res.status in ("active", "monitoring")
+    assert res.last_updated is not None
+    if res.status == "monitoring":
+        assert res.active_cyclone is None
+        assert "No active cyclones in Bay of Bengal" in res.message
+    else:
+        assert res.active_cyclone is not None
+
+
 if __name__ == "__main__":
     test_api_health_check()
     test_api_list_tracks()
     test_api_get_track()
     test_api_get_vulnerability()
     test_api_generate_and_latest_advisory()
+    test_api_get_live_cyclone()
     print("All API route tests passed successfully!")
