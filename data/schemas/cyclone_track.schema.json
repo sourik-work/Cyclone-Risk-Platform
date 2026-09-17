@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CycloneTrack",
+  "description": "Schema representing a cyclone track including historical observations and forecast trajectory.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "season_year",
+    "basin",
+    "current_status",
+    "track_points"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the storm (e.g. BOB-02-2019)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Official storm name designated by RSMC New Delhi (e.g. Fani)"
+    },
+    "season_year": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2100
+    },
+    "basin": {
+      "type": "string",
+      "enum": ["Bay of Bengal", "Arabian Sea"],
+      "default": "Bay of Bengal"
+    },
+    "current_status": {
+      "type": "string",
+      "description": "Current IMD classification stage (e.g. Deep Depression, Cyclonic Storm, Extremely Severe Cyclonic Storm)"
+    },
+    "genesis_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "dissipation_time": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "track_points": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TrackPoint"
+      }
+    }
+  },
+  "definitions": {
+    "TrackPoint": {
+      "type": "object",
+      "required": [
+        "timestamp",
+        "latitude",
+        "longitude",
+        "wind_speed_knots",
+        "central_pressure_hpa",
+        "category",
+        "is_forecast"
+      ],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "latitude": {
+          "type": "number",
+          "minimum": -90.0,
+          "maximum": 90.0
+        },
+        "longitude": {
+          "type": "number",
+          "minimum": -180.0,
+          "maximum": 180.0
+        },
+        "wind_speed_knots": {
+          "type": "number",
+          "minimum": 0
+        },
+        "wind_speed_kmph": {
+          "type": "number",
+          "minimum": 0
+        },
+        "gust_speed_kmph": {
+          "type": "number",
+          "minimum": 0
+        },
+        "central_pressure_hpa": {
+          "type": "number",
+          "minimum": 800,
+          "maximum": 1050
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "Low Pressure Area",
+            "Depression",
+            "Deep Depression",
+            "Cyclonic Storm",
+            "Severe Cyclonic Storm",
+            "Very Severe Cyclonic Storm",
+            "Extremely Severe Cyclonic Storm",
+            "Super Cyclonic Storm",
+            "Well Marked Low"
+          ]
+        },
+        "is_forecast": {
+          "type": "boolean",
+          "default": false
+        },
+        "forecast_lead_hours": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cone_radius_km": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Uncertainty cone radius for forecast positions"
+        },
+        "heading_degrees": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "forward_speed_kmph": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

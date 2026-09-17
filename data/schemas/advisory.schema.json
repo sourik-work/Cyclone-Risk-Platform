@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AnticipatoryAdvisory",
+  "description": "Schema for Gemini-generated anticipatory action advisories and localized early warnings.",
+  "type": "object",
+  "required": [
+    "advisory_id",
+    "cyclone_id",
+    "issued_at",
+    "severity_level",
+    "estimated_landfall_time",
+    "target_districts",
+    "headline",
+    "multilingual_advisories",
+    "recommended_actions"
+  ],
+  "properties": {
+    "advisory_id": {
+      "type": "string"
+    },
+    "cyclone_id": {
+      "type": "string"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "severity_level": {
+      "type": "string",
+      "enum": ["WATCH", "ALERT", "WARNING", "EMERGENCY_ACTION"]
+    },
+    "lead_time_hours": {
+      "type": "number",
+      "minimum": 0
+    },
+    "estimated_landfall_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "estimated_landfall_location": {
+      "type": "string"
+    },
+    "max_expected_wind_kmph": {
+      "type": "number"
+    },
+    "max_expected_surge_m": {
+      "type": "number"
+    },
+    "target_districts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "headline": {
+      "type": "string"
+    },
+    "multilingual_advisories": {
+      "type": "object",
+      "required": ["odia", "bengali", "telugu", "tamil", "hindi", "english"],
+      "properties": {
+        "odia": { "type": "string" },
+        "bengali": { "type": "string" },
+        "telugu": { "type": "string" },
+        "tamil": { "type": "string" },
+        "hindi": { "type": "string" },
+        "english": { "type": "string" }
+      }
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "action", "urgency", "target_audience"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["EVACUATION", "SHELTER", "FISHERFOLK", "AGRICULTURE", "POWER_UTILITY", "HEALTHCARE"]
+          },
+          "action": { "type": "string" },
+          "urgency": {
+            "type": "string",
+            "enum": ["IMMEDIATE", "WITHIN_12_HOURS", "WITHIN_24_HOURS", "PRECAUTIONARY"]
+          },
+          "target_audience": { "type": "string" }
+        }
+      }
+    },
+    "model": {
+      "type": "string",
+      "default": "gemini-3.7-flash",
+      "description": "Model used to generate advisory"
+    }
+  }
+}
