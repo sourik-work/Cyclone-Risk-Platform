@@ -556,6 +556,438 @@ export const SEED_ODISHA_VULNERABILITY: VulnerabilityFeatureCollection = {
   ]
 };
 
+export const SEED_WEST_BENGAL_VULNERABILITY: VulnerabilityFeatureCollection = {
+  type: "FeatureCollection",
+  name: "west_bengal_coastal_districts_vulnerability",
+  features: [
+    {
+      type: "Feature",
+      properties: {
+        district_id: "WB-PMED",
+        district_name: "Purba Medinipur",
+        state_name: "West Bengal",
+        total_population: 5100000,
+        population: 5100000,
+        vulnerable_population: 2150000,
+        kutcha_population: 2150000,
+        coastal_length_km: 65.5,
+        coastline_km: 65.5,
+        average_elevation_m: 3.2,
+        elevation_m: 3.2,
+        cyclone_risk_score: 0.82,
+        vulnerability_score: 0.82,
+        storm_surge_risk_m: 4.6,
+        inundation_risk: 0.38,
+        shelter_capacity: 182000,
+        shelter_count: 182,
+        evac_shelters: 182,
+        hospital_count: 46,
+        primary_language: "Bengali",
+        secondary_language: "English"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [87.45, 21.65],
+            [87.85, 21.60],
+            [88.05, 21.80],
+            [87.95, 22.15],
+            [87.65, 22.25],
+            [87.40, 21.95],
+            [87.45, 21.65]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "WB-S24P",
+        district_name: "South 24 Parganas",
+        state_name: "West Bengal",
+        total_population: 8200000,
+        population: 8200000,
+        vulnerable_population: 3550000,
+        kutcha_population: 3550000,
+        coastal_length_km: 110.0,
+        coastline_km: 110.0,
+        average_elevation_m: 2.8,
+        elevation_m: 2.8,
+        cyclone_risk_score: 0.85,
+        vulnerability_score: 0.85,
+        storm_surge_risk_m: 5.1,
+        inundation_risk: 0.44,
+        shelter_capacity: 220000,
+        shelter_count: 220,
+        evac_shelters: 220,
+        hospital_count: 58,
+        primary_language: "Bengali",
+        secondary_language: "English"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [88.05, 21.60],
+            [88.55, 21.55],
+            [88.85, 21.75],
+            [88.90, 22.10],
+            [88.50, 22.35],
+            [88.15, 22.20],
+            [88.05, 21.60]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "WB-N24P",
+        district_name: "North 24 Parganas",
+        state_name: "West Bengal",
+        total_population: 10000000,
+        population: 10000000,
+        vulnerable_population: 4100000,
+        kutcha_population: 4100000,
+        coastal_length_km: 45.0,
+        coastline_km: 45.0,
+        average_elevation_m: 4.0,
+        elevation_m: 4.0,
+        cyclone_risk_score: 0.76,
+        vulnerability_score: 0.76,
+        storm_surge_risk_m: 3.8,
+        inundation_risk: 0.28,
+        shelter_capacity: 198000,
+        shelter_count: 198,
+        evac_shelters: 198,
+        hospital_count: 72,
+        primary_language: "Bengali",
+        secondary_language: "Hindi"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [88.40, 22.35],
+            [88.90, 22.25],
+            [89.05, 22.65],
+            [88.80, 22.85],
+            [88.45, 22.75],
+            [88.35, 22.45],
+            [88.40, 22.35]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_ANDHRA_PRADESH_VULNERABILITY: VulnerabilityFeatureCollection = {
+  type: "FeatureCollection",
+  name: "andhra_pradesh_coastal_districts_vulnerability",
+  features: [
+    {
+      type: "Feature",
+      properties: {
+        district_id: "AP-SRIK",
+        district_name: "Srikakulam",
+        state_name: "Andhra Pradesh",
+        total_population: 2750000,
+        population: 2750000,
+        vulnerable_population: 1150000,
+        kutcha_population: 1150000,
+        coastal_length_km: 193.0,
+        coastline_km: 193.0,
+        average_elevation_m: 6.5,
+        elevation_m: 6.5,
+        cyclone_risk_score: 0.79,
+        vulnerability_score: 0.79,
+        storm_surge_risk_m: 3.9,
+        inundation_risk: 0.32,
+        shelter_capacity: 152000,
+        shelter_count: 152,
+        evac_shelters: 152,
+        hospital_count: 34,
+        primary_language: "Telugu",
+        secondary_language: "Odia"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [83.80, 18.25],
+            [84.40, 18.55],
+            [84.75, 18.95],
+            [84.60, 19.10],
+            [84.10, 18.85],
+            [83.75, 18.45],
+            [83.80, 18.25]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "AP-VZN",
+        district_name: "Vizianagaram",
+        state_name: "Andhra Pradesh",
+        total_population: 2350000,
+        population: 2350000,
+        vulnerable_population: 980000,
+        kutcha_population: 980000,
+        coastal_length_km: 28.0,
+        coastline_km: 28.0,
+        average_elevation_m: 8.0,
+        elevation_m: 8.0,
+        cyclone_risk_score: 0.71,
+        vulnerability_score: 0.71,
+        storm_surge_risk_m: 3.2,
+        inundation_risk: 0.22,
+        shelter_capacity: 128000,
+        shelter_count: 128,
+        evac_shelters: 128,
+        hospital_count: 28,
+        primary_language: "Telugu",
+        secondary_language: "Hindi"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [83.35, 17.90],
+            [83.70, 18.15],
+            [83.90, 18.35],
+            [83.65, 18.45],
+            [83.25, 18.20],
+            [83.15, 18.00],
+            [83.35, 17.90]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "AP-VSP",
+        district_name: "Visakhapatnam",
+        state_name: "Andhra Pradesh",
+        total_population: 4300000,
+        population: 4300000,
+        vulnerable_population: 1800000,
+        kutcha_population: 1800000,
+        coastal_length_km: 132.0,
+        coastline_km: 132.0,
+        average_elevation_m: 7.2,
+        elevation_m: 7.2,
+        cyclone_risk_score: 0.81,
+        vulnerability_score: 0.81,
+        storm_surge_risk_m: 4.4,
+        inundation_risk: 0.35,
+        shelter_capacity: 184000,
+        shelter_count: 184,
+        evac_shelters: 184,
+        hospital_count: 52,
+        primary_language: "Telugu",
+        secondary_language: "English"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [82.60, 17.40],
+            [83.10, 17.65],
+            [83.45, 17.90],
+            [83.30, 18.05],
+            [82.85, 17.85],
+            [82.50, 17.60],
+            [82.60, 17.40]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "AP-EGOD",
+        district_name: "East Godavari",
+        state_name: "Andhra Pradesh",
+        total_population: 5200000,
+        population: 5200000,
+        vulnerable_population: 2200000,
+        kutcha_population: 2200000,
+        coastal_length_km: 161.0,
+        coastline_km: 161.0,
+        average_elevation_m: 3.5,
+        elevation_m: 3.5,
+        cyclone_risk_score: 0.83,
+        vulnerability_score: 0.83,
+        storm_surge_risk_m: 4.7,
+        inundation_risk: 0.39,
+        shelter_capacity: 206000,
+        shelter_count: 206,
+        evac_shelters: 206,
+        hospital_count: 64,
+        primary_language: "Telugu",
+        secondary_language: "English"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [81.60, 16.45],
+            [82.15, 16.70],
+            [82.45, 17.05],
+            [82.35, 17.30],
+            [81.90, 17.20],
+            [81.55, 16.85],
+            [81.60, 16.45]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_TAMIL_NADU_VULNERABILITY: VulnerabilityFeatureCollection = {
+  type: "FeatureCollection",
+  name: "tamil_nadu_coastal_districts_vulnerability",
+  features: [
+    {
+      type: "Feature",
+      properties: {
+        district_id: "TN-CHE",
+        district_name: "Chennai",
+        state_name: "Tamil Nadu",
+        total_population: 8500000,
+        population: 8500000,
+        vulnerable_population: 3450000,
+        kutcha_population: 3450000,
+        coastal_length_km: 25.5,
+        coastline_km: 25.5,
+        average_elevation_m: 6.0,
+        elevation_m: 6.0,
+        cyclone_risk_score: 0.82,
+        vulnerability_score: 0.82,
+        storm_surge_risk_m: 4.2,
+        inundation_risk: 0.34,
+        shelter_capacity: 144000,
+        shelter_count: 144,
+        evac_shelters: 144,
+        hospital_count: 86,
+        primary_language: "Tamil",
+        secondary_language: "English"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [80.12, 12.85],
+            [80.32, 12.95],
+            [80.35, 13.25],
+            [80.20, 13.30],
+            [80.05, 13.15],
+            [80.08, 12.90],
+            [80.12, 12.85]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "TN-CUD",
+        district_name: "Cuddalore",
+        state_name: "Tamil Nadu",
+        total_population: 2650000,
+        population: 2650000,
+        vulnerable_population: 1120000,
+        kutcha_population: 1120000,
+        coastal_length_km: 57.5,
+        coastline_km: 57.5,
+        average_elevation_m: 4.2,
+        elevation_m: 4.2,
+        cyclone_risk_score: 0.84,
+        vulnerability_score: 0.84,
+        storm_surge_risk_m: 4.9,
+        inundation_risk: 0.41,
+        shelter_capacity: 122000,
+        shelter_count: 122,
+        evac_shelters: 122,
+        hospital_count: 32,
+        primary_language: "Tamil",
+        secondary_language: "English"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [79.60, 11.35],
+            [79.85, 11.45],
+            [79.90, 11.80],
+            [79.70, 11.85],
+            [79.45, 11.65],
+            [79.50, 11.40],
+            [79.60, 11.35]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "TN-NGP",
+        district_name: "Nagapattinam",
+        state_name: "Tamil Nadu",
+        total_population: 2450000,
+        population: 2450000,
+        vulnerable_population: 1020000,
+        kutcha_population: 1020000,
+        coastal_length_km: 187.0,
+        coastline_km: 187.0,
+        average_elevation_m: 3.0,
+        elevation_m: 3.0,
+        cyclone_risk_score: 0.80,
+        vulnerability_score: 0.80,
+        storm_surge_risk_m: 4.8,
+        inundation_risk: 0.37,
+        shelter_capacity: 94000,
+        shelter_count: 94,
+        evac_shelters: 94,
+        hospital_count: 26,
+        primary_language: "Tamil",
+        secondary_language: "English"
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [79.65, 10.45],
+            [79.92, 10.60],
+            [79.95, 11.15],
+            [79.75, 11.20],
+            [79.55, 10.85],
+            [79.50, 10.55],
+            [79.65, 10.45]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_ALL_COASTAL_VULNERABILITY: VulnerabilityFeatureCollection = {
+  type: "FeatureCollection",
+  name: "india_coastal_districts_vulnerability",
+  features: [
+    ...SEED_ODISHA_VULNERABILITY.features,
+    ...SEED_WEST_BENGAL_VULNERABILITY.features,
+    ...SEED_ANDHRA_PRADESH_VULNERABILITY.features,
+    ...SEED_TAMIL_NADU_VULNERABILITY.features,
+  ]
+};
+
 export const SEED_MULTILINGUAL_ADVISORIES: Record<string, {
   headline: Record<string, string>;
   message: Record<string, string>;

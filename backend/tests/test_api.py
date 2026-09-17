@@ -38,7 +38,20 @@ def test_api_get_track():
 def test_api_get_vulnerability():
     vulnerability = get_coastal_vulnerability()
     assert vulnerability.type == "FeatureCollection"
-    assert len(vulnerability.features) == 6
+    assert len(vulnerability.features) == 16
+
+    # Test state filtering
+    odisha = get_coastal_vulnerability(state="Odisha")
+    assert len(odisha.features) == 6
+
+    wb = get_coastal_vulnerability(state="West Bengal")
+    assert len(wb.features) == 3
+
+    ap = get_coastal_vulnerability(state="Andhra Pradesh")
+    assert len(ap.features) == 4
+
+    tn = get_coastal_vulnerability(state="Tamil Nadu")
+    assert len(tn.features) == 3
 
 
 def test_api_generate_and_latest_advisory():

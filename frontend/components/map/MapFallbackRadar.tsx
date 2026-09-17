@@ -15,6 +15,7 @@ interface MapFallbackRadarProps {
   showVulnerability: boolean;
   mode?: 'historical' | 'live';
   hasActiveCyclone?: boolean;
+  selectedState?: string;
 }
 
 import { DistrictProperties } from './types';
@@ -30,6 +31,7 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
   showVulnerability,
   mode = 'historical',
   hasActiveCyclone = false,
+  selectedState = 'Odisha',
 }) => {
   const [hoveredDistrict, setHoveredDistrict] = useState<DistrictProperties | null>(null);
 
@@ -147,56 +149,64 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
           );
         })}
 
-        {/* Coastal Odisha Vulnerability Polygons */}
+        {/* Coastal Vulnerability Polygons (Filtered by selectedState) */}
         {showVulnerability &&
-          vulnerabilityData.features.map((feature) => {
-            const props = feature.properties;
-            const points = feature.geometry.coordinates[0]
-              .map(([lon, lat]) => project(lat, lon).join(','))
-              .join(' ');
+          vulnerabilityData.features
+            .filter(
+              (feature) =>
+                !selectedState ||
+                feature.properties.state_name.toLowerCase() === selectedState.toLowerCase()
+            )
+            .map((feature) => {
+              const props = feature.properties;
+              const points = feature.geometry.coordinates[0]
+                .map(([lon, lat]) => project(lat, lon).join(','))
+                .join(' ');
 
-            const isSelected = selectedDistrict?.district_id === props.district_id;
-            const isHovered = hoveredDistrict?.district_id === props.district_id;
+              const isSelected = selectedDistrict?.district_name.toLowerCase() === props.district_name.toLowerCase();
+              const isHovered = hoveredDistrict?.district_name.toLowerCase() === props.district_name.toLowerCase();
 
-            // Risk-based fill color
-            const fillColor =
-              props.cyclone_risk_score > 0.95
-                ? '#ef4444' // severe red
-                : props.cyclone_risk_score > 0.90
-                ? '#f97316' // high orange
-                : '#eab308'; // warning yellow
+              const score = props.cyclone_risk_score ?? props.vulnerability_score ?? 0.75;
 
-            return (
-              <g
-                key={props.district_id}
-                className="cursor-pointer transition-all duration-200"
-                onClick={() => onSelectDistrict(props)}
-                onMouseEnter={() => setHoveredDistrict(props)}
-                onMouseLeave={() => setHoveredDistrict(null)}
-              >
-                <polygon
-                  points={points}
-                  fill={fillColor}
-                  fillOpacity={isSelected ? 0.65 : isHovered ? 0.5 : 0.28}
-                  stroke={isSelected ? '#ffffff' : fillColor}
-                  strokeWidth={isSelected ? 2.5 : 1.5}
-                />
-                {/* District Label */}
-                {feature.geometry.coordinates[0][0] && (
-                  <text
-                    x={project(feature.geometry.coordinates[0][0][1], feature.geometry.coordinates[0][0][0])[0] + 5}
-                    y={project(feature.geometry.coordinates[0][0][1], feature.geometry.coordinates[0][0][0])[1] - 5}
-                    fill={isSelected ? '#ffffff' : '#cbd5e1'}
-                    fontSize="11"
-                    fontWeight={isSelected ? 'bold' : 'normal'}
-                    className="pointer-events-none drop-shadow"
-                  >
-                    {props.district_name}
-                  </text>
-                )}
-              </g>
-            );
-          })}
+              // Risk-based fill color
+              const fillColor =
+                score >= 0.82
+                  ? '#ef4444' // severe red
+                  : score >= 0.75
+                  ? '#f97316' // high orange
+                  : '#eab308'; // warning yellow
+
+              return (
+                <g
+                  key={props.district_id || props.district_name}
+                  className="cursor-pointer transition-all duration-200"
+                  onClick={() => onSelectDistrict(props)}
+                  onMouseEnter={() => setHoveredDistrict(props)}
+                  onMouseLeave={() => setHoveredDistrict(null)}
+                >
+                  <polygon
+                    points={points}
+                    fill={fillColor}
+                    fillOpacity={isSelected ? 0.65 : isHovered ? 0.5 : 0.28}
+                    stroke={isSelected ? '#ffffff' : fillColor}
+                    strokeWidth={isSelected ? 2.5 : 1.5}
+                  />
+                  {/* District Label */}
+                  {feature.geometry.coordinates[0][0] && (
+                    <text
+                      x={project(feature.geometry.coordinates[0][0][1], feature.geometry.coordinates[0][0][0])[0] + 5}
+                      y={project(feature.geometry.coordinates[0][0][1], feature.geometry.coordinates[0][0][0])[1] - 5}
+                      fill={isSelected ? '#ffffff' : '#cbd5e1'}
+                      fontSize="11"
+                      fontWeight={isSelected ? 'bold' : 'normal'}
+                      className="pointer-events-none drop-shadow"
+                    >
+                      {props.district_name}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
 
         {/* Uncertainty Forecast Cone */}
         {showForecastCone && futureForecastPoints.length > 0 && (

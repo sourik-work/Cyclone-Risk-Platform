@@ -81,15 +81,51 @@ def get_cyclone_track(cyclone_id: str) -> CycloneTrack:
 
 
 @router.get("/vulnerability", response_model=VulnerabilityFeatureCollection)
-def get_coastal_vulnerability() -> VulnerabilityFeatureCollection:
-    """Returns coastal Odisha district vulnerability GeoJSON FeatureCollection."""
-    geojson_path = DATA_DIR / "vulnerability" / "odisha_coastal_districts.geojson"
-    if not geojson_path.exists():
-        raise HTTPException(status_code=404, detail="Vulnerability GeoJSON file not found")
+def get_coastal_vulnerability(
+    state: Optional[str] = Query(default=None, description="Optional coastal state filter (e.g. 'Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu')")
+) -> VulnerabilityFeatureCollection:
+    """Returns coastal district vulnerability GeoJSON FeatureCollection across India-scale coverage."""
+    vulnerability_dir = DATA_DIR / "vulnerability"
+    if not vulnerability_dir.exists():
+        raise HTTPException(status_code=404, detail="Vulnerability directory not found")
 
-    with open(geojson_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-        return VulnerabilityFeatureCollection.model_validate(data)
+    geojson_files = sorted(list(vulnerability_dir.glob("*.geojson")))
+    if not geojson_files:
+        raise HTTPException(status_code=404, detail="No vulnerability GeoJSON files found")
+
+    all_features = []
+    for file_path in geojson_files:
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            features = data.get("features", [])
+            all_features.extend(features)
+
+    # Handle direct Python function invocation in tests without FastAPI unwrap
+    state_filter = None
+    if isinstance(state, str):
+        state_filter = state
+    elif state is not None and hasattr(state, "default") and isinstance(state.default, str):
+        state_filter = state.default
+
+    if state_filter and state_filter.lower() != "all":
+        target = state_filter.lower()
+        filtered = [
+            f for f in all_features
+            if target in f.get("properties", {}).get("state_name", "").lower()
+        ]
+        if not filtered:
+            raise HTTPException(status_code=404, detail=f"No vulnerability data found for state '{state_filter}'")
+        return VulnerabilityFeatureCollection.model_validate({
+            "type": "FeatureCollection",
+            "name": f"{state_filter.lower().replace(' ', '_')}_coastal_vulnerability",
+            "features": filtered,
+        })
+
+    return VulnerabilityFeatureCollection.model_validate({
+        "type": "FeatureCollection",
+        "name": "india_coastal_districts_vulnerability",
+        "features": all_features,
+    })
 
 
 @router.post("/advisories/generate", response_model=AnticipatoryAdvisory)

@@ -118,15 +118,17 @@ export const MapControls: React.FC<MapControlsProps> = ({
         </button>
 
         <button
+          id="toggle-layer-vulnerability"
           onClick={() => onToggleLayer('showVulnerability')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
             layerToggles.showVulnerability
               ? 'bg-red-500/15 border-red-500/30 text-red-400'
               : 'bg-slate-950 border-slate-800 text-slate-500 hover:text-slate-300'
           }`}
+          title="Toggle State Coastal District Vulnerability Polygon Overlay"
         >
           <ShieldAlert className="w-3.5 h-3.5" />
-          <span>Odisha Vulnerability</span>
+          <span>Vulnerability Grid</span>
         </button>
 
         {/* Earth Engine Satellite Overlay Toggle - Disabled in Live Monitoring & Amphan */}

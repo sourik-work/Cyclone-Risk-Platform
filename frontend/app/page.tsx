@@ -19,6 +19,7 @@ import {
   SEED_AMPHAN_TRACK,
   SEED_FANI_TRACK,
   SEED_ODISHA_VULNERABILITY,
+  SEED_ALL_COASTAL_VULNERABILITY,
 } from '../lib/seedData';
 import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
 
@@ -213,10 +214,24 @@ export default function Home() {
     }
   };
 
+  // Coastal state selector: 'Odisha' (default), 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'
+  const [selectedState, setSelectedState] = useState<string>('Odisha');
+
   // Default selected district: Kendrapara or Puri
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictProperties | null>(
-    SEED_ODISHA_VULNERABILITY.features[0]?.properties || null
+    SEED_ALL_COASTAL_VULNERABILITY.features[0]?.properties || null
   );
+
+  // Handle switching active coastal state
+  const handleSelectState = (newState: string) => {
+    setSelectedState(newState);
+    const match = SEED_ALL_COASTAL_VULNERABILITY.features.find(
+      (f) => f.properties.state_name.toLowerCase() === newState.toLowerCase()
+    );
+    if (match) {
+      setSelectedDistrict(match.properties);
+    }
+  };
 
   // Calls POST /api/advisories/generate
   const fetchAdvisory = useCallback(
@@ -292,7 +307,7 @@ export default function Home() {
   const [layerToggles, setLayerToggles] = useState<MapLayerToggles>({
     showTrack: true,
     showForecastCone: true,
-    showVulnerability: false, // Disabled: replaced by live Earth Engine satellite raster
+    showVulnerability: true, // Enabled: State coastal district vulnerability polygon grid
     showWindRadii: false,
     showShelters: false,
     showEarthEngine: true, // Enabled: Real-time GEE satellite overlay
@@ -335,6 +350,7 @@ export default function Home() {
         mode={mode}
         onModeChange={handleModeChange}
         liveStatus={liveData?.status}
+        districts={SEED_ALL_COASTAL_VULNERABILITY.features.map((f) => f.properties)}
       />
 
       {/* Main Operations Center Layout */}
@@ -434,13 +450,14 @@ export default function Home() {
               <CycloneMap
                 track={activeTrack}
                 activePointIndex={activePointIndex}
-                vulnerabilityData={SEED_ODISHA_VULNERABILITY}
+                vulnerabilityData={SEED_ALL_COASTAL_VULNERABILITY}
                 selectedDistrict={selectedDistrict}
                 onSelectDistrict={setSelectedDistrict}
                 layerToggles={layerToggles}
                 mode={mode}
                 hasActiveCyclone={hasActiveCyclone}
                 onToggleLayer={handleToggleLayer}
+                selectedState={selectedState}
               />
             </div>
 
@@ -475,6 +492,10 @@ export default function Home() {
             currentLanguage={currentLanguage}
             advisory={advisory}
             isLoadingAdvisory={isLoadingAdvisory}
+            selectedState={selectedState}
+            onSelectState={handleSelectState}
+            allDistricts={SEED_ALL_COASTAL_VULNERABILITY.features.map((f) => f.properties)}
+            onSelectDistrict={setSelectedDistrict}
           />
         </div>
       </div>

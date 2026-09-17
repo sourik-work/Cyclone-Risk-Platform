@@ -64,9 +64,16 @@ class VulnerabilityProperties(BaseModel):
     storm_surge_risk_m: float = Field(ge=0.0)
     shelter_capacity: int = Field(ge=0)
     shelter_count: int = Field(ge=0)
-    hospital_count: int = Field(ge=0)
+    hospital_count: int = Field(default=0, ge=0)
     primary_language: str
     secondary_language: Optional[str] = None
+    population: Optional[int] = None
+    kutcha_population: Optional[int] = None
+    coastline_km: Optional[float] = None
+    elevation_m: Optional[float] = None
+    vulnerability_score: Optional[float] = None
+    inundation_risk: Optional[float] = None
+    evac_shelters: Optional[int] = None
 
 
 # Alias for backward and TypeScript naming compatibility

@@ -55,6 +55,13 @@ export interface DistrictProperties {
   hospital_count: number;
   primary_language: 'Odia' | 'Bengali' | 'Telugu' | 'Tamil' | 'Hindi';
   secondary_language?: string;
+  population?: number;
+  kutcha_population?: number;
+  coastline_km?: number;
+  elevation_m?: number;
+  vulnerability_score?: number;
+  inundation_risk?: number;
+  evac_shelters?: number;
 }
 
 export interface DistrictFeature {

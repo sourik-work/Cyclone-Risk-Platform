@@ -26,6 +26,7 @@ interface CycloneMapProps {
   mode?: 'historical' | 'live';
   hasActiveCyclone?: boolean;
   onToggleLayer?: (layerKey: keyof MapLayerToggles) => void;
+  selectedState?: string;
 }
 
 /**
@@ -353,6 +354,116 @@ const GoogleMapsAiForecastLayer: React.FC<{
   return null;
 };
 
+const STATE_MAP_CONFIG: Record<string, { lat: number; lng: number; zoom: number }> = {
+  odisha: { lat: 19.8, lng: 85.8, zoom: 7.0 },
+  'west bengal': { lat: 22.0, lng: 88.0, zoom: 7.5 },
+  'andhra pradesh': { lat: 16.5, lng: 82.0, zoom: 7.0 },
+  'tamil nadu': { lat: 12.5, lng: 80.0, zoom: 7.0 },
+};
+
+/**
+ * Recenter and zoom Google Map smoothly when selectedState changes
+ */
+const MapCameraController: React.FC<{ selectedState?: string }> = ({ selectedState }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (!map || !selectedState) return;
+    const key = selectedState.toLowerCase().trim();
+    const config = STATE_MAP_CONFIG[key];
+    if (config) {
+      map.panTo({ lat: config.lat, lng: config.lng });
+      map.setZoom(config.zoom);
+    }
+  }, [map, selectedState]);
+  return null;
+};
+
+/**
+ * 5. Coastal District Vulnerability Polygon Layer for Google Maps
+ * Filters by selectedState and renders districts with interactive polygons.
+ */
+const GoogleMapsVulnerabilityLayer: React.FC<{
+  vulnerabilityData: VulnerabilityFeatureCollection;
+  selectedState: string;
+  selectedDistrict: DistrictProperties | null;
+  onSelectDistrict: (district: DistrictProperties) => void;
+  visible?: boolean;
+}> = ({
+  vulnerabilityData,
+  selectedState,
+  selectedDistrict,
+  onSelectDistrict,
+  visible = true,
+}) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !visible || typeof google === 'undefined') return;
+
+    // Filter districts strictly by selectedState
+    const stateFeatures = vulnerabilityData.features.filter(
+      (f) => f.properties.state_name.toLowerCase() === selectedState.toLowerCase()
+    );
+
+    const polygons: google.maps.Polygon[] = [];
+
+    stateFeatures.forEach((feat) => {
+      const props = feat.properties;
+      const isSelected =
+        selectedDistrict?.district_name.toLowerCase() === props.district_name.toLowerCase();
+      const score = props.cyclone_risk_score ?? props.vulnerability_score ?? 0.75;
+
+      const baseColor =
+        score >= 0.82 ? '#ef4444' : score >= 0.75 ? '#f97316' : '#eab308';
+
+      const coords = feat.geometry.coordinates[0].map(([lng, lat]) => ({
+        lat,
+        lng,
+      }));
+
+      const polygon = new google.maps.Polygon({
+        map,
+        paths: coords,
+        strokeColor: isSelected ? '#ffffff' : baseColor,
+        strokeOpacity: isSelected ? 1.0 : 0.85,
+        strokeWeight: isSelected ? 3.0 : 1.5,
+        fillColor: baseColor,
+        fillOpacity: isSelected ? 0.55 : 0.30,
+        zIndex: isSelected ? 20 : 12,
+        clickable: true,
+      });
+
+      polygon.addListener('click', () => {
+        onSelectDistrict(props);
+      });
+
+      polygon.addListener('mouseover', () => {
+        polygon.setOptions({
+          fillOpacity: 0.60,
+          strokeWeight: 2.5,
+          strokeColor: '#38bdf8',
+        });
+      });
+
+      polygon.addListener('mouseout', () => {
+        polygon.setOptions({
+          fillOpacity: isSelected ? 0.55 : 0.30,
+          strokeWeight: isSelected ? 3.0 : 1.5,
+          strokeColor: isSelected ? '#ffffff' : baseColor,
+        });
+      });
+
+      polygons.push(polygon);
+    });
+
+    return () => {
+      polygons.forEach((poly) => poly.setMap(null));
+    };
+  }, [map, visible, selectedState, selectedDistrict?.district_name, vulnerabilityData, onSelectDistrict]);
+
+  return null;
+};
+
 export const CycloneMap: React.FC<CycloneMapProps> = ({
   track,
   activePointIndex,
@@ -363,6 +474,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   mode = 'historical',
   hasActiveCyclone = false,
   onToggleLayer,
+  selectedState = 'Odisha',
 }) => {
   const isLive = mode === 'live';
   const isMonitoring = isLive && !hasActiveCyclone;
@@ -558,7 +670,17 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
                 visible={effectiveShowAiForecast}
               />
 
-              {/* NOTE: Mock vulnerability overlay is completely disabled per project instructions. Real satellite data replaces it. */}
+              {/* 5. Coastal District Vulnerability Overlay (Filtered by selectedState) */}
+              <GoogleMapsVulnerabilityLayer
+                vulnerabilityData={vulnerabilityData}
+                selectedState={selectedState}
+                selectedDistrict={selectedDistrict}
+                onSelectDistrict={onSelectDistrict}
+                visible={layerToggles.showVulnerability}
+              />
+
+              {/* Camera controller to smoothly pan/zoom to selectedState */}
+              <MapCameraController selectedState={selectedState} />
             </Map>
           </APIProvider>
         ) : (
@@ -570,9 +692,10 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             onSelectDistrict={onSelectDistrict}
             showTrack={effectiveShowTrack}
             showForecastCone={effectiveShowForecastCone}
-            showVulnerability={false} // Disabled: replaced by real satellite data
+            showVulnerability={layerToggles.showVulnerability}
             mode={mode}
             hasActiveCyclone={hasActiveCyclone}
+            selectedState={selectedState}
           />
         )}
 
