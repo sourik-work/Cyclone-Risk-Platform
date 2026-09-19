@@ -1,7 +1,7 @@
 """Pydantic schemas for cyclone tracks, vulnerability features, and anticipatory advisories."""
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 
 
@@ -270,5 +270,72 @@ class HazardSummary(BaseModel):
     rainfall: RainfallForecast
     surge: Optional[SurgeSimulation] = None
     overall_risk: str
+
+
+class DataSourceInfo(BaseModel):
+    """Metadata and operational status for an external data source."""
+
+    source_id: str
+    name: str
+    provider: str
+    endpoint: str
+    status: str = Field(description="'operational', 'degraded', 'cached', or 'simulated'")
+    last_fetch: Optional[str] = None
+    details: Optional[Dict[str, Any]] = None
+
+
+class DataGovStats(BaseModel):
+    """Socio-economic indicators from data.gov.in Open Data (CKAN)."""
+
+    state: str
+    district: Optional[str] = None
+    population: Optional[int] = None
+    literacy_rate: Optional[float] = None
+    hospital_beds: Optional[int] = None
+    road_density_km_per_100sqkm: Optional[float] = None
+    poverty_rate: Optional[float] = None
+    pucca_house_percent: Optional[float] = None
+    source: str = "data.gov.in Open Data (CKAN)"
+    is_cached: bool = False
+    timestamp: Optional[str] = None
+    raw_data: Optional[Dict[str, Any]] = None
+
+
+class BhuvanLayer(BaseModel):
+    """ISRO Bhuvan WMS geolayer metadata and tile template URL."""
+
+    layer_id: str
+    title: str
+    abstract: Optional[str] = None
+    bounds: List[float] = Field(description="[min_lon, min_lat, max_lon, max_lat]")
+    crs: str = "EPSG:4326"
+    tile_url_template: str
+    source: str = "ISRO Bhuvan WMS"
+
+
+class OSMFeature(BaseModel):
+    """OpenStreetMap infrastructure feature extracted from Overpass API."""
+
+    feature_type: str = Field(description="'road', 'hospital', or 'shelter'")
+    osm_id: Union[int, str]
+    name: Optional[str] = None
+    coordinates: Any
+    geometry_type: str = "Point"
+    tags: Dict[str, Any] = Field(default_factory=dict)
+
+
+class FAOWHOIndicators(BaseModel):
+    """FAO food security and WHO public health vulnerability metrics."""
+
+    state: str
+    food_insecurity_percent: float
+    undernourishment_percent: float
+    stunting_percent: Optional[float] = None
+    infant_mortality_per_1000: float
+    healthcare_access_index: float
+    disease_prevalence: Dict[str, Any] = Field(default_factory=dict)
+    source: str = "FAO / WHO Reports & NFHS-5"
+    timestamp: Optional[str] = None
+
 
 

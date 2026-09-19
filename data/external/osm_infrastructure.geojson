@@ -1,0 +1,205 @@
+{
+  "type": "FeatureCollection",
+  "name": "osm_coastal_infrastructure",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "way/101001",
+      "properties": {
+        "osm_id": 101001,
+        "type": "way",
+        "highway": "trunk",
+        "name": "NH-316 (Bhubaneswar-Puri Highway)",
+        "ref": "NH-316",
+        "district": "Puri",
+        "state": "Odisha",
+        "lanes": 4,
+        "maxspeed": "80",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [85.8201, 20.1245],
+          [85.8234, 20.0215],
+          [85.8298, 19.8642],
+          [85.8312, 19.8135]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/101002",
+      "properties": {
+        "osm_id": 101002,
+        "type": "way",
+        "highway": "primary",
+        "name": "Puri-Konark Marine Drive",
+        "ref": "SH-60",
+        "district": "Puri",
+        "state": "Odisha",
+        "lanes": 2,
+        "maxspeed": "60",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [85.8312, 19.8135],
+          [85.9452, 19.8456],
+          [86.0421, 19.8789],
+          [86.1245, 19.8924]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/101003",
+      "properties": {
+        "osm_id": 101003,
+        "type": "way",
+        "highway": "secondary",
+        "name": "Brahmagiri-Satapada Road",
+        "ref": "OD-MDR-22",
+        "district": "Puri",
+        "state": "Odisha",
+        "lanes": 2,
+        "surface": "paved"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [85.8012, 19.8054],
+          [85.6542, 19.7421],
+          [85.4215, 19.6845]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/201001",
+      "properties": {
+        "osm_id": 201001,
+        "type": "node",
+        "amenity": "hospital",
+        "name": "District Headquarters Hospital, Puri",
+        "healthcare": "hospital",
+        "operator": "Government of Odisha",
+        "district": "Puri",
+        "state": "Odisha",
+        "beds": "350",
+        "emergency": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.8312, 19.8135]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/201002",
+      "properties": {
+        "osm_id": 201002,
+        "type": "node",
+        "amenity": "hospital",
+        "name": "Gop Community Health Centre",
+        "healthcare": "centre",
+        "operator": "Government of Odisha",
+        "district": "Puri",
+        "state": "Odisha",
+        "beds": "50",
+        "emergency": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [86.0124, 19.9856]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/201003",
+      "properties": {
+        "osm_id": 201003,
+        "type": "node",
+        "amenity": "hospital",
+        "name": "Astaranga Primary Health Centre",
+        "healthcare": "clinic",
+        "operator": "Government of Odisha",
+        "district": "Puri",
+        "state": "Odisha",
+        "beds": "30",
+        "emergency": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [86.2541, 19.9812]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/301001",
+      "properties": {
+        "osm_id": 301001,
+        "type": "node",
+        "amenity": "shelter",
+        "shelter_type": "cyclone_shelter",
+        "name": "Konark Multi-Purpose Cyclone Shelter",
+        "operator": "OSDMA",
+        "capacity": "1800",
+        "district": "Puri",
+        "state": "Odisha",
+        "generator": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [86.1154, 19.8924]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/301002",
+      "properties": {
+        "osm_id": 301002,
+        "type": "node",
+        "amenity": "shelter",
+        "shelter_type": "cyclone_shelter",
+        "name": "Pentakota Fishermen Cyclone Shelter",
+        "operator": "OSDMA",
+        "capacity": "1200",
+        "district": "Puri",
+        "state": "Odisha",
+        "generator": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.8452, 19.7985]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/301003",
+      "properties": {
+        "osm_id": 301003,
+        "type": "node",
+        "amenity": "shelter",
+        "shelter_type": "cyclone_shelter",
+        "name": "Chandrabhaga Cyclone Evacuation Shelter",
+        "operator": "OSDMA",
+        "capacity": "1500",
+        "district": "Puri",
+        "state": "Odisha",
+        "generator": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [86.1021, 19.8741]
+      }
+    }
+  ]
+}

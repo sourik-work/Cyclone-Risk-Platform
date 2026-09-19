@@ -1,0 +1,277 @@
+{
+  "metadata": {
+    "source": "Open Government Data (OGD) Platform India (data.gov.in)",
+    "catalog": "Census of India & Ministry of Health and Family Welfare",
+    "cached_at": "2026-09-19T18:00:00Z"
+  },
+  "states": {
+    "odisha": {
+      "state_name": "Odisha",
+      "population": 41974218,
+      "literacy_rate": 73.45,
+      "hospital_beds_per_100k": 118.5,
+      "road_density_km_per_100sqkm": 194.2,
+      "source_status": "cached",
+      "timestamp": "2026-09-19T18:00:00Z",
+      "district_indicators": {
+        "puri": {
+          "district_name": "Puri",
+          "district_id": "OD-PUR",
+          "population": 1698730,
+          "literacy_rate": 84.67,
+          "rural_population_pct": 84.3,
+          "hospital_beds": 620,
+          "hospital_beds_per_100k": 36.5,
+          "primary_health_centres": 42,
+          "community_health_centres": 11,
+          "road_density_km_per_100sqkm": 218.4,
+          "all_weather_road_pct": 89.2,
+          "kutcha_housing_pct": 24.7
+        },
+        "jagatsinghpur": {
+          "district_name": "Jagatsinghpur",
+          "district_id": "OD-JAG",
+          "population": 1136971,
+          "literacy_rate": 86.59,
+          "rural_population_pct": 89.8,
+          "hospital_beds": 450,
+          "hospital_beds_per_100k": 39.6,
+          "primary_health_centres": 31,
+          "community_health_centres": 8,
+          "road_density_km_per_100sqkm": 235.1,
+          "all_weather_road_pct": 91.5,
+          "kutcha_housing_pct": 32.1
+        },
+        "kendrapara": {
+          "district_name": "Kendrapara",
+          "district_id": "OD-KEN",
+          "population": 1440361,
+          "literacy_rate": 85.17,
+          "rural_population_pct": 94.2,
+          "hospital_beds": 380,
+          "hospital_beds_per_100k": 26.4,
+          "primary_health_centres": 37,
+          "community_health_centres": 9,
+          "road_density_km_per_100sqkm": 178.6,
+          "all_weather_road_pct": 84.8,
+          "kutcha_housing_pct": 38.6
+        },
+        "bhadrak": {
+          "district_name": "Bhadrak",
+          "district_id": "OD-BHA",
+          "population": 1506337,
+          "literacy_rate": 82.78,
+          "rural_population_pct": 87.6,
+          "hospital_beds": 420,
+          "hospital_beds_per_100k": 27.9,
+          "primary_health_centres": 36,
+          "community_health_centres": 7,
+          "road_density_km_per_100sqkm": 192.3,
+          "all_weather_road_pct": 87.4,
+          "kutcha_housing_pct": 31.2
+        },
+        "balasore": {
+          "district_name": "Balasore",
+          "district_id": "OD-BAL",
+          "population": 2317419,
+          "literacy_rate": 79.79,
+          "rural_population_pct": 89.1,
+          "hospital_beds": 750,
+          "hospital_beds_per_100k": 32.4,
+          "primary_health_centres": 58,
+          "community_health_centres": 12,
+          "road_density_km_per_100sqkm": 204.8,
+          "all_weather_road_pct": 88.0,
+          "kutcha_housing_pct": 29.8
+        },
+        "ganjam": {
+          "district_name": "Ganjam",
+          "district_id": "OD-GAN",
+          "population": 3529031,
+          "literacy_rate": 71.06,
+          "rural_population_pct": 78.2,
+          "hospital_beds": 1250,
+          "hospital_beds_per_100k": 35.4,
+          "primary_health_centres": 78,
+          "community_health_centres": 18,
+          "road_density_km_per_100sqkm": 165.2,
+          "all_weather_road_pct": 85.5,
+          "kutcha_housing_pct": 27.4
+        }
+      }
+    },
+    "west bengal": {
+      "state_name": "West Bengal",
+      "population": 91276115,
+      "literacy_rate": 76.26,
+      "hospital_beds_per_100k": 135.2,
+      "road_density_km_per_100sqkm": 284.6,
+      "source_status": "cached",
+      "timestamp": "2026-09-19T18:00:00Z",
+      "district_indicators": {
+        "purba medinipur": {
+          "district_name": "Purba Medinipur",
+          "district_id": "WB-PMED",
+          "population": 5095875,
+          "literacy_rate": 87.02,
+          "rural_population_pct": 88.4,
+          "hospital_beds": 1420,
+          "hospital_beds_per_100k": 27.9,
+          "primary_health_centres": 64,
+          "community_health_centres": 14,
+          "road_density_km_per_100sqkm": 298.5,
+          "all_weather_road_pct": 92.1,
+          "kutcha_housing_pct": 34.5
+        },
+        "south 24 parganas": {
+          "district_name": "South 24 Parganas",
+          "district_id": "WB-S24P",
+          "population": 8161961,
+          "literacy_rate": 77.51,
+          "rural_population_pct": 74.4,
+          "hospital_beds": 2100,
+          "hospital_beds_per_100k": 25.7,
+          "primary_health_centres": 92,
+          "community_health_centres": 21,
+          "road_density_km_per_100sqkm": 265.4,
+          "all_weather_road_pct": 86.8,
+          "kutcha_housing_pct": 41.2
+        },
+        "north 24 parganas": {
+          "district_name": "North 24 Parganas",
+          "district_id": "WB-N24P",
+          "population": 10009781,
+          "literacy_rate": 84.06,
+          "rural_population_pct": 42.7,
+          "hospital_beds": 3600,
+          "hospital_beds_per_100k": 36.0,
+          "primary_health_centres": 88,
+          "community_health_centres": 19,
+          "road_density_km_per_100sqkm": 342.1,
+          "all_weather_road_pct": 94.6,
+          "kutcha_housing_pct": 21.0
+        }
+      }
+    },
+    "andhra pradesh": {
+      "state_name": "Andhra Pradesh",
+      "population": 49577103,
+      "literacy_rate": 67.02,
+      "hospital_beds_per_100k": 122.8,
+      "road_density_km_per_100sqkm": 175.4,
+      "source_status": "cached",
+      "timestamp": "2026-09-19T18:00:00Z",
+      "district_indicators": {
+        "srikakulam": {
+          "district_name": "Srikakulam",
+          "district_id": "AP-SRIK",
+          "population": 2703114,
+          "literacy_rate": 61.74,
+          "rural_population_pct": 83.8,
+          "hospital_beds": 880,
+          "hospital_beds_per_100k": 32.6,
+          "primary_health_centres": 62,
+          "community_health_centres": 12,
+          "road_density_km_per_100sqkm": 162.1,
+          "all_weather_road_pct": 86.2,
+          "kutcha_housing_pct": 26.5
+        },
+        "vizianagaram": {
+          "district_name": "Vizianagaram",
+          "district_id": "AP-VZN",
+          "population": 2344474,
+          "literacy_rate": 58.89,
+          "rural_population_pct": 79.1,
+          "hospital_beds": 740,
+          "hospital_beds_per_100k": 31.6,
+          "primary_health_centres": 54,
+          "community_health_centres": 10,
+          "road_density_km_per_100sqkm": 158.3,
+          "all_weather_road_pct": 84.5,
+          "kutcha_housing_pct": 28.1
+        },
+        "visakhapatnam": {
+          "district_name": "Visakhapatnam",
+          "district_id": "AP-VSP",
+          "population": 4290589,
+          "literacy_rate": 66.91,
+          "rural_population_pct": 52.5,
+          "hospital_beds": 2400,
+          "hospital_beds_per_100k": 55.9,
+          "primary_health_centres": 76,
+          "community_health_centres": 16,
+          "road_density_km_per_100sqkm": 210.6,
+          "all_weather_road_pct": 93.4,
+          "kutcha_housing_pct": 18.2
+        },
+        "east godavari": {
+          "district_name": "East Godavari",
+          "district_id": "AP-EGOD",
+          "population": 5154296,
+          "literacy_rate": 70.99,
+          "rural_population_pct": 74.5,
+          "hospital_beds": 2100,
+          "hospital_beds_per_100k": 40.7,
+          "primary_health_centres": 89,
+          "community_health_centres": 17,
+          "road_density_km_per_100sqkm": 195.8,
+          "all_weather_road_pct": 90.7,
+          "kutcha_housing_pct": 22.4
+        }
+      }
+    },
+    "tamil nadu": {
+      "state_name": "Tamil Nadu",
+      "population": 72147030,
+      "literacy_rate": 80.09,
+      "hospital_beds_per_100k": 156.4,
+      "road_density_km_per_100sqkm": 268.9,
+      "source_status": "cached",
+      "timestamp": "2026-09-19T18:00:00Z",
+      "district_indicators": {
+        "chennai": {
+          "district_name": "Chennai",
+          "district_id": "TN-CHE",
+          "population": 4646732,
+          "literacy_rate": 90.18,
+          "rural_population_pct": 0.0,
+          "hospital_beds": 6200,
+          "hospital_beds_per_100k": 133.4,
+          "primary_health_centres": 140,
+          "community_health_centres": 28,
+          "road_density_km_per_100sqkm": 580.2,
+          "all_weather_road_pct": 98.9,
+          "kutcha_housing_pct": 6.8
+        },
+        "cuddalore": {
+          "district_name": "Cuddalore",
+          "district_id": "TN-CUD",
+          "population": 2605914,
+          "literacy_rate": 78.04,
+          "rural_population_pct": 66.0,
+          "hospital_beds": 980,
+          "hospital_beds_per_100k": 37.6,
+          "primary_health_centres": 58,
+          "community_health_centres": 11,
+          "road_density_km_per_100sqkm": 215.4,
+          "all_weather_road_pct": 91.2,
+          "kutcha_housing_pct": 25.1
+        },
+        "nagapattinam": {
+          "district_name": "Nagapattinam",
+          "district_id": "TN-NGP",
+          "population": 1616450,
+          "literacy_rate": 83.59,
+          "rural_population_pct": 77.4,
+          "hospital_beds": 720,
+          "hospital_beds_per_100k": 44.5,
+          "primary_health_centres": 42,
+          "community_health_centres": 9,
+          "road_density_km_per_100sqkm": 228.6,
+          "all_weather_road_pct": 89.7,
+          "kutcha_housing_pct": 33.4
+        }
+      }
+    }
+  }
+}

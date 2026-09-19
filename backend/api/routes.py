@@ -1,6 +1,8 @@
 """API routes for cyclone tracking, vulnerability GIS queries, and Gemini advisory generation."""
 
 import json
+import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -9,12 +11,17 @@ from pydantic import BaseModel
 
 from backend.schemas.cyclone import (
     AnticipatoryAdvisory,
+    BhuvanLayer,
     CycloneTrack,
+    DataGovStats,
+    DataSourceInfo,
+    FAOWHOIndicators,
     ForecastTrackPoint,
     ForecastTrackRequest,
     ForecastTrackResponse,
     HazardSummary,
     LiveCycloneResponse,
+    OSMFeature,
     RainfallForecast,
     SurgeSimulation,
     SurgeSimulationRequest,
@@ -22,10 +29,23 @@ from backend.schemas.cyclone import (
     SynthesizeResponse,
     VulnerabilityFeatureCollection,
 )
+from backend.services.bhuvan_fetcher import fetch_layer_metadata, get_tile_url_template
+from backend.services.datagov_fetcher import fetch_district_indicators, fetch_state_stats
+from backend.services.fao_who_fetcher import (
+    fetch_combined_indicators,
+    fetch_food_security,
+    fetch_health_indicators,
+)
 from backend.services.forecast_service import get_model_metrics, predict_track
 from backend.services.gemini_advisory import GeminiAdvisoryService
 from backend.services.imd_fetcher import IMDFetcherService
 from backend.services.infrastructure_service import load_infrastructure
+from backend.services.osm_fetcher import (
+    fetch_hospitals,
+    fetch_roads,
+    fetch_shelters,
+    get_district_bbox,
+)
 from backend.services.rainfall_service import get_rainfall_forecast
 from backend.services.surge_service import simulate_surge
 from backend.services.tts_service import synthesize
@@ -347,4 +367,109 @@ def get_hazards_summary_endpoint(
         surge=surge_model,
         overall_risk=overall_risk,
     )
+
+
+@router.get("/data-sources", response_model=List[DataSourceInfo])
+def get_data_sources() -> List[DataSourceInfo]:
+    """Returns status, metadata, and last-fetch timestamps for all integrated public data sources."""
+    now_iso = datetime.now(timezone.utc).isoformat()
+    return [
+        DataSourceInfo(
+            source_id="datagov",
+            name="Open Government Data Platform India (data.gov.in)",
+            provider="National Informatics Centre (NIC) / MeitY",
+            endpoint="https://api.data.gov.in/",
+            status="cached" if not os.getenv("DATAGOV_API_KEY") else "operational",
+            last_fetch=now_iso,
+            details={"type": "CKAN Open API", "cached_fallback": True},
+        ),
+        DataSourceInfo(
+            source_id="isro_bhuvan",
+            name="ISRO Bhuvan Geo-Platform (WMS)",
+            provider="National Remote Sensing Centre (NRSC / ISRO)",
+            endpoint="https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms",
+            status="operational",
+            last_fetch=now_iso,
+            details={"format": "WMS 1.1.1", "layers": ["coastal_vulnerability", "landuse", "flood_hazard", "elevation"]},
+        ),
+        DataSourceInfo(
+            source_id="osm_overpass",
+            name="OpenStreetMap Overpass Infrastructure API",
+            provider="OpenStreetMap Foundation",
+            endpoint="https://overpass-api.de/api/interpreter",
+            status="operational",
+            last_fetch=now_iso,
+            details={"features": ["roads", "hospitals", "shelters"], "rate_limited": True},
+        ),
+        DataSourceInfo(
+            source_id="fao_who",
+            name="FAO Food Security & WHO Public Health Database",
+            provider="UN FAO / WHO / NFHS-5",
+            endpoint="https://www.fao.org/faostat/ / https://www.who.int/data/gho",
+            status="cached",
+            last_fetch=now_iso,
+            details={"scope": "Coastal States Nutritional & Health Baselines"},
+        ),
+        DataSourceInfo(
+            source_id="imd_rsmc",
+            name="IMD RSMC Tropical Cyclones New Delhi",
+            provider="India Meteorological Department (IMD)",
+            endpoint="https://rsmcnewdelhi.imd.gov.in/",
+            status="operational",
+            last_fetch=now_iso,
+            details={"bulletins": True, "active_monitoring": True},
+        ),
+    ]
+
+
+@router.get("/external/datagov", response_model=DataGovStats)
+def get_datagov_endpoint(
+    state: str = Query(default="Odisha", description="State name (e.g. 'Odisha', 'West Bengal')"),
+    district: Optional[str] = Query(default=None, description="Optional district name (e.g. 'Puri')"),
+) -> DataGovStats:
+    """Returns socio-economic statistics from data.gov.in or cached official records."""
+    if district:
+        data = fetch_district_indicators(district=district)
+        return DataGovStats.model_validate(data)
+    data = fetch_state_stats(state=state)
+    return DataGovStats.model_validate(data)
+
+
+@router.get("/external/bhuvan", response_model=BhuvanLayer)
+def get_bhuvan_endpoint(
+    layer: str = Query(default="coastal_vulnerability", description="Layer ID: coastal_vulnerability, landuse, flood_hazard, elevation"),
+) -> BhuvanLayer:
+    """Returns ISRO Bhuvan WMS geolayer metadata and tile template URL."""
+    data = fetch_layer_metadata(layer=layer)
+    return BhuvanLayer.model_validate(data)
+
+
+@router.get("/external/osm/roads")
+def get_osm_roads_endpoint(
+    district: str = Query(default="Puri", description="District name (e.g. 'Puri', 'Ganjam')"),
+    limit: int = Query(default=50, ge=1, le=200, description="Max road segments to return"),
+) -> Dict[str, Any]:
+    """Returns major road networks from OpenStreetMap Overpass API or local cache for the district."""
+    bbox = get_district_bbox(district)
+    return fetch_roads(bbox=bbox, limit=limit)
+
+
+@router.get("/external/osm/hospitals")
+def get_osm_hospitals_endpoint(
+    district: str = Query(default="Puri", description="District name (e.g. 'Puri', 'Ganjam')"),
+    limit: int = Query(default=50, ge=1, le=200, description="Max hospital facilities to return"),
+) -> Dict[str, Any]:
+    """Returns hospitals and health centers from OpenStreetMap Overpass API or local cache for the district."""
+    bbox = get_district_bbox(district)
+    return fetch_hospitals(bbox=bbox, limit=limit)
+
+
+@router.get("/external/fao-who", response_model=FAOWHOIndicators)
+def get_fao_who_endpoint(
+    state: str = Query(default="Odisha", description="Coastal state name (e.g. 'Odisha', 'West Bengal')"),
+) -> FAOWHOIndicators:
+    """Returns FAO food security and WHO public health vulnerability indicators."""
+    data = fetch_combined_indicators(state=state)
+    return FAOWHOIndicators.model_validate(data)
+
 

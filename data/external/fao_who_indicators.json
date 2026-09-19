@@ -1,0 +1,141 @@
+{
+  "last_updated": "2026-09-19T16:00:00Z",
+  "source_notes": "Compiled from FAO SOFI (State of Food Security and Nutrition) regional profiles and WHO/NFHS-5 health indicators for coastal states of India.",
+  "states": {
+    "Odisha": {
+      "state": "Odisha",
+      "food_security": {
+        "food_insecurity_percent": 24.8,
+        "undernourishment_percent": 15.6,
+        "severe_food_insecurity_percent": 7.2,
+        "stunting_children_percent": 31.0,
+        "wasting_children_percent": 18.1,
+        "dietary_diversity_score": 5.4,
+        "pds_coverage_percent": 86.4
+      },
+      "health_indicators": {
+        "infant_mortality_per_1000": 36.3,
+        "under_five_mortality_per_1000": 41.1,
+        "maternal_mortality_ratio": 119,
+        "healthcare_access_index": 62.4,
+        "institutional_births_percent": 92.2,
+        "immunization_coverage_percent": 90.5,
+        "doctor_patient_ratio_per_10k": 6.8,
+        "disease_prevalence": {
+          "malaria_api": 1.42,
+          "diarrheal_disease_percent": 8.9,
+          "acute_respiratory_infection_percent": 4.1,
+          "waterborne_risk_level": "High"
+        }
+      }
+    },
+    "West Bengal": {
+      "state": "West Bengal",
+      "food_security": {
+        "food_insecurity_percent": 21.3,
+        "undernourishment_percent": 14.2,
+        "severe_food_insecurity_percent": 6.1,
+        "stunting_children_percent": 33.8,
+        "wasting_children_percent": 20.3,
+        "dietary_diversity_score": 5.8,
+        "pds_coverage_percent": 88.1
+      },
+      "health_indicators": {
+        "infant_mortality_per_1000": 22.0,
+        "under_five_mortality_per_1000": 25.4,
+        "maternal_mortality_ratio": 103,
+        "healthcare_access_index": 68.1,
+        "institutional_births_percent": 91.7,
+        "immunization_coverage_percent": 87.8,
+        "doctor_patient_ratio_per_10k": 8.4,
+        "disease_prevalence": {
+          "malaria_api": 0.35,
+          "diarrheal_disease_percent": 7.4,
+          "acute_respiratory_infection_percent": 3.8,
+          "waterborne_risk_level": "High"
+        }
+      }
+    },
+    "Andhra Pradesh": {
+      "state": "Andhra Pradesh",
+      "food_security": {
+        "food_insecurity_percent": 17.5,
+        "undernourishment_percent": 12.1,
+        "severe_food_insecurity_percent": 4.8,
+        "stunting_children_percent": 26.5,
+        "wasting_children_percent": 16.1,
+        "dietary_diversity_score": 6.5,
+        "pds_coverage_percent": 84.9
+      },
+      "health_indicators": {
+        "infant_mortality_per_1000": 30.3,
+        "under_five_mortality_per_1000": 35.2,
+        "maternal_mortality_ratio": 58,
+        "healthcare_access_index": 73.6,
+        "institutional_births_percent": 96.8,
+        "immunization_coverage_percent": 92.1,
+        "doctor_patient_ratio_per_10k": 9.2,
+        "disease_prevalence": {
+          "malaria_api": 0.48,
+          "diarrheal_disease_percent": 6.1,
+          "acute_respiratory_infection_percent": 3.2,
+          "waterborne_risk_level": "Moderate"
+        }
+      }
+    },
+    "Tamil Nadu": {
+      "state": "Tamil Nadu",
+      "food_security": {
+        "food_insecurity_percent": 13.2,
+        "undernourishment_percent": 9.8,
+        "severe_food_insecurity_percent": 3.2,
+        "stunting_children_percent": 25.0,
+        "wasting_children_percent": 14.6,
+        "dietary_diversity_score": 7.1,
+        "pds_coverage_percent": 94.2
+      },
+      "health_indicators": {
+        "infant_mortality_per_1000": 13.0,
+        "under_five_mortality_per_1000": 16.2,
+        "maternal_mortality_ratio": 54,
+        "healthcare_access_index": 82.5,
+        "institutional_births_percent": 99.2,
+        "immunization_coverage_percent": 95.8,
+        "doctor_patient_ratio_per_10k": 12.5,
+        "disease_prevalence": {
+          "malaria_api": 0.12,
+          "diarrheal_disease_percent": 4.5,
+          "acute_respiratory_infection_percent": 2.7,
+          "waterborne_risk_level": "Low"
+        }
+      }
+    },
+    "Gujarat": {
+      "state": "Gujarat",
+      "food_security": {
+        "food_insecurity_percent": 19.8,
+        "undernourishment_percent": 13.9,
+        "severe_food_insecurity_percent": 5.4,
+        "stunting_children_percent": 39.0,
+        "wasting_children_percent": 25.1,
+        "dietary_diversity_score": 6.0,
+        "pds_coverage_percent": 82.0
+      },
+      "health_indicators": {
+        "infant_mortality_per_1000": 23.0,
+        "under_five_mortality_per_1000": 28.0,
+        "maternal_mortality_ratio": 57,
+        "healthcare_access_index": 71.0,
+        "institutional_births_percent": 94.3,
+        "immunization_coverage_percent": 89.2,
+        "doctor_patient_ratio_per_10k": 8.1,
+        "disease_prevalence": {
+          "malaria_api": 0.28,
+          "diarrheal_disease_percent": 6.8,
+          "acute_respiratory_infection_percent": 3.5,
+          "waterborne_risk_level": "Moderate"
+        }
+      }
+    }
+  }
+}
