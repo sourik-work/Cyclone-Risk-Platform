@@ -13,7 +13,11 @@ from backend.schemas.cyclone import (
     ForecastTrackPoint,
     ForecastTrackRequest,
     ForecastTrackResponse,
+    HazardSummary,
     LiveCycloneResponse,
+    RainfallForecast,
+    SurgeSimulation,
+    SurgeSimulationRequest,
     SynthesizeRequest,
     SynthesizeResponse,
     VulnerabilityFeatureCollection,
@@ -22,6 +26,8 @@ from backend.services.forecast_service import get_model_metrics, predict_track
 from backend.services.gemini_advisory import GeminiAdvisoryService
 from backend.services.imd_fetcher import IMDFetcherService
 from backend.services.infrastructure_service import load_infrastructure
+from backend.services.rainfall_service import get_rainfall_forecast
+from backend.services.surge_service import simulate_surge
 from backend.services.tts_service import synthesize
 
 router = APIRouter(prefix="/api", tags=["Cyclone Risk"])
@@ -290,3 +296,55 @@ def get_infrastructure(
     state_param = state if isinstance(state, str) else getattr(state, "default", None)
     type_param = type if isinstance(type, str) else getattr(type, "default", None)
     return load_infrastructure(asset_type=type_param, state=state_param)
+
+
+@router.get("/rainfall/forecast", response_model=RainfallForecast)
+def get_rainfall_forecast_endpoint(
+    district: str = Query(default="Puri", description="District ID or name (e.g. 'OD-PUR', 'Puri')"),
+    cyclone_id: Optional[str] = Query(default=None, description="Optional active cyclone track ID"),
+) -> RainfallForecast:
+    """Returns 24h/48h/72h rainfall forecast and categorical risk level for a coastal district."""
+    data = get_rainfall_forecast(district_id=district, cyclone_id=cyclone_id)
+    return RainfallForecast.model_validate(data)
+
+
+@router.post("/surge/simulate", response_model=SurgeSimulation)
+def simulate_surge_endpoint(
+    req: SurgeSimulationRequest,
+) -> SurgeSimulation:
+    """Simulates hydrodynamic storm surge, inland inundation polygon, and exposed assets."""
+    data = simulate_surge(cyclone_id=req.cyclone_id, district_id=req.district_id)
+    return SurgeSimulation.model_validate(data)
+
+
+@router.get("/hazards/summary", response_model=HazardSummary)
+def get_hazards_summary_endpoint(
+    district: str = Query(default="Puri", description="District ID or name (e.g. 'OD-PUR', 'Puri')"),
+    cyclone_id: Optional[str] = Query(default=None, description="Optional active cyclone track ID"),
+) -> HazardSummary:
+    """Returns aggregated multi-hazard assessment combining rainfall forecast and storm surge simulation."""
+    rainfall_data = get_rainfall_forecast(district_id=district, cyclone_id=cyclone_id)
+    rainfall_model = RainfallForecast.model_validate(rainfall_data)
+
+    surge_cyclone = cyclone_id or "BOB-02-2019"
+    surge_data = simulate_surge(cyclone_id=surge_cyclone, district_id=district)
+    surge_model = SurgeSimulation.model_validate(surge_data)
+
+    # Determine overall hazard risk:
+    # Priority: CRITICAL > HIGH > MEDIUM > LOW
+    if rainfall_model.risk_level == "CRITICAL" or surge_model.max_surge_m >= 3.0:
+        overall_risk = "CRITICAL"
+    elif rainfall_model.risk_level == "HIGH" or surge_model.max_surge_m >= 2.0:
+        overall_risk = "HIGH"
+    elif rainfall_model.risk_level == "MEDIUM" or surge_model.max_surge_m >= 1.0:
+        overall_risk = "MEDIUM"
+    else:
+        overall_risk = "LOW"
+
+    return HazardSummary(
+        district_id=rainfall_model.district_id,
+        rainfall=rainfall_model,
+        surge=surge_model,
+        overall_risk=overall_risk,
+    )
+

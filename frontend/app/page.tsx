@@ -317,6 +317,8 @@ export default function Home() {
     showPowerGrid: true, // Enabled: Power grid substations & transmission lines
     showRoads: true, // Enabled: Arterial roads (NH/SH/MDR)
     showHospitals: true, // Enabled: Hospitals & cyclone shelters
+    showRainfall: true, // Enabled: Rainfall hazard overlay
+    showSurge: true, // Enabled: Storm surge zone polygon
   });
 
   // Live infrastructure data state (with instant embedded fallback)

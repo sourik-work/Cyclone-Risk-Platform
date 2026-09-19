@@ -90,6 +90,8 @@ export interface MapLayerToggles {
   showPowerGrid?: boolean;
   showRoads?: boolean;
   showHospitals?: boolean;
+  showRainfall?: boolean;
+  showSurge?: boolean;
 }
 
 export interface InfrastructureProperties {
@@ -266,4 +268,44 @@ export interface LiveCycloneResponse {
   status: 'active' | 'monitoring';
   message: string;
 }
+
+export interface RainfallForecast {
+  district_id: string;
+  forecast_24h_mm: number;
+  forecast_48h_mm: number;
+  forecast_72h_mm: number;
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | string;
+}
+
+export interface SurgeSimulation {
+  cyclone_id: string;
+  district_id: string;
+  max_surge_m: number;
+  inundation_polygon: {
+    type: string;
+    geometry?: {
+      type: string;
+      coordinates: number[][][];
+    };
+    coordinates?: number[][][];
+    properties?: Record<string, any>;
+  };
+  inundation_area_km2: number;
+  affected_population: number;
+  affected_assets: {
+    hospitals_at_risk?: number;
+    shelters_activated?: number;
+    power_substations_at_risk?: number;
+    roads_submerged_km?: number;
+    [key: string]: any;
+  };
+}
+
+export interface HazardSummary {
+  district_id: string;
+  rainfall: RainfallForecast;
+  surge?: SurgeSimulation | null;
+  overall_risk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | string;
+}
+
 

@@ -233,3 +233,42 @@ class SynthesizeResponse(BaseModel):
     language: str = "en"
     error: Optional[str] = None
 
+
+class RainfallForecast(BaseModel):
+    """24h, 48h, and 72h accumulated rainfall forecast and categorical risk classification."""
+
+    district_id: str
+    forecast_24h_mm: float
+    forecast_48h_mm: float
+    forecast_72h_mm: float
+    risk_level: str
+
+
+class SurgeSimulationRequest(BaseModel):
+    """Payload to simulate storm surge inundation for a district during a cyclone event."""
+
+    cyclone_id: str = Field(default="BOB-02-2019", description="Cyclone ID (e.g. 'BOB-02-2019', 'fani')")
+    district_id: str = Field(default="Puri", description="District ID or Name (e.g. 'OD-PUR', 'Puri')")
+
+
+class SurgeSimulation(BaseModel):
+    """Storm surge hydrodynamic inundation simulation output and exposed assets."""
+
+    cyclone_id: str
+    district_id: str
+    max_surge_m: float
+    inundation_polygon: dict
+    inundation_area_km2: float
+    affected_population: int
+    affected_assets: dict
+
+
+class HazardSummary(BaseModel):
+    """Combined hazard assessment uniting rainfall, storm surge, and storm track intensity."""
+
+    district_id: str
+    rainfall: RainfallForecast
+    surge: Optional[SurgeSimulation] = None
+    overall_risk: str
+
+

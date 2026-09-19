@@ -5,11 +5,13 @@ import {
   CycloneTrack,
   DistrictProperties,
   InfrastructureFeatureCollection,
+  RainfallForecast,
+  SurgeSimulation,
   TrackPoint,
   VulnerabilityFeatureCollection,
 } from './types';
 import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
-import { Shield, Waves } from 'lucide-react';
+import { Shield, Waves, CloudRain } from 'lucide-react';
 
 interface MapFallbackRadarProps {
   track: CycloneTrack;
@@ -27,6 +29,10 @@ interface MapFallbackRadarProps {
   showPowerGrid?: boolean;
   showRoads?: boolean;
   showHospitals?: boolean;
+  showRainfall?: boolean;
+  showSurge?: boolean;
+  surgeData?: SurgeSimulation | null;
+  rainfallForecasts?: Record<string, RainfallForecast>;
 }
 
 export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
@@ -45,6 +51,10 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
   showPowerGrid = false,
   showRoads = false,
   showHospitals = false,
+  showRainfall = true,
+  showSurge = true,
+  surgeData = null,
+  rainfallForecasts = {},
 }) => {
   const [hoveredDistrict, setHoveredDistrict] = useState<DistrictProperties | null>(null);
 
@@ -181,13 +191,33 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
 
               const score = props.cyclone_risk_score ?? props.vulnerability_score ?? 0.75;
 
-              // Risk-based fill color
-              const fillColor =
-                score >= 0.82
-                  ? '#ef4444' // severe red
-                  : score >= 0.75
-                  ? '#f97316' // high orange
-                  : '#eab308'; // warning yellow
+              // Color-code districts: Rainfall overlay (LOW=#87ceeb, MEDIUM=#fbbf24, HIGH=#f97316, CRITICAL=#dc2626) or standard vulnerability
+              let fillColor: string;
+              if (showRainfall) {
+                const rain =
+                  rainfallForecasts &&
+                  (rainfallForecasts[props.district_name.toLowerCase()] ||
+                    rainfallForecasts[props.district_id?.toLowerCase()]);
+                const risk = (
+                  rain?.risk_level ||
+                  (score >= 0.85 ? 'CRITICAL' : score >= 0.75 ? 'HIGH' : score >= 0.5 ? 'MEDIUM' : 'LOW')
+                ).toUpperCase();
+                fillColor =
+                  risk === 'CRITICAL'
+                    ? '#dc2626'
+                    : risk === 'HIGH'
+                    ? '#f97316'
+                    : risk === 'MEDIUM'
+                    ? '#fbbf24'
+                    : '#87ceeb';
+              } else {
+                fillColor =
+                  score >= 0.82
+                    ? '#ef4444' // severe red
+                    : score >= 0.75
+                    ? '#f97316' // high orange
+                    : '#eab308'; // warning yellow
+              }
 
               return (
                 <g
@@ -220,6 +250,28 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
                 </g>
               );
             })}
+
+        {/* 5.5 Storm Surge Inundation Polygon Layer (Radar fallback) */}
+        {showSurge && surgeData && (() => {
+          const geom = (surgeData.inundation_polygon as any)?.geometry || surgeData.inundation_polygon;
+          const coords: [number, number][] = geom?.coordinates?.[0] || [];
+          if (coords.length < 3) return null;
+          const pts = coords.map(([lon, lat]) => project(lat, lon).join(',')).join(' ');
+          return (
+            <polygon
+              key="surge-inundation-polygon-radar"
+              points={pts}
+              fill="#06b6d4"
+              fillOpacity={0.35}
+              stroke="#06b6d4"
+              strokeWidth={3}
+              strokeDasharray="6 3"
+              className="animate-pulse cursor-pointer"
+            >
+              <title>{`🌊 Storm Surge Inundation Zone\nMax Surge: ${surgeData.max_surge_m}m\nArea: ${surgeData.inundation_area_km2} km²\nAffected Pop: ${surgeData.affected_population}`}</title>
+            </polygon>
+          );
+        })()}
 
         {/* 6. Arterial Roads Layer (NH=blue, SH=green, MDR=orange, 4px width) */}
         {showRoads &&
