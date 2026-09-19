@@ -338,4 +338,17 @@ class FAOWHOIndicators(BaseModel):
     timestamp: Optional[str] = None
 
 
+class HistoricalAnalyticsResponse(BaseModel):
+    """Aggregate multi-hazard and vulnerability statistics per coastal state."""
+
+    state: str
+    total_districts: int
+    total_population: int
+    avg_vulnerability_score: float
+    total_shelters: int
+    historical_cyclones: List[str]
+    avg_storm_surge_m: float
+
+
+
 

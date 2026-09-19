@@ -20,6 +20,7 @@ from backend.schemas.cyclone import (
     ForecastTrackRequest,
     ForecastTrackResponse,
     HazardSummary,
+    HistoricalAnalyticsResponse,
     LiveCycloneResponse,
     OSMFeature,
     RainfallForecast,
@@ -28,6 +29,10 @@ from backend.schemas.cyclone import (
     SynthesizeRequest,
     SynthesizeResponse,
     VulnerabilityFeatureCollection,
+)
+from backend.services.bigquery_service import (
+    get_cyclone_tracks,
+    get_historical_analytics,
 )
 from backend.services.bhuvan_fetcher import fetch_layer_metadata, get_tile_url_template
 from backend.services.datagov_fetcher import fetch_district_indicators, fetch_state_stats
@@ -76,8 +81,30 @@ def health_check() -> Dict[str, str]:
 
 
 @router.get("/tracks")
-def list_cyclone_tracks() -> List[Dict[str, Any]]:
+def list_cyclone_tracks(
+    source: Optional[str] = Query(default="json", description="'json' (default) or 'bigquery'")
+) -> List[Dict[str, Any]]:
     """Lists available historical and scenario storm tracks."""
+    source_val = source if isinstance(source, str) else getattr(source, "default", "json")
+    if source_val and str(source_val).lower() == "bigquery":
+        bq_rows = get_cyclone_tracks()
+        groups: Dict[str, Dict[str, Any]] = {}
+        for r in bq_rows:
+            cid = r.get("cyclone_id", "UNKNOWN")
+            if cid not in groups:
+                groups[cid] = {
+                    "id": cid,
+                    "name": cid,
+                    "season_year": r.get("season_year"),
+                    "basin": "Bay of Bengal",
+                    "current_status": "Cyclonic Storm",
+                    "track_points_count": 0,
+                    "source": "BigQuery",
+                }
+            groups[cid]["track_points_count"] += 1
+        if groups:
+            return list(groups.values())
+
     tracks_dir = DATA_DIR / "tracks"
     if not tracks_dir.exists():
         raise HTTPException(status_code=404, detail="Tracks directory not found")
@@ -471,5 +498,15 @@ def get_fao_who_endpoint(
     """Returns FAO food security and WHO public health vulnerability indicators."""
     data = fetch_combined_indicators(state=state)
     return FAOWHOIndicators.model_validate(data)
+
+
+@router.get("/analytics/historical", response_model=HistoricalAnalyticsResponse)
+def get_historical_analytics_endpoint(
+    state: str = Query(default="Odisha", description="Coastal state name (e.g. 'Odisha', 'West Bengal')"),
+) -> HistoricalAnalyticsResponse:
+    """Returns aggregate historical statistics, vulnerability metrics, and past cyclone benchmarks per state."""
+    data = get_historical_analytics(state=state)
+    return HistoricalAnalyticsResponse.model_validate(data)
+
 
 
