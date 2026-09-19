@@ -215,3 +215,21 @@ class ForecastTrackResponse(BaseModel):
     model_version: str = Field(default="track_lstm_v1")
     training_samples: int = Field(default=8484)
     model_params: int = Field(default=119872)
+
+
+class SynthesizeRequest(BaseModel):
+    """Payload to synthesize advisory text into speech."""
+
+    text: str
+    language: str = "en"
+
+
+class SynthesizeResponse(BaseModel):
+    """Response payload containing base64 audio and synthesis metadata."""
+
+    audio_base64: Optional[str] = None
+    duration_seconds: float = 0.0
+    voice_used: Optional[str] = None
+    language: str = "en"
+    error: Optional[str] = None
+

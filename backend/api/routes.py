@@ -14,11 +14,15 @@ from backend.schemas.cyclone import (
     ForecastTrackRequest,
     ForecastTrackResponse,
     LiveCycloneResponse,
+    SynthesizeRequest,
+    SynthesizeResponse,
     VulnerabilityFeatureCollection,
 )
 from backend.services.forecast_service import get_model_metrics, predict_track
 from backend.services.gemini_advisory import GeminiAdvisoryService
 from backend.services.imd_fetcher import IMDFetcherService
+from backend.services.infrastructure_service import load_infrastructure
+from backend.services.tts_service import synthesize
 
 router = APIRouter(prefix="/api", tags=["Cyclone Risk"])
 
@@ -177,6 +181,13 @@ def get_latest_advisory() -> AnticipatoryAdvisory:
     return _LATEST_ADVISORY
 
 
+@router.post("/advisories/synthesize", response_model=SynthesizeResponse)
+def synthesize_advisory_audio(req: SynthesizeRequest) -> SynthesizeResponse:
+    """Synthesizes advisory text into spoken audio via Gemini Flash TTS."""
+    result = synthesize(req.text, req.language)
+    return SynthesizeResponse(**result)
+
+
 @router.get("/cyclone/live", response_model=LiveCycloneResponse)
 def get_live_cyclone(refresh: bool = Query(default=False, description="Force re-fetch from IMD sources")) -> LiveCycloneResponse:
     """Returns real-time cyclone status or continuous basin monitoring from IMD RSMC New Delhi."""
@@ -268,3 +279,14 @@ def forecast_cyclone_track(req: ForecastTrackRequest) -> ForecastTrackResponse:
         training_samples=int(metrics.get("training_samples", 8484)),
         model_params=int(metrics.get("model_params", 119872)),
     )
+
+
+@router.get("/infrastructure")
+def get_infrastructure(
+    state: Optional[str] = Query(None, description="Filter by coastal state name (e.g. Odisha, West Bengal)"),
+    type: Optional[str] = Query(None, description="Filter by asset/facility type (e.g. SUBSTATION, HOSPITAL, CYCLONE_SHELTER, ARTERIAL_ROAD)"),
+) -> Dict[str, Any]:
+    """Retrieves critical infrastructure assets (power grid, arterial roads, hospitals/shelters)."""
+    state_param = state if isinstance(state, str) else getattr(state, "default", None)
+    type_param = type if isinstance(type, str) else getattr(type, "default", None)
+    return load_infrastructure(asset_type=type_param, state=state_param)

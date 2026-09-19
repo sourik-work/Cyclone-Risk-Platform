@@ -6,12 +6,14 @@ import {
   CycloneTrack,
   DistrictProperties,
   ForecastTrackResponse,
+  InfrastructureFeatureCollection,
   MapLayerToggles,
   TrackPoint,
   VulnerabilityFeatureCollection,
 } from './types';
+import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
 import { MapFallbackRadar } from './MapFallbackRadar';
-import { Radio, Layers, Satellite, Sliders, Cpu, Compass } from 'lucide-react';
+import { Radio, Layers, Satellite, Sliders, Cpu, Compass, Zap, Activity } from 'lucide-react';
 
 const AUTHENTICATED_EE_TILE_URL =
   'https://earthengine.googleapis.com/v1/projects/cyclone-risk-platform/maps/b3a9fb812b939765aa9e34a318c3149b-39495b43e12ed39f1a31ec4eae471f26/tiles/{z}/{x}/{y}?key=AIzaSyBWf8E_V67W3PenTBi2Q5OR2MU-DDCk1jw';
@@ -27,6 +29,7 @@ interface CycloneMapProps {
   hasActiveCyclone?: boolean;
   onToggleLayer?: (layerKey: keyof MapLayerToggles) => void;
   selectedState?: string;
+  infrastructureData?: InfrastructureFeatureCollection | null;
 }
 
 /**
@@ -464,6 +467,228 @@ const GoogleMapsVulnerabilityLayer: React.FC<{
   return null;
 };
 
+/**
+ * 6. Power Grid Layer for Google Maps
+ * Substations: circle markers (400kV=red, 220kV=orange, 132kV=yellow)
+ * Transmission lines: dashed grey polylines
+ * Filtered by selectedState
+ */
+const GoogleMapsPowerGridLayer: React.FC<{
+  infrastructureData?: InfrastructureFeatureCollection | null;
+  selectedState: string;
+  visible?: boolean;
+}> = ({ infrastructureData, selectedState, visible = true }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !visible || typeof google === 'undefined') return;
+
+    const data = infrastructureData || SEED_INFRASTRUCTURE_DATA;
+    const items = data.features.filter(
+      (f) =>
+        f.properties.state?.toLowerCase() === selectedState.toLowerCase() &&
+        (f.properties.asset_type === 'SUBSTATION' || f.properties.asset_type === 'TRANSMISSION_LINE')
+    );
+
+    const markers: google.maps.Marker[] = [];
+    const lines: google.maps.Polyline[] = [];
+
+    items.forEach((feat) => {
+      const p = feat.properties;
+      if (feat.geometry.type === 'Point' && feat.geometry.coordinates) {
+        const [lng, lat] = feat.geometry.coordinates;
+        const kv = p.voltage_kv || 220;
+        // 400kV=red, 220kV=orange, 132kV=yellow
+        const color = kv >= 400 ? '#ef4444' : kv >= 220 ? '#f97316' : '#eab308';
+        const scale = kv >= 400 ? 7 : kv >= 220 ? 6 : 5;
+
+        const marker = new google.maps.Marker({
+          map,
+          position: { lat, lng },
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale,
+            fillColor: color,
+            fillOpacity: 0.95,
+            strokeColor: '#ffffff',
+            strokeWeight: 1.5,
+          },
+          title: `⚡ ${p.name}\nType: Substation (${p.voltage_kv}kV, ${p.capacity_mva} MVA)\nOperator: ${p.operator}\nDistrict: ${p.district}\nCriticality: ${p.criticality}`,
+          zIndex: 35,
+        });
+        markers.push(marker);
+      } else if (feat.geometry.type === 'LineString' && feat.geometry.coordinates) {
+        // Dashed grey polylines for transmission lines
+        const path = feat.geometry.coordinates.map(([lng, lat]: [number, number]) => ({ lat, lng }));
+        const polyline = new google.maps.Polyline({
+          map,
+          path,
+          geodesic: true,
+          strokeColor: '#94a3b8',
+          strokeOpacity: 0.0,
+          icons: [
+            {
+              icon: {
+                path: 'M 0,-1 0,1',
+                strokeOpacity: 0.85,
+                strokeColor: '#94a3b8',
+                scale: 2.5,
+              },
+              offset: '0',
+              repeat: '12px',
+            },
+          ],
+          zIndex: 22,
+        });
+        lines.push(polyline);
+      }
+    });
+
+    return () => {
+      markers.forEach((m) => m.setMap(null));
+      lines.forEach((l) => l.setMap(null));
+    };
+  }, [map, visible, selectedState, infrastructureData]);
+
+  return null;
+};
+
+/**
+ * 7. Arterial Roads Layer for Google Maps
+ * Colored polylines (NH=blue, SH=green, MDR=orange), 4px width
+ * Filtered by selectedState
+ */
+const GoogleMapsRoadsLayer: React.FC<{
+  infrastructureData?: InfrastructureFeatureCollection | null;
+  selectedState: string;
+  visible?: boolean;
+}> = ({ infrastructureData, selectedState, visible = true }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !visible || typeof google === 'undefined') return;
+
+    const data = infrastructureData || SEED_INFRASTRUCTURE_DATA;
+    const items = data.features.filter(
+      (f) =>
+        f.properties.state?.toLowerCase() === selectedState.toLowerCase() &&
+        f.properties.asset_type === 'ARTERIAL_ROAD' &&
+        f.geometry.type === 'LineString'
+    );
+
+    const polylines: google.maps.Polyline[] = [];
+
+    items.forEach((feat) => {
+      const p = feat.properties;
+      const roadClass = (p.road_class || 'NH').toUpperCase();
+      // NH=blue (#3b82f6), SH=green (#22c55e), MDR=orange (#f97316), 4px width
+      const color =
+        roadClass === 'NH'
+          ? '#3b82f6'
+          : roadClass === 'SH'
+          ? '#22c55e'
+          : '#f97316';
+
+      const path = feat.geometry.coordinates.map(([lng, lat]: [number, number]) => ({ lat, lng }));
+      const polyline = new google.maps.Polyline({
+        map,
+        path,
+        geodesic: true,
+        strokeColor: color,
+        strokeOpacity: 0.9,
+        strokeWeight: 4, // 4px width
+        zIndex: 24,
+      });
+
+      polylines.push(polyline);
+    });
+
+    return () => {
+      polylines.forEach((l) => l.setMap(null));
+    };
+  }, [map, visible, selectedState, infrastructureData]);
+
+  return null;
+};
+
+/**
+ * 8. Hospitals and Shelters Layer for Google Maps
+ * Circle markers (red=hospital/medical college, blue=PHC, green=shelter), scaled by capacity
+ * Filtered by selectedState
+ */
+const GoogleMapsHospitalsLayer: React.FC<{
+  infrastructureData?: InfrastructureFeatureCollection | null;
+  selectedState: string;
+  visible?: boolean;
+}> = ({ infrastructureData, selectedState, visible = true }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !visible || typeof google === 'undefined') return;
+
+    const data = infrastructureData || SEED_INFRASTRUCTURE_DATA;
+    const items = data.features.filter(
+      (f) =>
+        f.properties.state?.toLowerCase() === selectedState.toLowerCase() &&
+        f.geometry.type === 'Point' &&
+        Boolean(f.properties.facility_type)
+    );
+
+    const markers: google.maps.Marker[] = [];
+
+    items.forEach((feat) => {
+      const p = feat.properties;
+      const [lng, lat] = feat.geometry.coordinates;
+      const fType = p.facility_type;
+
+      // red=hospital/medical college, blue=PHC, green=shelter, scaled by capacity
+      let color = '#ef4444'; // red
+      let scale = 6;
+
+      if (fType === 'CYCLONE_SHELTER') {
+        color = '#10b981'; // green
+        const cap = p.shelter_capacity || 800;
+        scale = Math.max(5, Math.min(11, Math.sqrt(cap) * 0.18 + 2.5));
+      } else if (fType === 'PHC') {
+        color = '#3b82f6'; // blue
+        const beds = p.bed_capacity || 30;
+        scale = Math.max(4, Math.min(8, Math.sqrt(beds) * 0.4 + 2));
+      } else {
+        // DISTRICT_HOSPITAL or MEDICAL_COLLEGE
+        color = '#ef4444'; // red
+        const beds = p.bed_capacity || 300;
+        scale = Math.max(6, Math.min(12, Math.sqrt(beds) * 0.3 + 3));
+      }
+
+      const marker = new google.maps.Marker({
+        map,
+        position: { lat, lng },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale,
+          fillColor: color,
+          fillOpacity: 0.95,
+          strokeColor: '#ffffff',
+          strokeWeight: 1.5,
+        },
+        title:
+          fType === 'CYCLONE_SHELTER'
+            ? `🏕️ ${p.name}\nType: Cyclone Shelter (Capacity: ${p.shelter_capacity})\nDistrict: ${p.district}\nCoast distance: ${p.distance_from_coast_km} km`
+            : `🏥 ${p.name}\nType: ${p.facility_type?.replace(/_/g, ' ')} (${p.bed_capacity} beds)\nDistrict: ${p.district}\nGenerator: ${p.has_generator ? 'Yes' : 'No'}\nCoast distance: ${p.distance_from_coast_km} km`,
+        zIndex: 36,
+      });
+
+      markers.push(marker);
+    });
+
+    return () => {
+      markers.forEach((m) => m.setMap(null));
+    };
+  }, [map, visible, selectedState, infrastructureData]);
+
+  return null;
+};
+
 export const CycloneMap: React.FC<CycloneMapProps> = ({
   track,
   activePointIndex,
@@ -475,6 +700,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   hasActiveCyclone = false,
   onToggleLayer,
   selectedState = 'Odisha',
+  infrastructureData,
 }) => {
   const isLive = mode === 'live';
   const isMonitoring = isLive && !hasActiveCyclone;
@@ -507,8 +733,17 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   const [tempKeyInput, setTempKeyInput] = useState<string>('');
   const [tempEeUrlInput, setTempEeUrlInput] = useState<string>(envEeUrl);
 
-  // Default to Google Maps mode when key is present
+  // Default to Google Maps mode unless ?radar=true is passed
   const [mapMode, setMapMode] = useState<'radar' | 'google'>('google');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('radar') === 'true') {
+        setMapMode('radar');
+      }
+    }
+  }, []);
 
   const handleSaveConfig = () => {
     if (tempKeyInput.trim()) {
@@ -598,6 +833,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
 
         <div className="flex items-center bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1 text-xs">
           <button
+            id="btn-mode-google-maps"
             onClick={() => setMapMode('google')}
             className={`px-3 py-1.5 rounded-md font-medium transition-colors flex items-center gap-1.5 ${
               mapMode === 'google'
@@ -609,6 +845,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             Google Maps + EE
           </button>
           <button
+            id="btn-mode-control-radar"
             onClick={() => setMapMode('radar')}
             className={`px-3 py-1.5 rounded-md font-medium transition-colors flex items-center gap-1.5 ${
               mapMode === 'radar'
@@ -679,6 +916,27 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
                 visible={layerToggles.showVulnerability}
               />
 
+              {/* 6. Power Grid Layer (400kV/220kV/132kV Substations & Transmission Lines) */}
+              <GoogleMapsPowerGridLayer
+                infrastructureData={infrastructureData}
+                selectedState={selectedState}
+                visible={Boolean(layerToggles.showPowerGrid)}
+              />
+
+              {/* 7. Arterial Roads Layer (NH/SH/MDR Colored Polylines) */}
+              <GoogleMapsRoadsLayer
+                infrastructureData={infrastructureData}
+                selectedState={selectedState}
+                visible={Boolean(layerToggles.showRoads)}
+              />
+
+              {/* 8. Hospitals & Shelters Layer (District Hospitals, PHCs, Shelters) */}
+              <GoogleMapsHospitalsLayer
+                infrastructureData={infrastructureData}
+                selectedState={selectedState}
+                visible={Boolean(layerToggles.showHospitals)}
+              />
+
               {/* Camera controller to smoothly pan/zoom to selectedState */}
               <MapCameraController selectedState={selectedState} />
             </Map>
@@ -696,6 +954,10 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             mode={mode}
             hasActiveCyclone={hasActiveCyclone}
             selectedState={selectedState}
+            infrastructureData={infrastructureData}
+            showPowerGrid={Boolean(layerToggles.showPowerGrid)}
+            showRoads={Boolean(layerToggles.showRoads)}
+            showHospitals={Boolean(layerToggles.showHospitals)}
           />
         )}
 

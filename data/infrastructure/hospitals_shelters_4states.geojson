@@ -1,0 +1,1256 @@
+{
+  "type": "FeatureCollection",
+  "name": "hospitals_shelters_4states",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.8312,
+          19.8135
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-HOSP-001",
+        "name": "District Headquarters Hospital, Puri",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Odisha",
+        "district": "Puri",
+        "latitude": 19.8135,
+        "longitude": 85.8312,
+        "bed_capacity": 350,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 12,
+        "distance_from_coast_km": 2.4,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.088,
+          19.892
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-SHEL-001",
+        "name": "Konark Multi-Purpose Cyclone Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Odisha",
+        "district": "Puri",
+        "latitude": 19.892,
+        "longitude": 86.088,
+        "bed_capacity": null,
+        "shelter_capacity": 1800,
+        "has_generator": true,
+        "elevation_m": 8,
+        "distance_from_coast_km": 3.1,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.27,
+          19.985
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-PHC-001",
+        "name": "Astaranga Primary Health Centre",
+        "facility_type": "PHC",
+        "state": "Odisha",
+        "district": "Puri",
+        "latitude": 19.985,
+        "longitude": 86.27,
+        "bed_capacity": 30,
+        "shelter_capacity": null,
+        "has_generator": false,
+        "elevation_m": 6,
+        "distance_from_coast_km": 1.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.645,
+          20.298
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-HOSP-002",
+        "name": "Paradeep Port Trust Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Odisha",
+        "district": "Jagatsinghpur",
+        "latitude": 20.298,
+        "longitude": 86.645,
+        "bed_capacity": 220,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 7,
+        "distance_from_coast_km": 1.5,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.48,
+          20.18
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-SHEL-002",
+        "name": "Ersama Super Cyclone Shelter Hub",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Odisha",
+        "district": "Jagatsinghpur",
+        "latitude": 20.18,
+        "longitude": 86.48,
+        "bed_capacity": null,
+        "shelter_capacity": 2000,
+        "has_generator": true,
+        "elevation_m": 5,
+        "distance_from_coast_km": 4.2,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.421,
+          20.502
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-HOSP-003",
+        "name": "Kendrapara District Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Odisha",
+        "district": "Kendrapara",
+        "latitude": 20.502,
+        "longitude": 86.421,
+        "bed_capacity": 280,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 9,
+        "distance_from_coast_km": 28.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.723,
+          20.582
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-SHEL-003",
+        "name": "Rajnagar Cyclone Evacuation Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Odisha",
+        "district": "Kendrapara",
+        "latitude": 20.582,
+        "longitude": 86.723,
+        "bed_capacity": null,
+        "shelter_capacity": 1500,
+        "has_generator": true,
+        "elevation_m": 4,
+        "distance_from_coast_km": 3.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.512,
+          21.058
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-HOSP-004",
+        "name": "Bhadrak District Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Odisha",
+        "district": "Bhadrak",
+        "latitude": 21.058,
+        "longitude": 86.512,
+        "bed_capacity": 300,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 15,
+        "distance_from_coast_km": 32.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.958,
+          20.812
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-SHEL-004",
+        "name": "Dhamra Port Coastal Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Odisha",
+        "district": "Bhadrak",
+        "latitude": 20.812,
+        "longitude": 86.958,
+        "bed_capacity": null,
+        "shelter_capacity": 1600,
+        "has_generator": true,
+        "elevation_m": 6,
+        "distance_from_coast_km": 1.2,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.931,
+          21.492
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-MED-001",
+        "name": "Fakir Mohan Medical College & Hospital",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Odisha",
+        "district": "Balasore",
+        "latitude": 21.492,
+        "longitude": 86.931,
+        "bed_capacity": 650,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 18,
+        "distance_from_coast_km": 16.0,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.012,
+          21.468
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-SHEL-005",
+        "name": "Chandipur Coastal Evacuation Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Odisha",
+        "district": "Balasore",
+        "latitude": 21.468,
+        "longitude": 87.012,
+        "bed_capacity": null,
+        "shelter_capacity": 1200,
+        "has_generator": true,
+        "elevation_m": 5,
+        "distance_from_coast_km": 0.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.792,
+          19.311
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-MED-002",
+        "name": "MKCG Medical College & Hospital, Berhampur",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Odisha",
+        "district": "Ganjam",
+        "latitude": 19.311,
+        "longitude": 84.792,
+        "bed_capacity": 850,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 32,
+        "distance_from_coast_km": 12.0,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.908,
+          19.262
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-SHEL-006",
+        "name": "Gopalpur Port Cyclone Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Odisha",
+        "district": "Ganjam",
+        "latitude": 19.262,
+        "longitude": 84.908,
+        "bed_capacity": null,
+        "shelter_capacity": 1400,
+        "has_generator": true,
+        "elevation_m": 7,
+        "distance_from_coast_km": 0.9,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.012,
+          19.355
+        ]
+      },
+      "properties": {
+        "facility_id": "OD-PHC-002",
+        "name": "Chhatrapur Coastal PHC",
+        "facility_type": "PHC",
+        "state": "Odisha",
+        "district": "Ganjam",
+        "latitude": 19.355,
+        "longitude": 85.012,
+        "bed_capacity": 40,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 14,
+        "distance_from_coast_km": 4.5,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.078,
+          22.062
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-HOSP-001",
+        "name": "Haldia Sub-Divisional Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "latitude": 22.062,
+        "longitude": 88.078,
+        "bed_capacity": 320,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 7,
+        "distance_from_coast_km": 2.1,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.925,
+          22.298
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-HOSP-002",
+        "name": "Tamluk District Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "latitude": 22.298,
+        "longitude": 87.925,
+        "bed_capacity": 400,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 10,
+        "distance_from_coast_km": 35.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.521,
+          21.628
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-SHEL-001",
+        "name": "Digha Multi-Purpose Cyclone Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "latitude": 21.628,
+        "longitude": 87.521,
+        "bed_capacity": null,
+        "shelter_capacity": 1800,
+        "has_generator": true,
+        "elevation_m": 5,
+        "distance_from_coast_km": 0.5,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.698,
+          21.668
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-SHEL-002",
+        "name": "Mandarmoni Coastal Disaster Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "latitude": 21.668,
+        "longitude": 87.698,
+        "bed_capacity": null,
+        "shelter_capacity": 1200,
+        "has_generator": true,
+        "elevation_m": 4,
+        "distance_from_coast_km": 0.3,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.562,
+          21.682
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-PHC-001",
+        "name": "Ramnagar Coastal PHC",
+        "facility_type": "PHC",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "latitude": 21.682,
+        "longitude": 87.562,
+        "bed_capacity": 35,
+        "shelter_capacity": null,
+        "has_generator": false,
+        "elevation_m": 6,
+        "distance_from_coast_km": 4.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.192,
+          22.192
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-HOSP-003",
+        "name": "Diamond Harbour Super Speciality Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "latitude": 22.192,
+        "longitude": 88.192,
+        "bed_capacity": 450,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 8,
+        "distance_from_coast_km": 1.2,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.118,
+          21.652
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-SHEL-003",
+        "name": "Sagar Island Central Cyclone Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "latitude": 21.652,
+        "longitude": 88.118,
+        "bed_capacity": null,
+        "shelter_capacity": 2000,
+        "has_generator": true,
+        "elevation_m": 3,
+        "distance_from_coast_km": 0.9,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.188,
+          21.878
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-SHEL-004",
+        "name": "Kakdwip Emergency Evacuation Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "latitude": 21.878,
+        "longitude": 88.188,
+        "bed_capacity": null,
+        "shelter_capacity": 1500,
+        "has_generator": true,
+        "elevation_m": 5,
+        "distance_from_coast_km": 2.5,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.805,
+          22.165
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-PHC-002",
+        "name": "Gosaba Delta PHC",
+        "facility_type": "PHC",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "latitude": 22.165,
+        "longitude": 88.805,
+        "bed_capacity": 45,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 3,
+        "distance_from_coast_km": 3.2,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.482,
+          22.722
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-MED-001",
+        "name": "Barasat Government Medical College & Hospital",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "West Bengal",
+        "district": "North 24 Parganas",
+        "latitude": 22.722,
+        "longitude": 88.482,
+        "bed_capacity": 600,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 12,
+        "distance_from_coast_km": 42.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.868,
+          22.658
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-HOSP-004",
+        "name": "Basirhat District Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "West Bengal",
+        "district": "North 24 Parganas",
+        "latitude": 22.658,
+        "longitude": 88.868,
+        "bed_capacity": 300,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 9,
+        "distance_from_coast_km": 30.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.985,
+          22.465
+        ]
+      },
+      "properties": {
+        "facility_id": "WB-SHEL-005",
+        "name": "Hingalganj Sundarbans Shelter Hub",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "West Bengal",
+        "district": "North 24 Parganas",
+        "latitude": 22.465,
+        "longitude": 88.985,
+        "bed_capacity": null,
+        "shelter_capacity": 1400,
+        "has_generator": true,
+        "elevation_m": 4,
+        "distance_from_coast_km": 2.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.892,
+          18.298
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-HOSP-001",
+        "name": "RIMS General Hospital, Srikakulam",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Andhra Pradesh",
+        "district": "Srikakulam",
+        "latitude": 18.298,
+        "longitude": 83.892,
+        "bed_capacity": 550,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 16,
+        "distance_from_coast_km": 14.0,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.128,
+          18.338
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-SHEL-001",
+        "name": "Kalingapatnam Coastal Cyclone Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Andhra Pradesh",
+        "district": "Srikakulam",
+        "latitude": 18.338,
+        "longitude": 84.128,
+        "bed_capacity": null,
+        "shelter_capacity": 1600,
+        "has_generator": true,
+        "elevation_m": 6,
+        "distance_from_coast_km": 0.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.342,
+          18.572
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-PHC-001",
+        "name": "Bhavanapadu Port PHC",
+        "facility_type": "PHC",
+        "state": "Andhra Pradesh",
+        "district": "Srikakulam",
+        "latitude": 18.572,
+        "longitude": 84.342,
+        "bed_capacity": 25,
+        "shelter_capacity": null,
+        "has_generator": false,
+        "elevation_m": 5,
+        "distance_from_coast_km": 1.2,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.412,
+          18.118
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-HOSP-002",
+        "name": "Vizianagaram Government General Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Andhra Pradesh",
+        "district": "Vizianagaram",
+        "latitude": 18.118,
+        "longitude": 83.412,
+        "bed_capacity": 380,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 65,
+        "distance_from_coast_km": 26.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.492,
+          18.018
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-SHEL-002",
+        "name": "Bhogapuram Coastal Evacuation Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Andhra Pradesh",
+        "district": "Vizianagaram",
+        "latitude": 18.018,
+        "longitude": 83.492,
+        "bed_capacity": null,
+        "shelter_capacity": 1200,
+        "has_generator": true,
+        "elevation_m": 18,
+        "distance_from_coast_km": 4.1,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.305,
+          17.708
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-MED-001",
+        "name": "King George Hospital (KGH) / Andhra Medical College",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
+        "latitude": 17.708,
+        "longitude": 83.305,
+        "bed_capacity": 1000,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 15,
+        "distance_from_coast_km": 1.1,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.285,
+          17.692
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-HOSP-003",
+        "name": "Visakhapatnam Port Authority Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
+        "latitude": 17.692,
+        "longitude": 83.285,
+        "bed_capacity": 250,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 8,
+        "distance_from_coast_km": 1.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.452,
+          17.892
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-SHEL-003",
+        "name": "Bheemunipatnam Multi-Hazard Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
+        "latitude": 17.892,
+        "longitude": 83.452,
+        "bed_capacity": null,
+        "shelter_capacity": 1800,
+        "has_generator": true,
+        "elevation_m": 7,
+        "distance_from_coast_km": 0.6,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.238,
+          16.962
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-MED-002",
+        "name": "Rangaraya Medical College & General Hospital, Kakinada",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Andhra Pradesh",
+        "district": "East Godavari",
+        "latitude": 16.962,
+        "longitude": 82.238,
+        "bed_capacity": 750,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 6,
+        "distance_from_coast_km": 2.2,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.008,
+          16.578
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-HOSP-004",
+        "name": "Amalapuram Area Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Andhra Pradesh",
+        "district": "East Godavari",
+        "latitude": 16.578,
+        "longitude": 82.008,
+        "bed_capacity": 200,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 5,
+        "distance_from_coast_km": 14.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.332,
+          17.085
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-SHEL-004",
+        "name": "Uppada Beach Evacuation Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Andhra Pradesh",
+        "district": "East Godavari",
+        "latitude": 17.085,
+        "longitude": 82.332,
+        "bed_capacity": null,
+        "shelter_capacity": 1500,
+        "has_generator": true,
+        "elevation_m": 4,
+        "distance_from_coast_km": 0.2,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.735,
+          16.325
+        ]
+      },
+      "properties": {
+        "facility_id": "AP-PHC-002",
+        "name": "Antarvedi Delta PHC",
+        "facility_type": "PHC",
+        "state": "Andhra Pradesh",
+        "district": "East Godavari",
+        "latitude": 16.325,
+        "longitude": 81.735,
+        "bed_capacity": 30,
+        "shelter_capacity": null,
+        "has_generator": false,
+        "elevation_m": 3,
+        "distance_from_coast_km": 1.5,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.278,
+          13.081
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-MED-001",
+        "name": "Rajiv Gandhi Government General Hospital (Madras Medical College)",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "latitude": 13.081,
+        "longitude": 80.278,
+        "bed_capacity": 1000,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 8,
+        "distance_from_coast_km": 1.9,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.285,
+          13.109
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-MED-002",
+        "name": "Government Stanley Medical College Hospital",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "latitude": 13.109,
+        "longitude": 80.285,
+        "bed_capacity": 800,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 6,
+        "distance_from_coast_km": 1.4,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.272,
+          13.062
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-HOSP-001",
+        "name": "Government Kasturba Gandhi Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "latitude": 13.062,
+        "longitude": 80.272,
+        "bed_capacity": 450,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 7,
+        "distance_from_coast_km": 2.1,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.279,
+          13.045
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-SHEL-001",
+        "name": "Marina Coastal Cyclone Relief Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "latitude": 13.045,
+        "longitude": 80.279,
+        "bed_capacity": null,
+        "shelter_capacity": 2000,
+        "has_generator": true,
+        "elevation_m": 5,
+        "distance_from_coast_km": 0.4,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.325,
+          13.215
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-SHEL-002",
+        "name": "Ennore Port Disaster Evacuation Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "latitude": 13.215,
+        "longitude": 80.325,
+        "bed_capacity": null,
+        "shelter_capacity": 1600,
+        "has_generator": true,
+        "elevation_m": 4,
+        "distance_from_coast_km": 0.6,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.762,
+          11.752
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-HOSP-002",
+        "name": "Cuddalore District Headquarters Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Tamil Nadu",
+        "district": "Cuddalore",
+        "latitude": 11.752,
+        "longitude": 79.762,
+        "bed_capacity": 420,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 9,
+        "distance_from_coast_km": 2.8,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.712,
+          11.392
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-MED-003",
+        "name": "Rajah Muthiah Medical College, Chidambaram",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Tamil Nadu",
+        "district": "Cuddalore",
+        "latitude": 11.392,
+        "longitude": 79.712,
+        "bed_capacity": 700,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 12,
+        "distance_from_coast_km": 14.0,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.782,
+          11.705
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-SHEL-003",
+        "name": "Silver Beach Disaster Shelter, Cuddalore",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Tamil Nadu",
+        "district": "Cuddalore",
+        "latitude": 11.705,
+        "longitude": 79.782,
+        "bed_capacity": null,
+        "shelter_capacity": 1500,
+        "has_generator": true,
+        "elevation_m": 4,
+        "distance_from_coast_km": 0.3,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.762,
+          11.495
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-PHC-001",
+        "name": "Parangipettai Coastal PHC",
+        "facility_type": "PHC",
+        "state": "Tamil Nadu",
+        "district": "Cuddalore",
+        "latitude": 11.495,
+        "longitude": 79.762,
+        "bed_capacity": 30,
+        "shelter_capacity": null,
+        "has_generator": false,
+        "elevation_m": 5,
+        "distance_from_coast_km": 1.5,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.841,
+          10.762
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-HOSP-003",
+        "name": "Nagapattinam Government District Hospital",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Tamil Nadu",
+        "district": "Nagapattinam",
+        "latitude": 10.762,
+        "longitude": 79.841,
+        "bed_capacity": 360,
+        "shelter_capacity": null,
+        "has_generator": true,
+        "elevation_m": 6,
+        "distance_from_coast_km": 1.1,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.845,
+          10.682
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-SHEL-004",
+        "name": "Velankanni Pilgrim & Evacuation Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Tamil Nadu",
+        "district": "Nagapattinam",
+        "latitude": 10.682,
+        "longitude": 79.845,
+        "bed_capacity": null,
+        "shelter_capacity": 2000,
+        "has_generator": true,
+        "elevation_m": 4,
+        "distance_from_coast_km": 0.5,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.852,
+          10.378
+        ]
+      },
+      "properties": {
+        "facility_id": "TN-SHEL-005",
+        "name": "Vedaranyam Tsunami & Cyclone Shelter",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Tamil Nadu",
+        "district": "Nagapattinam",
+        "latitude": 10.378,
+        "longitude": 79.852,
+        "bed_capacity": null,
+        "shelter_capacity": 1400,
+        "has_generator": true,
+        "elevation_m": 5,
+        "distance_from_coast_km": 1.2,
+        "criticality": "HIGH"
+      }
+    }
+  ]
+}

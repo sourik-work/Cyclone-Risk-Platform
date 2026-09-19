@@ -1,0 +1,1380 @@
+{
+  "type": "FeatureCollection",
+  "name": "power_grid_4states",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.83,
+          19.81
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-001",
+        "name": "Puri 220kV Grid Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Puri",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "OPTCL",
+        "latitude": 19.81,
+        "longitude": 85.83,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.09,
+          19.89
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-002",
+        "name": "Konark 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Puri",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "OPTCL",
+        "latitude": 19.89,
+        "longitude": 86.09,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.64,
+          20.29
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-003",
+        "name": "Paradeep 400kV Port Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Jagatsinghpur",
+        "voltage_kv": 400,
+        "capacity_mva": 630,
+        "operator": "OPTCL",
+        "latitude": 20.29,
+        "longitude": 86.64,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.168,
+          20.255
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-004",
+        "name": "Jagatsinghpur 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Jagatsinghpur",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "OPTCL",
+        "latitude": 20.255,
+        "longitude": 86.168,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.425,
+          20.505
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-005",
+        "name": "Kendrapara 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Kendrapara",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "OPTCL",
+        "latitude": 20.505,
+        "longitude": 86.425,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.565,
+          20.575
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-006",
+        "name": "Pattamundai 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Kendrapara",
+        "voltage_kv": 132,
+        "capacity_mva": 120,
+        "operator": "OPTCL",
+        "latitude": 20.575,
+        "longitude": 86.565,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.515,
+          21.055
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-007",
+        "name": "Bhadrak 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Bhadrak",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "OPTCL",
+        "latitude": 21.055,
+        "longitude": 86.515,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.955,
+          20.805
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-008",
+        "name": "Dhamra Port 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Bhadrak",
+        "voltage_kv": 220,
+        "capacity_mva": 240,
+        "operator": "OPTCL",
+        "latitude": 20.805,
+        "longitude": 86.955,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.935,
+          21.495
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-009",
+        "name": "Balasore 400kV Grid Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Balasore",
+        "voltage_kv": 400,
+        "capacity_mva": 630,
+        "operator": "OPTCL",
+        "latitude": 21.495,
+        "longitude": 86.935,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.795,
+          19.315
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-SUB-010",
+        "name": "Berhampur 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Odisha",
+        "district": "Ganjam",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "OPTCL",
+        "latitude": 19.315,
+        "longitude": 84.795,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.085,
+          22.065
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-001",
+        "name": "Haldia 400kV Bulk Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "voltage_kv": 400,
+        "capacity_mva": 630,
+        "operator": "WBSETCL",
+        "latitude": 22.065,
+        "longitude": 88.085,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.525,
+          21.625
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-002",
+        "name": "Digha 132kV Coastal Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "WBSETCL",
+        "latitude": 21.625,
+        "longitude": 87.525,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.75,
+          21.78
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-003",
+        "name": "Contai 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "WBSETCL",
+        "latitude": 21.78,
+        "longitude": 87.75,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.87,
+          22.42
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-004",
+        "name": "Kolaghat 400kV Thermal Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "Purba Medinipur",
+        "voltage_kv": 400,
+        "capacity_mva": 800,
+        "operator": "WBSETCL",
+        "latitude": 22.42,
+        "longitude": 87.87,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.19,
+          22.195
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-005",
+        "name": "Diamond Harbour 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "WBSETCL",
+        "latitude": 22.195,
+        "longitude": 88.19,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.185,
+          21.875
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-006",
+        "name": "Kakdwip 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "WBSETCL",
+        "latitude": 21.875,
+        "longitude": 88.185,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.435,
+          22.365
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-007",
+        "name": "Baruipur 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "WBSETCL",
+        "latitude": 22.365,
+        "longitude": 88.435,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.66,
+          22.31
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-008",
+        "name": "Canning 132kV Delta Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "South 24 Parganas",
+        "voltage_kv": 132,
+        "capacity_mva": 120,
+        "operator": "WBSETCL",
+        "latitude": 22.31,
+        "longitude": 88.66,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.48,
+          22.72
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-009",
+        "name": "Barasat 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "North 24 Parganas",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "WBSETCL",
+        "latitude": 22.72,
+        "longitude": 88.48,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.865,
+          22.655
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-SUB-010",
+        "name": "Basirhat 132kV Border Substation",
+        "asset_type": "SUBSTATION",
+        "state": "West Bengal",
+        "district": "North 24 Parganas",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "WBSETCL",
+        "latitude": 22.655,
+        "longitude": 88.865,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.895,
+          18.295
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-001",
+        "name": "Srikakulam 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "Srikakulam",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "APTRANSCO",
+        "latitude": 18.295,
+        "longitude": 83.895,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.23,
+          18.61
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-002",
+        "name": "Tekkali 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "Srikakulam",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "APTRANSCO",
+        "latitude": 18.61,
+        "longitude": 84.23,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.415,
+          18.115
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-003",
+        "name": "Vizianagaram 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "Vizianagaram",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "APTRANSCO",
+        "latitude": 18.115,
+        "longitude": 83.415,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.49,
+          18.02
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-004",
+        "name": "Bhogapuram 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "Vizianagaram",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "APTRANSCO",
+        "latitude": 18.02,
+        "longitude": 83.49,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.18,
+          17.65
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-005",
+        "name": "Visakhapatnam 400kV Kalpaka Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
+        "voltage_kv": 400,
+        "capacity_mva": 630,
+        "operator": "APTRANSCO",
+        "latitude": 17.65,
+        "longitude": 83.18,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.215,
+          17.695
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-006",
+        "name": "Gajuwaka 220kV Industrial Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "APTRANSCO",
+        "latitude": 17.695,
+        "longitude": 83.215,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.005,
+          17.69
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-007",
+        "name": "Anakapalle 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "APTRANSCO",
+        "latitude": 17.69,
+        "longitude": 83.005,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.255,
+          16.965
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-008",
+        "name": "Kakinada 220kV Port Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "East Godavari",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "APTRANSCO",
+        "latitude": 16.965,
+        "longitude": 82.255,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.785,
+          17.005
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-009",
+        "name": "Rajahmundry 400kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "East Godavari",
+        "voltage_kv": 400,
+        "capacity_mva": 630,
+        "operator": "APTRANSCO",
+        "latitude": 17.005,
+        "longitude": 81.785,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.005,
+          16.575
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-SUB-010",
+        "name": "Amalapuram 132kV Delta Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Andhra Pradesh",
+        "district": "East Godavari",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "APTRANSCO",
+        "latitude": 16.575,
+        "longitude": 82.005,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.32,
+          13.21
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-001",
+        "name": "Ennore 400kV Thermal Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "voltage_kv": 400,
+        "capacity_mva": 800,
+        "operator": "TANTRANSCO",
+        "latitude": 13.21,
+        "longitude": 80.32,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.29,
+          13.13
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-002",
+        "name": "Tondiarpet 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "TANTRANSCO",
+        "latitude": 13.13,
+        "longitude": 80.29,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.265,
+          13.035
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-003",
+        "name": "Mylapore 220kV GIS Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "TANTRANSCO",
+        "latitude": 13.035,
+        "longitude": 80.265,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.21,
+          13.008
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-004",
+        "name": "Guindy 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "TANTRANSCO",
+        "latitude": 13.008,
+        "longitude": 80.21,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.765,
+          11.75
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-005",
+        "name": "Cuddalore 220kV SIPCOT Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Cuddalore",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "TANTRANSCO",
+        "latitude": 11.75,
+        "longitude": 79.765,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.485,
+          11.595
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-006",
+        "name": "Neyveli 400kV Thermal Grid Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Cuddalore",
+        "voltage_kv": 400,
+        "capacity_mva": 1000,
+        "operator": "TANTRANSCO",
+        "latitude": 11.595,
+        "longitude": 79.485,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.692,
+          11.398
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-007",
+        "name": "Chidambaram 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Cuddalore",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "TANTRANSCO",
+        "latitude": 11.398,
+        "longitude": 79.692,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.845,
+          10.765
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-008",
+        "name": "Nagapattinam 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Nagapattinam",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "TANTRANSCO",
+        "latitude": 10.765,
+        "longitude": 79.845,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.84,
+          10.68
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-009",
+        "name": "Velankanni 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Nagapattinam",
+        "voltage_kv": 132,
+        "capacity_mva": 120,
+        "operator": "TANTRANSCO",
+        "latitude": 10.68,
+        "longitude": 79.84,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.855,
+          10.375
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-SUB-010",
+        "name": "Vedaranyam 132kV Coastal Substation",
+        "asset_type": "SUBSTATION",
+        "state": "Tamil Nadu",
+        "district": "Nagapattinam",
+        "voltage_kv": 132,
+        "capacity_mva": 120,
+        "operator": "TANTRANSCO",
+        "latitude": 10.375,
+        "longitude": 79.855,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            85.83,
+            19.81
+          ],
+          [
+            85.82,
+            20.0
+          ],
+          [
+            85.8245,
+            20.2961
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-LINE-001",
+        "name": "Puri-Bhubaneswar 220kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Odisha",
+        "voltage_kv": 220,
+        "length_km": 62,
+        "operator": "OPTCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.64,
+            20.29
+          ],
+          [
+            86.41,
+            20.27
+          ],
+          [
+            86.168,
+            20.255
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-LINE-002",
+        "name": "Paradeep-Jagatsinghpur 400kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Odisha",
+        "voltage_kv": 400,
+        "length_km": 54,
+        "operator": "OPTCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.955,
+            20.805
+          ],
+          [
+            86.72,
+            20.93
+          ],
+          [
+            86.515,
+            21.055
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-LINE-003",
+        "name": "Dhamra-Bhadrak 220kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Odisha",
+        "voltage_kv": 220,
+        "length_km": 48,
+        "operator": "OPTCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.935,
+            21.495
+          ],
+          [
+            86.71,
+            21.28
+          ],
+          [
+            86.515,
+            21.055
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-LINE-004",
+        "name": "Balasore-Bhadrak 400kV Interconnect",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Odisha",
+        "voltage_kv": 400,
+        "length_km": 68,
+        "operator": "OPTCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            84.795,
+            19.315
+          ],
+          [
+            84.92,
+            19.35
+          ],
+          [
+            85.05,
+            19.38
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-LINE-005",
+        "name": "Berhampur-Ganjam Coastal 220kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Odisha",
+        "voltage_kv": 220,
+        "length_km": 42,
+        "operator": "OPTCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            87.87,
+            22.42
+          ],
+          [
+            87.96,
+            22.25
+          ],
+          [
+            88.085,
+            22.065
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-LINE-001",
+        "name": "Kolaghat-Haldia 400kV Feeder",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "West Bengal",
+        "voltage_kv": 400,
+        "length_km": 58,
+        "operator": "WBSETCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            88.085,
+            22.065
+          ],
+          [
+            87.75,
+            21.78
+          ],
+          [
+            87.525,
+            21.625
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-LINE-002",
+        "name": "Haldia-Contai-Digha 220kV Coastal Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "West Bengal",
+        "voltage_kv": 220,
+        "length_km": 76,
+        "operator": "WBSETCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            88.435,
+            22.365
+          ],
+          [
+            88.31,
+            22.28
+          ],
+          [
+            88.19,
+            22.195
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-LINE-003",
+        "name": "Baruipur-Diamond Harbour 220kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "West Bengal",
+        "voltage_kv": 220,
+        "length_km": 44,
+        "operator": "WBSETCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            88.19,
+            22.195
+          ],
+          [
+            88.188,
+            22.03
+          ],
+          [
+            88.185,
+            21.875
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "WB-LINE-004",
+        "name": "Diamond Harbour-Kakdwip 132kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "West Bengal",
+        "voltage_kv": 132,
+        "length_km": 38,
+        "operator": "WBSETCL",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            83.18,
+            17.65
+          ],
+          [
+            83.195,
+            17.67
+          ],
+          [
+            83.215,
+            17.695
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-LINE-001",
+        "name": "Kalpaka-Gajuwaka 400kV Grid Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Andhra Pradesh",
+        "voltage_kv": 400,
+        "length_km": 32,
+        "operator": "APTRANSCO",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            83.415,
+            18.115
+          ],
+          [
+            83.65,
+            18.2
+          ],
+          [
+            83.895,
+            18.295
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-LINE-002",
+        "name": "Vizianagaram-Srikakulam 220kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Andhra Pradesh",
+        "voltage_kv": 220,
+        "length_km": 64,
+        "operator": "APTRANSCO",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            81.785,
+            17.005
+          ],
+          [
+            82.02,
+            16.98
+          ],
+          [
+            82.255,
+            16.965
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "AP-LINE-003",
+        "name": "Rajahmundry-Kakinada 400kV Corridor",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Andhra Pradesh",
+        "voltage_kv": 400,
+        "length_km": 60,
+        "operator": "APTRANSCO",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.32,
+            13.21
+          ],
+          [
+            80.305,
+            13.17
+          ],
+          [
+            80.29,
+            13.13
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-LINE-001",
+        "name": "Ennore-Tondiarpet 400kV Bulk Link",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Tamil Nadu",
+        "voltage_kv": 400,
+        "length_km": 24,
+        "operator": "TANTRANSCO",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            79.485,
+            11.595
+          ],
+          [
+            79.62,
+            11.67
+          ],
+          [
+            79.765,
+            11.75
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-LINE-002",
+        "name": "Neyveli-Cuddalore 220kV Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Tamil Nadu",
+        "voltage_kv": 220,
+        "length_km": 42,
+        "operator": "TANTRANSCO",
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            79.765,
+            11.75
+          ],
+          [
+            79.692,
+            11.398
+          ],
+          [
+            79.8,
+            11.1
+          ],
+          [
+            79.845,
+            10.765
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "TN-LINE-003",
+        "name": "Cuddalore-Nagapattinam 220kV East Coast Line",
+        "asset_type": "TRANSMISSION_LINE",
+        "state": "Tamil Nadu",
+        "voltage_kv": 220,
+        "length_km": 115,
+        "operator": "TANTRANSCO",
+        "criticality": "HIGH"
+      }
+    }
+  ]
+}

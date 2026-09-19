@@ -87,6 +87,50 @@ export interface MapLayerToggles {
   showShelters: boolean;
   showEarthEngine?: boolean;
   showAiForecast?: boolean;
+  showPowerGrid?: boolean;
+  showRoads?: boolean;
+  showHospitals?: boolean;
+}
+
+export interface InfrastructureProperties {
+  asset_id?: string;
+  facility_id?: string;
+  road_id?: string;
+  name: string;
+  asset_type?: 'SUBSTATION' | 'TRANSMISSION_LINE' | 'ARTERIAL_ROAD' | string;
+  facility_type?: 'DISTRICT_HOSPITAL' | 'MEDICAL_COLLEGE' | 'PHC' | 'CYCLONE_SHELTER' | string;
+  road_class?: 'NH' | 'SH' | 'MDR' | string;
+  state: string;
+  district?: string;
+  districts_served?: string[];
+  voltage_kv?: number;
+  capacity_mva?: number;
+  operator?: string;
+  latitude?: number;
+  longitude?: number;
+  bed_capacity?: number | null;
+  shelter_capacity?: number | null;
+  has_generator?: boolean;
+  elevation_m?: number;
+  distance_from_coast_km?: number;
+  length_km?: number;
+  criticality?: 'HIGH' | 'MEDIUM' | 'LOW' | string;
+  is_at_risk?: boolean;
+}
+
+export interface InfrastructureFeature {
+  type: 'Feature';
+  geometry: {
+    type: 'Point' | 'LineString';
+    coordinates: any;
+  };
+  properties: InfrastructureProperties;
+}
+
+export interface InfrastructureFeatureCollection {
+  type: 'FeatureCollection';
+  name?: string;
+  features: InfrastructureFeature[];
 }
 
 export interface ForecastTrackPoint {

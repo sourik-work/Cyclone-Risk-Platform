@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CycloneTrack, TrackPoint, VulnerabilityFeatureCollection } from './types';
+import {
+  CycloneTrack,
+  DistrictProperties,
+  InfrastructureFeatureCollection,
+  TrackPoint,
+  VulnerabilityFeatureCollection,
+} from './types';
+import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
 import { Shield, Waves } from 'lucide-react';
 
 interface MapFallbackRadarProps {
@@ -16,9 +23,11 @@ interface MapFallbackRadarProps {
   mode?: 'historical' | 'live';
   hasActiveCyclone?: boolean;
   selectedState?: string;
+  infrastructureData?: InfrastructureFeatureCollection | null;
+  showPowerGrid?: boolean;
+  showRoads?: boolean;
+  showHospitals?: boolean;
 }
-
-import { DistrictProperties } from './types';
 
 export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
   track,
@@ -32,6 +41,10 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
   mode = 'historical',
   hasActiveCyclone = false,
   selectedState = 'Odisha',
+  infrastructureData,
+  showPowerGrid = false,
+  showRoads = false,
+  showHospitals = false,
 }) => {
   const [hoveredDistrict, setHoveredDistrict] = useState<DistrictProperties | null>(null);
 
@@ -205,6 +218,128 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
                     </text>
                   )}
                 </g>
+              );
+            })}
+
+        {/* 6. Arterial Roads Layer (NH=blue, SH=green, MDR=orange, 4px width) */}
+        {showRoads &&
+          (infrastructureData || SEED_INFRASTRUCTURE_DATA).features
+            .filter(
+              (f) =>
+                f.properties.state?.toLowerCase() === selectedState.toLowerCase() &&
+                f.properties.asset_type === 'ARTERIAL_ROAD' &&
+                f.geometry.type === 'LineString'
+            )
+            .map((feat, idx) => {
+              const roadClass = (feat.properties.road_class || 'NH').toUpperCase();
+              const strokeColor =
+                roadClass === 'NH' ? '#3b82f6' : roadClass === 'SH' ? '#22c55e' : '#f97316';
+              const pts = (feat.geometry.coordinates as [number, number][])
+                .map(([lon, lat]) => project(lat, lon).join(','))
+                .join(' ');
+              return (
+                <polyline
+                  key={`road-${feat.properties.road_id || idx}`}
+                  points={pts}
+                  fill="none"
+                  stroke={strokeColor}
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity="0.85"
+                >
+                  <title>{`${feat.properties.name} (${feat.properties.road_class})`}</title>
+                </polyline>
+              );
+            })}
+
+        {/* 7. Power Grid Layer (Substations: 400kV=red, 220kV=orange, 132kV=yellow; Lines: dashed grey) */}
+        {showPowerGrid &&
+          (infrastructureData || SEED_INFRASTRUCTURE_DATA).features
+            .filter((f) => f.properties.state?.toLowerCase() === selectedState.toLowerCase())
+            .map((feat, idx) => {
+              const p = feat.properties;
+              if (feat.geometry.type === 'LineString' && p.asset_type === 'TRANSMISSION_LINE') {
+                const pts = (feat.geometry.coordinates as [number, number][])
+                  .map(([lon, lat]) => project(lat, lon).join(','))
+                  .join(' ');
+                return (
+                  <polyline
+                    key={`line-${p.asset_id || idx}`}
+                    points={pts}
+                    fill="none"
+                    stroke="#94a3b8"
+                    strokeWidth="2"
+                    strokeDasharray="5 3"
+                    opacity="0.8"
+                  >
+                    <title>{`${p.name} (${p.voltage_kv}kV)`}</title>
+                  </polyline>
+                );
+              }
+              if (feat.geometry.type === 'Point' && p.asset_type === 'SUBSTATION') {
+                const [lon, lat] = feat.geometry.coordinates as [number, number];
+                const [cx, cy] = project(lat, lon);
+                const kv = p.voltage_kv || 220;
+                const fill = kv >= 400 ? '#ef4444' : kv >= 220 ? '#f97316' : '#eab308';
+                const r = kv >= 400 ? 6 : kv >= 220 ? 5 : 4;
+                return (
+                  <circle
+                    key={`sub-${p.asset_id || idx}`}
+                    cx={cx}
+                    cy={cy}
+                    r={r}
+                    fill={fill}
+                    stroke="#ffffff"
+                    strokeWidth="1.5"
+                    opacity="0.95"
+                  >
+                    <title>{`⚡ ${p.name} (${p.voltage_kv}kV, ${p.capacity_mva} MVA)`}</title>
+                  </circle>
+                );
+              }
+              return null;
+            })}
+
+        {/* 8. Hospitals & Shelters Layer (Hospital=red, PHC=blue, Shelter=green) */}
+        {showHospitals &&
+          (infrastructureData || SEED_INFRASTRUCTURE_DATA).features
+            .filter(
+              (f) =>
+                f.properties.state?.toLowerCase() === selectedState.toLowerCase() &&
+                f.geometry.type === 'Point' &&
+                Boolean(f.properties.facility_type)
+            )
+            .map((feat, idx) => {
+              const p = feat.properties;
+              const [lon, lat] = feat.geometry.coordinates as [number, number];
+              const [cx, cy] = project(lat, lon);
+              const fType = p.facility_type;
+              let fill = '#ef4444';
+              let r = 5;
+              if (fType === 'CYCLONE_SHELTER') {
+                fill = '#10b981';
+                r = Math.max(4, Math.min(8, Math.sqrt(p.shelter_capacity || 500) * 0.15 + 2));
+              } else if (fType === 'PHC') {
+                fill = '#3b82f6';
+                r = Math.max(3.5, Math.min(6, Math.sqrt(p.bed_capacity || 30) * 0.3 + 2));
+              } else {
+                fill = '#ef4444';
+                r = Math.max(5, Math.min(9, Math.sqrt(p.bed_capacity || 300) * 0.25 + 2.5));
+              }
+              return (
+                <circle
+                  key={`fac-${p.facility_id || idx}`}
+                  cx={cx}
+                  cy={cy}
+                  r={r}
+                  fill={fill}
+                  stroke="#ffffff"
+                  strokeWidth="1.5"
+                  opacity="0.95"
+                >
+                  <title>{`${p.name} (${fType})`}</title>
+                </circle>
               );
             })}
 

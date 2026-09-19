@@ -10,6 +10,7 @@ import {
   AnticipatoryAdvisory,
   CycloneTrack,
   DistrictProperties,
+  InfrastructureFeatureCollection,
   LiveCycloneResponse,
   MapLayerToggles,
   SupportedLanguage,
@@ -21,6 +22,7 @@ import {
   SEED_ODISHA_VULNERABILITY,
   SEED_ALL_COASTAL_VULNERABILITY,
 } from '../lib/seedData';
+import { SEED_INFRASTRUCTURE_DATA } from '../lib/infrastructureSeed';
 import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
 
 // Standby track representing quiescent Bay of Bengal for continuous monitoring
@@ -312,7 +314,32 @@ export default function Home() {
     showShelters: false,
     showEarthEngine: true, // Enabled: Real-time GEE satellite overlay
     showAiForecast: true, // Enabled: TrackLSTM AI Forecaster trajectory
+    showPowerGrid: true, // Enabled: Power grid substations & transmission lines
+    showRoads: true, // Enabled: Arterial roads (NH/SH/MDR)
+    showHospitals: true, // Enabled: Hospitals & cyclone shelters
   });
+
+  // Live infrastructure data state (with instant embedded fallback)
+  const [infrastructureData, setInfrastructureData] = useState<InfrastructureFeatureCollection>(SEED_INFRASTRUCTURE_DATA);
+
+  // Fetch updated infrastructure data from backend /api/infrastructure
+  useEffect(() => {
+    const fetchInfrastructure = async () => {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      try {
+        const res = await fetch(`${backendUrl}/api/infrastructure`);
+        if (res.ok) {
+          const data: InfrastructureFeatureCollection = await res.json();
+          if (data && data.features && data.features.length > 0) {
+            setInfrastructureData(data);
+          }
+        }
+      } catch (err) {
+        console.warn('Using embedded infrastructure seed data:', err);
+      }
+    };
+    fetchInfrastructure();
+  }, []);
 
   const handleToggleLayer = (key: keyof MapLayerToggles) => {
     setLayerToggles((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -458,6 +485,7 @@ export default function Home() {
                 hasActiveCyclone={hasActiveCyclone}
                 onToggleLayer={handleToggleLayer}
                 selectedState={selectedState}
+                infrastructureData={infrastructureData}
               />
             </div>
 
@@ -496,7 +524,10 @@ export default function Home() {
             onSelectState={handleSelectState}
             allDistricts={SEED_ALL_COASTAL_VULNERABILITY.features.map((f) => f.properties)}
             onSelectDistrict={setSelectedDistrict}
+            onLanguageChange={setCurrentLanguage}
+            infrastructureData={infrastructureData}
           />
+
         </div>
       </div>
     </main>

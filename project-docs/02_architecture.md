@@ -72,3 +72,39 @@ Evaluated on holdout historical test storms including Cyclone Fani (2019) and Cy
   }
   ```
 - **Response Payload:** Returns 16 predicted points (`lat`, `lon`, `wind_kmph`, `pressure_hpa`, `lead_hours`), remaining points from IMD official track, and validation metrics (`rmse_24h_km`, `rmse_48h_km`, `wind_mae_kmph`, `pressure_mae_hpa`, `model_params`, `training_samples`).
+
+---
+
+## Voice Pipeline (Multilingual Early Warning Audio)
+
+### Overview & Objective
+Pre-landfall anticipatory warnings must reach populations across diverse literacy levels, low-connectivity zones, and marginalized coastal settlements (fisherfolk, kutcha households). Spoken audio delivery provides critical, rapid-comprehension warnings through dashboard playback and simulated regional community radio loudspeaker networks.
+
+### Architecture Specification
+```
+Advisory Text (6 Regional Languages)
+       │
+       ▼
+POST /api/advisories/synthesize
+       │
+       ▼
+Gemini API Native TTS (Model: gemini-3.1-flash-tts-preview)
+  ├── Voice: 'Kore' (Auto-detects regional language phonetics)
+  ├── Retry: Exponential backoff with jitter
+  └── Model Fallback: gemini-2.5-flash-preview-tts on 404 / model not found
+       │
+       ▼
+Base64-Encoded Audio Stream (MP3)
+       │
+       ├── Dashboard: Web Audio playback with 4-state control
+       └── Broadcast Network: All India Radio + 847 community loudspeakers
+```
+
+- **Model:** `gemini-3.1-flash-tts-preview` (native component of the Gemini API) with fallback to `gemini-2.5-flash-preview-tts`.
+- **API Endpoint:** `POST /api/advisories/synthesize`
+  - **Request Body:** `{ "text": string, "language": "en" | "hi" | "bn" | "ta" | "te" | "or" }`
+  - **Response Payload:** `{ "audio_base64": string | null, "duration_seconds": float, "voice_used": string | null, "language": string, "error": string | null }`
+  - Always returns HTTP 200 for client resilience.
+- **Language Auto-Detection:** The model auto-detects language directly from regional Unicode text characters (English, Bengali, Telugu, Tamil, Hindi, Odia) using unified `voice_name='Kore'`.
+- **Odia Fallback:** Because pure Odia phonetic synthesis is in preview, Odia speech utilizes Hindi phonetic fallback with an explicit dashboard notice advising that pronunciation may vary.
+- **Why Gemini TTS Over Cloud TTS:** Google Cloud Text-to-Speech requires separate GCP project billing and distinct IAM credentials which can be blocked in constrained environments. Gemini API native TTS leverages the unified Gemini developer API key already provisioned (`GEMINI_API_KEY`), requiring zero additional cloud billing setups or external SDK dependencies.

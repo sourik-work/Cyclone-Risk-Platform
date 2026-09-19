@@ -131,6 +131,46 @@ export const MapControls: React.FC<MapControlsProps> = ({
           <span>Vulnerability Grid</span>
         </button>
 
+        {/* Task 5: 3 Infrastructure Exposure Layer Toggles */}
+        <button
+          id="toggle-power-grid"
+          onClick={() => onToggleLayer('showPowerGrid')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+            layerToggles.showPowerGrid
+              ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-sm'
+              : 'bg-slate-950 border-slate-800 text-slate-500 hover:text-slate-300'
+          }`}
+          title="Toggle Power Grid (Substations & Transmission Lines)"
+        >
+          <span>⚡ Power Grid</span>
+        </button>
+
+        <button
+          id="toggle-roads"
+          onClick={() => onToggleLayer('showRoads')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+            layerToggles.showRoads
+              ? 'bg-blue-500/20 border-blue-500/40 text-blue-300 shadow-sm'
+              : 'bg-slate-950 border-slate-800 text-slate-500 hover:text-slate-300'
+          }`}
+          title="Toggle Arterial Roads (NH/SH/MDR)"
+        >
+          <span>🛣 Roads</span>
+        </button>
+
+        <button
+          id="toggle-hospitals"
+          onClick={() => onToggleLayer('showHospitals')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+            layerToggles.showHospitals
+              ? 'bg-rose-500/20 border-rose-500/40 text-rose-300 shadow-sm'
+              : 'bg-slate-950 border-slate-800 text-slate-500 hover:text-slate-300'
+          }`}
+          title="Toggle Hospitals, PHCs & Cyclone Shelters"
+        >
+          <span>🏥 Hospitals</span>
+        </button>
+
         {/* Earth Engine Satellite Overlay Toggle - Disabled in Live Monitoring & Amphan */}
         <button
           id="toggle-layer-earth-engine"

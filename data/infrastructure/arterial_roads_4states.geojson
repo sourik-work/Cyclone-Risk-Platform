@@ -1,0 +1,560 @@
+{
+  "type": "FeatureCollection",
+  "name": "arterial_roads_4states",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.93,
+            21.49
+          ],
+          [
+            86.78,
+            21.32
+          ],
+          [
+            86.64,
+            21.18
+          ],
+          [
+            86.51,
+            21.05
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-16-OD-01",
+        "name": "NH-16 (Balasore-Bhadrak Segment)",
+        "road_class": "NH",
+        "state": "Odisha",
+        "districts_served": [
+          "Balasore",
+          "Bhadrak"
+        ],
+        "length_km": 72,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.51,
+            21.05
+          ],
+          [
+            86.35,
+            20.85
+          ],
+          [
+            86.15,
+            20.55
+          ],
+          [
+            85.95,
+            20.35
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-16-OD-02",
+        "name": "NH-16 (Bhadrak-Kendrapara Corridor)",
+        "road_class": "NH",
+        "state": "Odisha",
+        "districts_served": [
+          "Bhadrak",
+          "Kendrapara"
+        ],
+        "length_km": 68,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            85.82,
+            20.25
+          ],
+          [
+            85.58,
+            19.98
+          ],
+          [
+            85.25,
+            19.72
+          ],
+          [
+            84.95,
+            19.45
+          ],
+          [
+            84.79,
+            19.31
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-16-OD-03",
+        "name": "NH-16 (Puri Coastal-Ganjam Segment)",
+        "road_class": "NH",
+        "state": "Odisha",
+        "districts_served": [
+          "Puri",
+          "Ganjam"
+        ],
+        "length_km": 145,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.64,
+            20.29
+          ],
+          [
+            86.42,
+            20.31
+          ],
+          [
+            86.17,
+            20.26
+          ],
+          [
+            85.88,
+            20.3
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-516-OD-01",
+        "name": "NH-516A (Paradeep Port Express Link)",
+        "road_class": "NH",
+        "state": "Odisha",
+        "districts_served": [
+          "Jagatsinghpur",
+          "Kendrapara"
+        ],
+        "length_km": 82,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            85.83,
+            19.81
+          ],
+          [
+            85.95,
+            19.84
+          ],
+          [
+            86.09,
+            19.89
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "SH-OD-01",
+        "name": "OD-SH-60 (Puri-Konark Coastal Marine Drive)",
+        "road_class": "SH",
+        "state": "Odisha",
+        "districts_served": [
+          "Puri"
+        ],
+        "length_km": 36,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            87.87,
+            22.42
+          ],
+          [
+            87.65,
+            22.25
+          ],
+          [
+            87.42,
+            22.02
+          ],
+          [
+            87.25,
+            21.85
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-16-WB-01",
+        "name": "NH-16 (Kolaghat-Dantan Corridor)",
+        "road_class": "NH",
+        "state": "West Bengal",
+        "districts_served": [
+          "Purba Medinipur"
+        ],
+        "length_km": 94,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            87.87,
+            22.42
+          ],
+          [
+            87.94,
+            22.28
+          ],
+          [
+            88.04,
+            22.14
+          ],
+          [
+            88.08,
+            22.06
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-116-WB-01",
+        "name": "NH-116 (Haldia Port Expressway)",
+        "road_class": "NH",
+        "state": "West Bengal",
+        "districts_served": [
+          "Purba Medinipur"
+        ],
+        "length_km": 52,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            87.9,
+            22.2
+          ],
+          [
+            87.75,
+            21.78
+          ],
+          [
+            87.62,
+            21.68
+          ],
+          [
+            87.52,
+            21.62
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-116B-WB-01",
+        "name": "NH-116B (Contai-Digha Coastal Highway)",
+        "road_class": "NH",
+        "state": "West Bengal",
+        "districts_served": [
+          "Purba Medinipur"
+        ],
+        "length_km": 88,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            88.35,
+            22.52
+          ],
+          [
+            88.24,
+            22.32
+          ],
+          [
+            88.19,
+            22.19
+          ],
+          [
+            88.18,
+            21.87
+          ],
+          [
+            88.25,
+            21.57
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-12-WB-01",
+        "name": "NH-12 (Diamond Harbour-Kakdwip Arterial Road)",
+        "road_class": "NH",
+        "state": "West Bengal",
+        "districts_served": [
+          "South 24 Parganas"
+        ],
+        "length_km": 110,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            88.48,
+            22.72
+          ],
+          [
+            88.66,
+            22.68
+          ],
+          [
+            88.86,
+            22.65
+          ],
+          [
+            88.92,
+            22.57
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "SH-03-WB-01",
+        "name": "WB-SH-3 (Barasat-Basirhat-Hasnabad Link)",
+        "road_class": "SH",
+        "state": "West Bengal",
+        "districts_served": [
+          "North 24 Parganas"
+        ],
+        "length_km": 65,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            84.23,
+            18.61
+          ],
+          [
+            83.89,
+            18.29
+          ],
+          [
+            83.52,
+            18.02
+          ],
+          [
+            83.31,
+            17.78
+          ],
+          [
+            83.21,
+            17.68
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-16-AP-01",
+        "name": "NH-16 (Srikakulam-Visakhapatnam Coastal Highway)",
+        "road_class": "NH",
+        "state": "Andhra Pradesh",
+        "districts_served": [
+          "Srikakulam",
+          "Vizianagaram",
+          "Visakhapatnam"
+        ],
+        "length_km": 160,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            83.0,
+            17.69
+          ],
+          [
+            82.65,
+            17.32
+          ],
+          [
+            82.25,
+            16.96
+          ],
+          [
+            82.12,
+            16.75
+          ],
+          [
+            82.0,
+            16.57
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-216-AP-01",
+        "name": "NH-216 (Kakinada-Amalapuram Coastal Highway)",
+        "road_class": "NH",
+        "state": "Andhra Pradesh",
+        "districts_served": [
+          "Visakhapatnam",
+          "East Godavari"
+        ],
+        "length_km": 142,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            82.66,
+            18.08
+          ],
+          [
+            82.85,
+            17.88
+          ],
+          [
+            83.0,
+            17.69
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-516E-AP-01",
+        "name": "NH-516E (Ghat-Coast Arterial Corridor)",
+        "road_class": "NH",
+        "state": "Andhra Pradesh",
+        "districts_served": [
+          "Visakhapatnam"
+        ],
+        "length_km": 78,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.12,
+            13.4
+          ],
+          [
+            80.22,
+            13.25
+          ],
+          [
+            80.29,
+            13.13
+          ],
+          [
+            80.27,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-16-TN-01",
+        "name": "NH-16 (Chennai-Ennore Trunk Highway)",
+        "road_class": "NH",
+        "state": "Tamil Nadu",
+        "districts_served": [
+          "Chennai"
+        ],
+        "length_km": 45,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.25,
+            13.0
+          ],
+          [
+            80.18,
+            12.5
+          ],
+          [
+            79.82,
+            11.95
+          ],
+          [
+            79.76,
+            11.75
+          ],
+          [
+            79.69,
+            11.39
+          ],
+          [
+            79.84,
+            10.76
+          ],
+          [
+            79.85,
+            10.37
+          ]
+        ]
+      },
+      "properties": {
+        "road_id": "NH-32-TN-01",
+        "name": "NH-32 (East Coast Road - Chennai to Nagapattinam)",
+        "road_class": "NH",
+        "state": "Tamil Nadu",
+        "districts_served": [
+          "Chennai",
+          "Cuddalore",
+          "Nagapattinam"
+        ],
+        "length_km": 285,
+        "criticality": "HIGH"
+      }
+    }
+  ]
+}
