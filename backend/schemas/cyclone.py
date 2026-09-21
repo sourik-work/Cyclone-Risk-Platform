@@ -350,5 +350,58 @@ class HistoricalAnalyticsResponse(BaseModel):
     avg_storm_surge_m: float
 
 
+class AuthVerifyRequest(BaseModel):
+    """Firebase Auth ID token verification request."""
+
+    id_token: str
 
 
+class AuthVerifyResponse(BaseModel):
+    """Firebase Auth verification response."""
+
+    uid: str
+    email: Optional[str] = None
+    valid: bool
+
+
+class CitizenReportRequest(BaseModel):
+    """Citizen damage field report submission with base64 photo and geolocation."""
+
+    description: str
+    latitude: float
+    longitude: float
+    image_base64: str  # base64-encoded image
+    state: str
+    district: str
+
+
+class CitizenReportResponse(BaseModel):
+    """Processed citizen report with multimodal Gemini damage classification."""
+
+    report_id: str
+    damage_severity: str  # LOW, MEDIUM, HIGH, CRITICAL
+    ai_analysis: str
+    image_url: str
+    created_at: str
+
+
+class AlertSubscribeRequest(BaseModel):
+    """FCM device token subscription request."""
+
+    fcm_token: str
+    state: str
+
+
+class AlertSubscribeResponse(BaseModel):
+    """FCM device token subscription response."""
+
+    subscription_id: str
+    status: str
+
+
+class FCMNotificationRequest(BaseModel):
+    """Broadcast notification payload for state subscribers."""
+
+    title: str
+    body: str
+    state: str

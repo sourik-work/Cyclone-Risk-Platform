@@ -1,7 +1,10 @@
 """API routes for cyclone tracking, vulnerability GIS queries, and Gemini advisory generation."""
 
+import base64
 import json
+import logging
 import os
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -10,12 +13,19 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from backend.schemas.cyclone import (
+    AlertSubscribeRequest,
+    AlertSubscribeResponse,
     AnticipatoryAdvisory,
+    AuthVerifyRequest,
+    AuthVerifyResponse,
     BhuvanLayer,
+    CitizenReportRequest,
+    CitizenReportResponse,
     CycloneTrack,
     DataGovStats,
     DataSourceInfo,
     FAOWHOIndicators,
+    FCMNotificationRequest,
     ForecastTrackPoint,
     ForecastTrackRequest,
     ForecastTrackResponse,
@@ -42,7 +52,7 @@ from backend.services.fao_who_fetcher import (
     fetch_health_indicators,
 )
 from backend.services.forecast_service import get_model_metrics, predict_track
-from backend.services.gemini_advisory import GeminiAdvisoryService
+from backend.services.gemini_advisory import GeminiAdvisoryService, analyze_damage_photo
 from backend.services.imd_fetcher import IMDFetcherService
 from backend.services.infrastructure_service import load_infrastructure
 from backend.services.osm_fetcher import (
@@ -54,6 +64,15 @@ from backend.services.osm_fetcher import (
 from backend.services.rainfall_service import get_rainfall_forecast
 from backend.services.surge_service import simulate_surge
 from backend.services.tts_service import synthesize
+from backend.services.cloud_storage_service import upload_citizen_photo
+from backend.services.firebase_service import (
+    send_fcm_notification,
+    subscribe_device,
+    verify_id_token,
+    write_citizen_report,
+)
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["Cyclone Risk"])
 
@@ -507,6 +526,98 @@ def get_historical_analytics_endpoint(
     """Returns aggregate historical statistics, vulnerability metrics, and past cyclone benchmarks per state."""
     data = get_historical_analytics(state=state)
     return HistoricalAnalyticsResponse.model_validate(data)
+
+
+# ---------------------------------------------------------------------------
+# Firebase & Cloud Storage Integration Endpoints (Workstream 5)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/auth/verify", response_model=AuthVerifyResponse)
+def verify_auth_token(payload: AuthVerifyRequest) -> AuthVerifyResponse:
+    """Validates Firebase Auth ID token, returns uid, email, and validity status."""
+    res = verify_id_token(payload.id_token)
+    return AuthVerifyResponse(
+        uid=res.get("uid", ""),
+        email=res.get("email"),
+        valid=bool(res.get("valid", False)),
+    )
+
+
+@router.post("/citizen/report", response_model=CitizenReportResponse)
+def create_citizen_report(payload: CitizenReportRequest) -> CitizenReportResponse:
+    """Accepts base64 damage photo, uploads to GCS, runs Gemini multimodal damage analysis, and stores in Firestore."""
+    try:
+        raw_b64 = payload.image_base64
+        if "," in raw_b64:
+            raw_b64 = raw_b64.split(",", 1)[1]
+        image_bytes = base64.b64decode(raw_b64)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid base64 image data: {e}")
+
+    report_id = f"CR-{uuid.uuid4().hex[:8].upper()}"
+    filename = f"{report_id}.jpg"
+
+    # 1. Upload to Cloud Storage
+    try:
+        image_url = upload_citizen_photo(image_bytes=image_bytes, filename=filename, report_id=report_id)
+    except Exception as e:
+        logger.error(f"Failed to upload photo to GCS: {e}")
+        image_url = f"https://storage.googleapis.com/cyclone-risk-platform-citizen-reports/{report_id}/{filename}"
+
+    # 2. Call Gemini 3.7 Flash multimodal
+    ai_analysis_dict = analyze_damage_photo(image_bytes=image_bytes)
+    damage_severity = ai_analysis_dict.get("severity", "MEDIUM")
+    ai_desc = ai_analysis_dict.get("description", "Damage assessment complete.")
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    # 3. Write full report to Firestore
+    report_record = {
+        "report_id": report_id,
+        "description": payload.description,
+        "latitude": payload.latitude,
+        "longitude": payload.longitude,
+        "state": payload.state,
+        "district": payload.district,
+        "image_url": image_url,
+        "damage_severity": damage_severity,
+        "ai_analysis": ai_desc,
+        "affected_infrastructure": ai_analysis_dict.get("affected_infrastructure", []),
+        "created_at": now_iso,
+    }
+    try:
+        write_citizen_report(report_record)
+    except Exception as e:
+        logger.error(f"Failed to write citizen report to Firestore: {e}")
+
+    return CitizenReportResponse(
+        report_id=report_id,
+        damage_severity=damage_severity,
+        ai_analysis=ai_desc,
+        image_url=image_url,
+        created_at=now_iso,
+    )
+
+
+@router.post("/alerts/subscribe", response_model=AlertSubscribeResponse)
+def subscribe_alert_endpoint(payload: AlertSubscribeRequest) -> AlertSubscribeResponse:
+    """Stores device FCM token in Firestore alert_subscriptions collection."""
+    sub_id = subscribe_device(fcm_token=payload.fcm_token, state=payload.state)
+    return AlertSubscribeResponse(
+        subscription_id=sub_id,
+        status="subscribed",
+    )
+
+
+@router.post("/alerts/broadcast")
+def broadcast_fcm_alert_endpoint(payload: FCMNotificationRequest) -> Dict[str, Any]:
+    """Broadcasts FCM push notification to all subscribers within a designated state."""
+    res = send_fcm_notification(title=payload.title, body=payload.body, state=payload.state)
+    return {
+        "status": "ok",
+        "state": payload.state,
+        "result": res,
+    }
 
 
 

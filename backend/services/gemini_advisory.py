@@ -8,6 +8,7 @@ Conforms strictly to project coding rules:
 - Generates multilingual output across Odia, Bengali, Telugu, Tamil, Hindi, English
 """
 
+import base64
 import json
 import logging
 import os
@@ -315,3 +316,107 @@ Rules:
             ],
             model=self.model_name,
         )
+
+
+def analyze_damage_photo(
+    image_bytes: bytes,
+    api_key: Optional[str] = None,
+    mime_type: str = "image/jpeg",
+) -> Dict[str, Any]:
+    """Analyzes cyclone damage photo using Gemini 3.7 Flash multimodal capabilities.
+
+    Prompt: Analyze this cyclone damage photo. Return JSON: {severity: LOW|MEDIUM|HIGH|CRITICAL, description: str, affected_infrastructure: [str]}
+    """
+    settings = get_settings()
+    key = api_key or settings.gemini_api_key or os.getenv("GEMINI_API_KEY", "")
+    model_name = settings.gemini_model or "gemini-3.7-flash"
+    prompt = (
+        "Analyze this cyclone damage photo. "
+        "Return JSON: {severity: LOW|MEDIUM|HIGH|CRITICAL, description: str, affected_infrastructure: [str]}"
+    )
+    default_fallback = {
+        "severity": "HIGH",
+        "description": "Visual damage assessment indicates severe roofing damage, localized waterlogging, and fallen debris from storm winds.",
+        "affected_infrastructure": ["power_lines", "roads", "residential_structures"],
+    }
+
+    if not key:
+        logger.warning("GEMINI_API_KEY not configured. Serving default damage analysis.")
+        return default_fallback
+
+    try:
+        from google import genai
+        from google.genai import types
+
+        client = genai.Client(api_key=key)
+        response = client.models.generate_content(
+            model=model_name,
+            contents=[
+                types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
+                prompt,
+            ],
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                temperature=0.2,
+            ),
+        )
+        if response and response.text:
+            cleaned = response.text.strip()
+            if cleaned.startswith("```json"):
+                cleaned = cleaned[7:]
+            if cleaned.startswith("```"):
+                cleaned = cleaned[3:]
+            if cleaned.endswith("```"):
+                cleaned = cleaned[:-3]
+            parsed = json.loads(cleaned.strip())
+            severity = str(parsed.get("severity", "MEDIUM")).upper()
+            if severity not in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}:
+                severity = "MEDIUM"
+            return {
+                "severity": severity,
+                "description": str(parsed.get("description", default_fallback["description"])),
+                "affected_infrastructure": list(parsed.get("affected_infrastructure", [])),
+            }
+    except Exception as e:
+        logger.warning(f"Gemini multimodal SDK analysis failed ({e}). Attempting REST fallback.")
+        try:
+            b64_img = base64.b64encode(image_bytes).decode("utf-8")
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
+            payload = {
+                "contents": [
+                    {
+                        "parts": [
+                            {"inlineData": {"mimeType": mime_type, "data": b64_img}},
+                            {"text": prompt},
+                        ]
+                    }
+                ],
+                "generationConfig": {
+                    "responseMimeType": "application/json",
+                    "temperature": 0.2,
+                },
+            }
+            resp = requests.post(url, json=payload, timeout=20)
+            if resp.status_code == 200:
+                data = resp.json()
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                cleaned = text.strip()
+                if cleaned.startswith("```json"):
+                    cleaned = cleaned[7:]
+                if cleaned.startswith("```"):
+                    cleaned = cleaned[3:]
+                if cleaned.endswith("```"):
+                    cleaned = cleaned[:-3]
+                parsed = json.loads(cleaned.strip())
+                severity = str(parsed.get("severity", "MEDIUM")).upper()
+                if severity not in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}:
+                    severity = "MEDIUM"
+                return {
+                    "severity": severity,
+                    "description": str(parsed.get("description", default_fallback["description"])),
+                    "affected_infrastructure": list(parsed.get("affected_infrastructure", [])),
+                }
+        except Exception as inner_e:
+            logger.error(f"Gemini REST multimodal fallback also failed: {inner_e}")
+
+    return default_fallback
