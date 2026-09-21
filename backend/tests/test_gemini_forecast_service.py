@@ -17,8 +17,8 @@ def _generate_mock_forecast(start_lat: float, start_lon: float, storm_name: str)
     points = [
         {
             "lead_hours": (i + 1) * 3,
-            "lat": round(start_lat + (i + 1) * 0.25, 2),
-            "lon": round(start_lon + (i + 1) * 0.15, 2),
+            "lat": round(start_lat + (i + 1) * 0.10, 2),
+            "lon": round(start_lon + (i + 1) * 0.08, 2),
             "wind_kmph": round(215.0 - (i * 5.0), 1),
             "pressure_hpa": round(935.0 + (i * 3.0), 1),
         }
@@ -32,7 +32,7 @@ def _generate_mock_forecast(start_lat: float, start_lon: float, storm_name: str)
 
 
 def test_gemini_forecast_returns_16_points():
-    mock_payload = _generate_mock_forecast(18.5, 85.2, "Fani")
+    mock_payload = _generate_mock_forecast(18.0, 85.0, "Fani")
     mock_client = MagicMock()
     mock_client.models.generate_content.return_value = MockGenerateContentResponse(mock_payload)
 
@@ -66,6 +66,23 @@ def test_gemini_forecast_handles_json_parse_failure():
     assert "could not be parsed" in result["reasoning"]
 
 
+def test_gemini_forecast_rejects_implausible_start_position():
+    # Mock output that jumps 500 km away from last observation
+    mock_payload = _generate_mock_forecast(28.0, 95.0, "Fani")
+    mock_client = MagicMock()
+    mock_client.models.generate_content.return_value = MockGenerateContentResponse(mock_payload)
+
+    recent_points = [
+        {"lat": 18.0, "lon": 85.0, "wind_kmph": 215, "pressure_hpa": 935},
+    ]
+    with patch("backend.services.gemini_forecast_service._get_client", return_value=mock_client):
+        result = predict_track_via_gemini(recent_points, {"name": "Fani"})
+
+    assert result["error"] in ("implausible_start_position", "out_of_bounds")
+    assert result["forecast"] == []
+    assert result["confidence"] == "LOW"
+
+
 def test_gemini_forecast_handles_empty_track():
     client = TestClient(app)
     resp = client.post("/api/forecast/gemini", json={"cyclone_id": "NON_EXISTENT_STORM_999"})
@@ -75,7 +92,7 @@ def test_gemini_forecast_handles_empty_track():
 
 def test_gemini_forecast_endpoint_returns_200_fani():
     client = TestClient(app)
-    mock_payload = _generate_mock_forecast(19.0, 85.5, "Fani")
+    mock_payload = _generate_mock_forecast(23.2, 88.5, "Fani")
     mock_client = MagicMock()
     mock_client.models.generate_content.return_value = MockGenerateContentResponse(mock_payload)
 
@@ -93,12 +110,12 @@ def test_gemini_forecast_endpoint_returns_200_fani():
 
 def test_gemini_forecast_endpoint_returns_200_amphan():
     client = TestClient(app)
-    mock_payload = _generate_mock_forecast(20.5, 87.5, "Amphan")
+    mock_payload = _generate_mock_forecast(24.5, 89.2, "Amphan")
     mock_client = MagicMock()
     mock_client.models.generate_content.return_value = MockGenerateContentResponse(mock_payload)
 
     with patch("backend.services.gemini_forecast_service._get_client", return_value=mock_client):
-        resp = client.post("/api/forecast/gemini", json={"cyclone_id": "BOB-01-2020", "recent_point_count": 5})
+        resp = client.post("/api/forecast/gemini", json={"cyclone_id": "BOB-01-2020", "recent_point_count": 4})
 
     assert resp.status_code == 200
     data = resp.json()
@@ -110,16 +127,16 @@ def test_gemini_forecast_endpoint_returns_200_amphan():
 def test_gemini_forecast_predicts_different_tracks():
     client = TestClient(app)
 
-    # Fani forecast mock
-    mock_fani = _generate_mock_forecast(18.5, 85.0, "Fani")
+    # Fani forecast mock (centered near Fani's last observation 23.2N, 88.5E)
+    mock_fani = _generate_mock_forecast(23.2, 88.5, "Fani")
     mock_client_fani = MagicMock()
     mock_client_fani.models.generate_content.return_value = MockGenerateContentResponse(mock_fani)
 
     with patch("backend.services.gemini_forecast_service._get_client", return_value=mock_client_fani):
         res_fani = client.post("/api/forecast/gemini", json={"cyclone_id": "BOB-02-2019"}).json()
 
-    # Amphan forecast mock
-    mock_amphan = _generate_mock_forecast(21.0, 88.0, "Amphan")
+    # Amphan forecast mock (centered near Amphan's last observation 24.5N, 89.2E)
+    mock_amphan = _generate_mock_forecast(24.5, 89.2, "Amphan")
     mock_client_amphan = MagicMock()
     mock_client_amphan.models.generate_content.return_value = MockGenerateContentResponse(mock_amphan)
 

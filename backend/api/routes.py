@@ -369,7 +369,11 @@ def forecast_cyclone_track(req: ForecastTrackRequest) -> ForecastTrackResponse:
         )
 
     # 2. Determine 4 input point indices
-    if req.recent_point_indices is not None:
+    if req.recent_point_indices is None:
+        # Default to LAST 4 points (for forward prediction)
+        total = len(track.track_points)
+        indices = [total - 4, total - 3, total - 2, total - 1]
+    else:
         if len(req.recent_point_indices) != 4:
             raise HTTPException(
                 status_code=400,
@@ -382,9 +386,6 @@ def forecast_cyclone_track(req: ForecastTrackRequest) -> ForecastTrackResponse:
                     detail=f"Point index {idx} out of range for cyclone with {len(track.track_points)} points",
                 )
         indices = list(req.recent_point_indices)
-    else:
-        # Default to first 4 observed points
-        indices = [0, 1, 2, 3]
 
     # 3. Format input points for predict_track
     input_points: List[Dict[str, Any]] = []
@@ -408,6 +409,10 @@ def forecast_cyclone_track(req: ForecastTrackRequest) -> ForecastTrackResponse:
     # 5. Extract remaining points from actual track as IMD official forecast
     last_input_idx = max(indices)
     remaining_points = track.track_points[last_input_idx + 1 :]
+    if not remaining_points:
+        remaining_points = [p for p in track.track_points if p.is_forecast]
+        if not remaining_points:
+            remaining_points = track.track_points[-4:]
     imd_official: List[Dict[str, Any]] = []
     for step_idx, pt in enumerate(remaining_points):
         lead_hrs = pt.forecast_lead_hours if pt.is_forecast and pt.forecast_lead_hours else (step_idx + 1) * 3

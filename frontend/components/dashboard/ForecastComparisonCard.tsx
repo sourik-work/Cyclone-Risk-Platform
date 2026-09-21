@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Brain, Cpu, Sparkles, Loader2, CheckCircle2, AlertTriangle, Info, RefreshCw } from 'lucide-react';
+import { CycloneTrack } from '../map/types';
 
 interface LstmForecastPoint {
   lat?: number;
@@ -46,6 +47,7 @@ interface GeminiForecastResponse {
 
 interface ForecastComparisonCardProps {
   cycloneId: string;
+  track?: CycloneTrack | null;
 }
 
 function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -62,7 +64,7 @@ function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   return R * c;
 }
 
-export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ cycloneId }) => {
+export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ cycloneId, track }) => {
   const [lstm, setLstm] = useState<LstmForecastResponse | null>(null);
   const [gemini, setGemini] = useState<GeminiForecastResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -76,17 +78,27 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
     try {
+      // Calculate the last 4 point indices for LSTM
+      const totalPoints = track?.track_points?.length || (cycloneId === 'BOB-01-2020' ? 10 : 12);
+      const lastFourIndices = [totalPoints - 4, totalPoints - 3, totalPoints - 2, totalPoints - 1];
+
       // Execute both forecast calls in parallel
       const [lstmRes, geminiRes] = await Promise.all([
         fetch(`${backendUrl}/api/forecast/track`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cyclone_id: cycloneId }),
+          body: JSON.stringify({
+            cyclone_id: cycloneId,
+            recent_point_indices: lastFourIndices,
+          }),
         }),
         fetch(`${backendUrl}/api/forecast/gemini`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cyclone_id: cycloneId, recent_point_count: 5 }),
+          body: JSON.stringify({
+            cyclone_id: cycloneId,
+            recent_point_count: 4,
+          }),
         }),
       ]);
 
@@ -260,6 +272,12 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ 
               </span>
             )}
           </div>
+
+          {divergenceKm !== null && divergenceKm > 500 && (
+            <div className="text-amber-400 text-xs mt-2 px-2.5 py-1.5 rounded bg-amber-950/30 border border-amber-800/40">
+              ⚠️ Large divergence detected. This may indicate a forecast error. Verify storm position.
+            </div>
+          )}
 
           {/* Footer note */}
           <div className="text-[10px] font-mono text-slate-400 pt-1 border-t border-slate-800/70 text-center">

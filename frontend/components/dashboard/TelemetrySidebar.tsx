@@ -1553,7 +1553,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       </div>
 
       {/* 5. Dual Model Forecast Comparison Card */}
-      <ForecastComparisonCard cycloneId={track?.id || selectedStormId || 'BOB-02-2019'} />
+      <ForecastComparisonCard cycloneId={track?.id || selectedStormId || 'BOB-02-2019'} track={track} />
     </aside>
 
     {/* Broadcast to Community Radio Network Modal */}
