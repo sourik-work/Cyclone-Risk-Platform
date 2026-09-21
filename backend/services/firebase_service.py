@@ -19,24 +19,21 @@ from firebase_admin import auth, credentials, firestore, messaging
 logger = logging.getLogger(__name__)
 
 
+from backend import bootstrap  # noqa: F401
+
+
 def _init_firebase() -> firebase_admin.App:
     """Initializes or returns the default Firebase Admin App using service account Certificate."""
     if firebase_admin._apps:
         return firebase_admin.get_app()
 
     cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-
-    # Fallback: project-root service-account.json
-    if not cred_path or not Path(cred_path).exists():
+    if not cred_path:
         fallback = Path(__file__).resolve().parent.parent.parent / "service-account.json"
         if fallback.exists():
             cred_path = str(fallback)
-
-    if not cred_path or not Path(cred_path).exists():
-        raise RuntimeError(
-            "Service account credentials not found. "
-            "Set GOOGLE_APPLICATION_CREDENTIALS in backend/.env or place service-account.json at project root."
-        )
+        else:
+            raise RuntimeError("GOOGLE_APPLICATION_CREDENTIALS not set")
 
     cred = credentials.Certificate(cred_path)
     return firebase_admin.initialize_app(
