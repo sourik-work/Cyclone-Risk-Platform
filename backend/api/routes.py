@@ -22,6 +22,8 @@ from backend.schemas.cyclone import (
     BhuvanLayer,
     CitizenReportRequest,
     CitizenReportResponse,
+    ChatMessage,
+    ChatResponse,
     CycloneTrack,
     DataGovStats,
     DataSourceInfo,
@@ -793,6 +795,78 @@ def evaluate_insurance_contracts(payload: InsuranceEvaluateRequest) -> Insurance
         total_households=total_households,
         results=[InsuranceTriggerResult(**r) for r in eval_results],
     )
+
+
+@router.post("/dialogflow/webhook")
+@router.post("/api/dialogflow/webhook")
+async def dialogflow_webhook(request: dict):
+    """Handles Dialogflow ES fulfillment requests. Also accepts a simpler {message, session_id} format for our own frontend."""
+    # Support both Dialogflow format and our simplified format
+    if "queryResult" in request:
+        # Dialogflow ES format
+        query_text = request["queryResult"].get("queryText", "")
+        session_id = request.get("session", "default")
+        intent_name = request["queryResult"].get("intent", {}).get("displayName", "")
+    else:
+        # Our simplified format from the frontend chat widget
+        query_text = request.get("message", "")
+        session_id = request.get("session_id", "default")
+        intent_name = None
+
+    # If intent not provided, classify via Gemini 3.7 Flash
+    if not intent_name:
+        from backend.services.dialogflow_service import detect_intent
+        result = detect_intent(query_text, session_id)
+        intent_name = result["intent"]
+
+    # Route to the appropriate handler
+    if intent_name == "check_cyclone_status":
+        from backend.services.imd_fetcher import IMDFetcherService
+        fetcher = IMDFetcherService()
+        status = fetcher.get_live_cyclone_status()
+        if status.status == "active" and status.active_cyclone:
+            latest_pt = status.active_cyclone.track_points[0] if status.active_cyclone.track_points else None
+            wind_kmph = getattr(status.active_cyclone, "wind_kmph", None)
+            if wind_kmph is None and latest_pt:
+                wind_kmph = latest_pt.wind_speed_kmph or round(latest_pt.wind_speed_knots * 1.852)
+            pressure_hpa = getattr(status.active_cyclone, "pressure_hpa", None)
+            if pressure_hpa is None and latest_pt:
+                pressure_hpa = latest_pt.central_pressure_hpa
+            reply = f"Active cyclone {status.active_cyclone.name} detected. Wind: {int(wind_kmph or 0)} km/h, Pressure: {int(pressure_hpa or 0)} hPa."
+        else:
+            reply = "No active cyclones in the Bay of Bengal. Continuous monitoring active."
+    elif intent_name == "get_advisory":
+        global _LATEST_ADVISORY
+        if _LATEST_ADVISORY is not None:
+            reply = f"Current Advisory: {_LATEST_ADVISORY.headline}. Severity: {_LATEST_ADVISORY.severity_level.value}. {_LATEST_ADVISORY.multilingual_advisories.english}"
+        else:
+            reply = "Generating advisory... check the dashboard panel for the full multilingual advisory."
+    else:
+        reply = "I can help with cyclone status or current advisories. Try asking: 'What is the cyclone status?' or 'Give me the advisory.'"
+
+    # Return in Dialogflow ES format (works with the frontend too)
+    return {
+        "fulfillmentText": reply,
+        "fulfillmentMessages": [{"text": {"text": [reply]}}],
+        "intent": intent_name,
+        "queryText": query_text,
+    }
+
+
+@router.post("/chat/message", response_model=ChatResponse)
+@router.post("/api/chat/message", response_model=ChatResponse)
+async def chat_message(payload: ChatMessage):
+    """Simplified chat endpoint used by the frontend widget."""
+    result = await dialogflow_webhook({
+        "message": payload.message,
+        "session_id": payload.session_id,
+    })
+    return ChatResponse(
+        reply=result["fulfillmentText"],
+        intent=result["intent"],
+        session_id=payload.session_id,
+    )
+
 
 
 

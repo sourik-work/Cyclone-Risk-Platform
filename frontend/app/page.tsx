@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ControlHeader, DashboardMode } from '../components/dashboard/ControlHeader';
 import { TelemetrySidebar } from '../components/dashboard/TelemetrySidebar';
 import { TimeScrubber } from '../components/dashboard/TimeScrubber';
+import { ChatWidget } from '../components/dashboard/ChatWidget';
 import { CycloneMap } from '../components/map/CycloneMap';
 import { MapControls } from '../components/map/MapControls';
 import {
@@ -569,9 +570,11 @@ export default function Home() {
             liveData={liveData}
             selectedStormId={selectedStormId}
           />
-
         </div>
       </div>
+
+      {/* Floating Dialogflow Conversational Agent */}
+      <ChatWidget />
     </main>
   );
 }

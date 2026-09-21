@@ -436,3 +436,19 @@ class InsuranceEvaluateResponse(BaseModel):
     total_payout_inr: float
     total_households: int
     results: List[InsuranceTriggerResult]
+
+
+class ChatMessage(BaseModel):
+    """User message payload for Dialogflow / conversational agent."""
+
+    message: str
+    session_id: str = "default"
+
+
+class ChatResponse(BaseModel):
+    """Assistant reply from conversational agent."""
+
+    reply: str
+    intent: str
+    session_id: str
+
