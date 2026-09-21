@@ -217,8 +217,8 @@ export default function Home() {
     if (mode === 'live') {
       return Math.max(0, activeTrack.track_points.length - 1);
     }
-    return Math.min(8, activeTrack.track_points.length - 1);
-  }, [mode, activeTrack]);
+    return selectedStormId === 'amphan' ? 6 : 7;
+  }, [mode, selectedStormId, activeTrack]);
 
   const [activePointIndex, setActivePointIndex] = useState<number>(defaultIndex);
 
@@ -227,7 +227,7 @@ export default function Home() {
     if (mode === 'live') {
       setActivePointIndex(0);
     } else {
-      setActivePointIndex(selectedStormId === 'amphan' ? 6 : 8);
+      setActivePointIndex(selectedStormId === 'amphan' ? 6 : 7);
     }
   }, [mode, selectedStormId]);
 
@@ -235,7 +235,7 @@ export default function Home() {
   const handleSelectStorm = (stormId: string) => {
     setSelectedStormId(stormId);
     const track = stormId === 'amphan' ? SEED_AMPHAN_TRACK : SEED_FANI_TRACK;
-    setActivePointIndex(Math.min(6, track.track_points.length - 1));
+    setActivePointIndex(stormId === 'amphan' ? 6 : 7);
     if (stormId === 'amphan') {
       // Hide Earth Engine overlay by default when viewing Amphan (tile pending)
       setLayerToggles((prev) => ({ ...prev, showEarthEngine: false }));

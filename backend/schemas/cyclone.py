@@ -475,7 +475,8 @@ class GeminiForecastRequest(BaseModel):
     """Request payload for in-context Gemini cyclone forecasting."""
 
     cyclone_id: str
-    recent_point_count: int = 5  # how many recent points to send to Gemini
+    recent_point_count: int = 4  # how many recent points to send to Gemini
+    end_index: Optional[int] = None  # which point is the "current" observation
 
 
 class GeminiForecastPoint(BaseModel):

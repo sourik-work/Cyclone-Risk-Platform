@@ -48,6 +48,7 @@ interface GeminiForecastResponse {
 interface ForecastComparisonCardProps {
   cycloneId: string;
   track?: CycloneTrack | null;
+  currentTimeIndex?: number;
 }
 
 function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -64,7 +65,11 @@ function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   return R * c;
 }
 
-export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ cycloneId, track }) => {
+export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
+  cycloneId,
+  track,
+  currentTimeIndex,
+}) => {
   const [lstm, setLstm] = useState<LstmForecastResponse | null>(null);
   const [gemini, setGemini] = useState<GeminiForecastResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -78,9 +83,16 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
     try {
-      // Calculate the last 4 point indices for LSTM
-      const totalPoints = track?.track_points?.length || (cycloneId === 'BOB-01-2020' ? 10 : 12);
-      const lastFourIndices = [totalPoints - 4, totalPoints - 3, totalPoints - 2, totalPoints - 1];
+      // Use the current scrubber position as the forecast starting point
+      // Take the 4 points ending at the current scrubber position
+      const effectiveIndex =
+        currentTimeIndex !== undefined
+          ? currentTimeIndex
+          : cycloneId === 'BOB-01-2020'
+          ? 6
+          : 7;
+      const startIndex = Math.max(3, effectiveIndex); // ensure we have 4 points
+      const indices = [startIndex - 3, startIndex - 2, startIndex - 1, startIndex];
 
       // Execute both forecast calls in parallel
       const [lstmRes, geminiRes] = await Promise.all([
@@ -89,7 +101,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ 
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             cyclone_id: cycloneId,
-            recent_point_indices: lastFourIndices,
+            recent_point_indices: indices,
           }),
         }),
         fetch(`${backendUrl}/api/forecast/gemini`, {
@@ -98,6 +110,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ 
           body: JSON.stringify({
             cyclone_id: cycloneId,
             recent_point_count: 4,
+            end_index: startIndex, // pass the end index to Gemini
           }),
         }),
       ]);
@@ -117,7 +130,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({ 
     } finally {
       setIsLoading(false);
     }
-  }, [cycloneId]);
+  }, [cycloneId, currentTimeIndex]);
 
   useEffect(() => {
     fetchForecasts();

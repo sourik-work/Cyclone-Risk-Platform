@@ -461,8 +461,13 @@ async def gemini_forecast(req: GeminiForecastRequest):
     if not track:
         raise HTTPException(404, detail=f"Cyclone track '{req.cyclone_id}' not found")
 
-    # Take last N observed points
-    recent = track.track_points[-req.recent_point_count:]
+    # Take observed points up to end_index if specified, else last N points
+    if req.end_index is not None:
+        end = min(req.end_index + 1, len(track.track_points))
+        start = max(0, end - req.recent_point_count)
+        recent = track.track_points[start:end]
+    else:
+        recent = track.track_points[-req.recent_point_count:]
     recent_dicts = [
         {
             "lat": p.latitude,
