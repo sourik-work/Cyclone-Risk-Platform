@@ -90,19 +90,23 @@ This platform provides **48-hour anticipatory lead time** by combining:
 
 ### Dual-Model Ensemble Forecast
 
-The platform runs **two independent predictive approaches** in parallel and compares their outputs:
+The platform runs **two independent predictive approaches** in parallel and compares their 48-hour outputs:
 
-| Model | Method | 48h RMSE | Agreement |
-|-------|--------|----------|-----------|
-| **TrackLSTM v1** | Trained 2-layer LSTM (119k params) | 155.6 km | Reference |
-| **Gemini 3.7 Flash** | In-context time-series reasoning | Qualitative | — |
+| Model | Method | Parameters | 24h RMSE |
+|-------|--------|-----------|----------|
+| **TrackLSTM v1** | Trained 2-layer LSTM | 119,872 | 85.6 km |
+| **Gemini 3.7 Flash** | In-context time-series reasoning | — | Qualitative |
 
-**Actual Fani prediction (2019 landfall scenario):**
-- TrackLSTM 48h: 22.18°N, 85.46°E
-- Gemini 48h: 22.12°N, 85.65°E
-- **Divergence: 20.6 km** ✓ Models agree
+**Validation across two historical cases:**
 
-When the two models agree within 100 km, we report **HIGH confidence**. When they diverge beyond 200 km, the dashboard shows an amber warning — this is real ensemble forecast verification logic, the same principle NOAA uses for multi-model hurricane guidance.
+| Cyclone | LSTM 48h position | Gemini 48h position | Divergence |
+|---------|------------------|---------------------|-----------|
+| Fani (2019) | 22.18°N, 85.46°E | 22.12°N, 85.65°E | 20.6 km |
+| Amphan (2020) | 23.71°N, 88.70°E | 23.22°N, 88.60°E | 55.9 km |
+
+When the two models agree within 100 km, we report **HIGH confidence**. When they diverge beyond 200 km, the dashboard shows an amber warning. This is real ensemble forecast verification logic — the same principle NOAA uses for multi-model hurricane guidance.
+
+**Caveat:** This is illustrative agreement on two historical cases, not a statistically robust ensemble validation. A production deployment would validate across a full test set of 20+ historical cyclones.
 
 ### Multilingual Advisories
 - **6 Indian languages**: English, Hindi, Odia, Bengali, Telugu, Tamil
@@ -121,6 +125,15 @@ When the two models agree within 100 km, we report **HIGH confidence**. When the
 - **Floating Chat Widget** on operations dashboard
 - Dual-intent Dialogflow ES webhook fulfillment with Gemini 3.7 Flash classification
 - Live queries for active storm status (`check_cyclone_status`) and current advisories (`get_advisory`)
+
+#### Why Dialogflow ES + Gemini?
+
+The chat pipeline uses both because they serve different roles:
+
+- **Dialogflow ES** — provides the GCP-native conversational surface (session management, intent registry, webhook contract). It gives us a standards-compliant `/api/dialogflow/webhook` endpoint that could be extended with Dialogflow CX or integrated with other enterprise platforms without changing our backend.
+- **Gemini 3.7 Flash** — handles semantic intent classification for messages that don't match Dialogflow's training phrases. This is a resilience layer, not a replacement.
+
+The alternative — using Gemini function-calling directly with no Dialogflow — would work but would lose the standard GCP conversational contract that enterprise municipal systems expect. We chose the layered approach for interoperability.
 
 ### Infrastructure Exposure
 - **40 substations** + **15 transmission lines** across 4 states
@@ -176,11 +189,18 @@ All triggers are logged to Firestore for audit and pre-landfall liquidity releas
 
 ---
 
-## Gemini Multimodal Reasoning
+### Gemini Multimodal Reasoning
 
-The `/api/exposure/reason` endpoint sends **Sentinel-1 SAR flood extent bounding boxes**, **district infrastructure geometry** (substations, roads, hospitals), and **storm forecast metrics** (wind, surge, rainfall) to **Gemini 3.7 Flash multimodal**.
+The `/api/exposure/reason` endpoint sends the following context to **Gemini 3.7 Flash**:
 
-Gemini returns:
+**Inputs:**
+- **Sentinel-1 SAR flood extent** — derived bounding box coordinates and area (km²) from GEE tile analysis
+- **District infrastructure geometry** — substation, road, and hospital coordinates with elevation and coastal proximity
+- **Storm forecast metrics** — wind (km/h), surge (m), rainfall (mm), atmospheric pressure (hPa)
+
+**Architectural note:** Gemini reasons over *derived* geometric features (bounding boxes and coordinates) rather than raw SAR raster pixels. This is a deliberate pattern — computing derived features in Earth Engine and passing them to the LLM gives us faster inference (<5s), lower token cost, and more deterministic outputs than sending multi-MB GeoTIFFs directly. A production extension could pass raw Sentinel-1 imagery directly for pixel-level reasoning.
+
+**Gemini returns:**
 - A district-level exposure narrative
 - Named critical assets with per-asset reasoning
 - 12-hour pre-landfall recommended actions
