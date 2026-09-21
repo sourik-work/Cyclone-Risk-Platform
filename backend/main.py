@@ -1,7 +1,26 @@
 """Main entrypoint for Cyclone Risk Platform FastAPI application."""
 
+import base64
+import json
 import logging
+import os
 from contextlib import asynccontextmanager
+from pathlib import Path
+
+# Handle credentials from base64-encoded env var (for Render deployment)
+creds_env = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+if creds_env and not Path(creds_env).exists():
+    # Not a file path — assume it's a base64-encoded JSON
+    try:
+        decoded = base64.b64decode(creds_env)
+        creds_path = "/tmp/service-account.json" if os.name != "nt" else str(Path.home() / "service-account.json")
+        with open(creds_path, "wb") as f:
+            f.write(decoded)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = creds_path
+        print(f"Decoded credentials to: {creds_path}")
+    except Exception as e:
+        print(f"Warning: Could not decode credentials env var: {e}")
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -40,14 +59,24 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS configuration allowing local Next.js frontend
+# CORS configuration allowing local Next.js frontend and production URLs
+allowed_origins = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+]
+
+# Add production frontend URL from env var
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url and frontend_url not in allowed_origins:
+    allowed_origins.append(frontend_url)
+
+# Allow all Vercel preview URLs (pattern)
+allowed_origins.append("https://*.vercel.app")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8080",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

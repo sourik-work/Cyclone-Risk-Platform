@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: cyclone-risk-platform-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GCP_PROJECT_ID
+        value: cyclone-risk-platform
+      - key: BIGQUERY_DATASET
+        value: cyclone_risk_dw
+      - key: EE_PROJECT
+        value: cyclone-risk-platform
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        sync: false
+      - key: BACKEND_HOST
+        value: 0.0.0.0
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_URL
+        sync: false
+    healthCheckPath: /api/health

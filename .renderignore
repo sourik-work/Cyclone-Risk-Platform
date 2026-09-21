@@ -1,0 +1,13 @@
+.git/
+.env
+.env.local
+service-account.json
+dialogflow-service-account.json
+node_modules/
+.next/
+__pycache__/
+*.pyc
+.pytest_cache/
+frontend/
+.agents/
+*.png
