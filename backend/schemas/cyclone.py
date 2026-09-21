@@ -405,3 +405,33 @@ class FCMNotificationRequest(BaseModel):
     title: str
     body: str
     state: str
+
+
+class InsuranceTriggerResult(BaseModel):
+    """Parametric insurance contract trigger evaluation result."""
+
+    contract_id: str
+    state: str
+    districts: List[str]
+    trigger_met: bool
+    current_value: float
+    threshold: float
+    payout_estimate_inr: float
+    households_affected: int
+    status: str
+
+
+class InsuranceEvaluateRequest(BaseModel):
+    """Payload to trigger parametric insurance evaluation."""
+
+    cyclone_id: str = "BOB-02-2019"
+
+
+class InsuranceEvaluateResponse(BaseModel):
+    """Aggregate parametric insurance trigger and payout liquidity evaluation."""
+
+    total_contracts: int
+    triggers_active: int
+    total_payout_inr: float
+    total_households: int
+    results: List[InsuranceTriggerResult]

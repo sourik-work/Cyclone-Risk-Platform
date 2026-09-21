@@ -556,6 +556,10 @@ export default function Home() {
             onSelectDistrict={setSelectedDistrict}
             onLanguageChange={setCurrentLanguage}
             infrastructureData={infrastructureData}
+            mode={mode}
+            hasActiveCyclone={mode === 'live' && !!liveData?.active_cyclone}
+            liveData={liveData}
+            selectedStormId={selectedStormId}
           />
 
         </div>

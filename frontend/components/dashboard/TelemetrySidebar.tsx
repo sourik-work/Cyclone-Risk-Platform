@@ -44,6 +44,7 @@ import {
   CloudRain,
 } from 'lucide-react';
 import { AlertSubscription } from './AlertSubscription';
+import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
 
 interface TelemetrySidebarProps {
   track: CycloneTrack;
@@ -58,6 +59,10 @@ interface TelemetrySidebarProps {
   onSelectDistrict?: (district: DistrictProperties) => void;
   onLanguageChange?: (lang: SupportedLanguage) => void;
   infrastructureData?: InfrastructureFeatureCollection | null;
+  mode?: 'historical' | 'live';
+  hasActiveCyclone?: boolean;
+  liveData?: any;
+  selectedStormId?: string;
 }
 
 const formatCount = (val: number): string => {
@@ -236,6 +241,10 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   onSelectDistrict,
   onLanguageChange,
   infrastructureData,
+  mode = 'historical',
+  hasActiveCyclone,
+  liveData,
+  selectedStormId,
 }) => {
   const currentPoint: TrackPoint = track.track_points[activePointIndex] || track.track_points[0];
   const effectiveAdvisory = advisory || FALLBACK_ADVISORY;
@@ -1256,6 +1265,16 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
       {/* FCM Push Alert Subscription Card */}
       <AlertSubscription currentState={selectedState || 'Odisha'} />
+
+      {/* Parametric Insurance Triggers Card */}
+      <InsuranceTriggerPanel
+        cycloneId={mode === 'live' ? (liveData?.active_cyclone?.cyclone_id || 'calm-baseline') : (selectedStormId || track?.id || 'BOB-02-2019')}
+        mode={mode}
+        hasActiveCyclone={mode === 'live' && (hasActiveCyclone !== undefined ? hasActiveCyclone : !!liveData?.active_cyclone)}
+        cycloneName={mode === 'live' ? (liveData?.active_cyclone?.name || null) : (track?.name || 'Fani')}
+        cycloneCategory={mode === 'live' ? (liveData?.active_cyclone?.current_status || null) : (track?.current_status || 'Extremely Severe Cyclonic Storm')}
+        currentState={selectedState || 'Odisha'}
+      />
 
       {/* 3. Gemini Multilingual Anticipatory Action Early Warning */}
       <div className="bg-gradient-to-b from-red-950/40 to-slate-900/90 backdrop-blur-md border border-red-500/30 rounded-xl p-4 shadow-xl space-y-3 relative overflow-hidden transition-all duration-300">

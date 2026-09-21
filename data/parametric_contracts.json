@@ -1,0 +1,68 @@
+{
+  "contracts": [
+    {
+      "contract_id": "PC-OD-001",
+      "state": "Odisha",
+      "districts": ["Puri", "Jagatsinghpur", "Kendrapara"],
+      "insured_population": 850000,
+      "coverage_type": "STORM_SURGE",
+      "trigger_threshold": {
+        "metric": "surge_height_m",
+        "operator": ">=",
+        "value": 1.5
+      },
+      "payout_per_household_inr": 15000,
+      "max_payout_inr": 12750000000,
+      "insurance_partner": "National Disaster Risk Pool",
+      "active": true
+    },
+    {
+      "contract_id": "PC-WB-002",
+      "state": "West Bengal",
+      "districts": ["South 24 Parganas", "North 24 Parganas"],
+      "insured_population": 1200000,
+      "coverage_type": "WIND_SPEED",
+      "trigger_threshold": {
+        "metric": "wind_speed_kmph",
+        "operator": ">=",
+        "value": 100
+      },
+      "payout_per_household_inr": 12000,
+      "max_payout_inr": 14400000000,
+      "insurance_partner": "National Disaster Risk Pool",
+      "active": true
+    },
+    {
+      "contract_id": "PC-AP-003",
+      "state": "Andhra Pradesh",
+      "districts": ["Srikakulam", "Vizianagaram", "Visakhapatnam"],
+      "insured_population": 620000,
+      "coverage_type": "COMPOSITE",
+      "trigger_threshold": {
+        "metric": "composite_risk",
+        "operator": ">=",
+        "value": 0.75
+      },
+      "payout_per_household_inr": 18000,
+      "max_payout_inr": 11160000000,
+      "insurance_partner": "National Disaster Risk Pool",
+      "active": true
+    },
+    {
+      "contract_id": "PC-TN-004",
+      "state": "Tamil Nadu",
+      "districts": ["Chennai", "Cuddalore", "Nagapattinam"],
+      "insured_population": 410000,
+      "coverage_type": "RAINFALL",
+      "trigger_threshold": {
+        "metric": "rainfall_24h_mm",
+        "operator": ">=",
+        "value": 150
+      },
+      "payout_per_household_inr": 10000,
+      "max_payout_inr": 4100000000,
+      "insurance_partner": "National Disaster Risk Pool",
+      "active": true
+    }
+  ]
+}

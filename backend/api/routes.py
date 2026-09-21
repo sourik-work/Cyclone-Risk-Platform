@@ -31,6 +31,9 @@ from backend.schemas.cyclone import (
     ForecastTrackResponse,
     HazardSummary,
     HistoricalAnalyticsResponse,
+    InsuranceEvaluateRequest,
+    InsuranceEvaluateResponse,
+    InsuranceTriggerResult,
     LiveCycloneResponse,
     OSMFeature,
     RainfallForecast,
@@ -61,7 +64,11 @@ from backend.services.osm_fetcher import (
     fetch_shelters,
     get_district_bbox,
 )
-from backend.services.rainfall_service import get_rainfall_forecast
+from backend.services.rainfall_service import (
+    _load_districts,
+    _load_track_max_wind,
+    get_rainfall_forecast,
+)
 from backend.services.surge_service import simulate_surge
 from backend.services.tts_service import synthesize
 from backend.services.cloud_storage_service import upload_citizen_photo
@@ -70,6 +77,11 @@ from backend.services.firebase_service import (
     subscribe_device,
     verify_id_token,
     write_citizen_report,
+)
+from backend.services.insurance_service import (
+    evaluate_all_contracts,
+    load_contracts,
+    log_trigger_to_firestore,
 )
 
 logger = logging.getLogger(__name__)
@@ -618,6 +630,98 @@ def broadcast_fcm_alert_endpoint(payload: FCMNotificationRequest) -> Dict[str, A
         "state": payload.state,
         "result": res,
     }
+
+
+@router.get("/insurance/contracts")
+def get_insurance_contracts() -> List[Dict[str, Any]]:
+    """Returns all active parametric insurance risk pool contracts."""
+    return load_contracts()
+
+
+@router.post("/insurance/evaluate", response_model=InsuranceEvaluateResponse)
+def evaluate_insurance_contracts(payload: InsuranceEvaluateRequest) -> InsuranceEvaluateResponse:
+    """Evaluates all parametric insurance contracts against current storm track, surge, and rainfall hazards."""
+    # 1. Load contracts
+    contracts = load_contracts()
+
+    # 2. Extract storm track metadata (max wind)
+    peak_wind = _load_track_max_wind(payload.cyclone_id)
+
+    # District metrics map across all districts mentioned in contracts
+    district_metrics: Dict[str, Dict[str, float]] = {}
+    vulnerability_data = _load_districts()
+
+    for c in contracts:
+        for d in c.get("districts", []):
+            if d not in district_metrics:
+                # Surge simulation
+                try:
+                    surge_res = simulate_surge(cyclone_id=payload.cyclone_id, district_id=d)
+                    max_surge_m = float(surge_res.get("max_surge_m", 0.0))
+                except Exception:
+                    max_surge_m = 0.0
+
+                # Rainfall forecast
+                try:
+                    rf_res = get_rainfall_forecast(district_id=d, cyclone_id=payload.cyclone_id)
+                    rain_mm = float(rf_res.get("forecast_24h_mm", 0.0))
+                except Exception:
+                    rain_mm = 0.0
+
+                # Vulnerability / composite risk calculation
+                dist_info = vulnerability_data.get(d.lower()) or vulnerability_data.get(d.upper()) or {}
+                vuln_score = 0.70
+                if dist_info:
+                    vuln_score = min(0.95, max(0.50, 0.60 + (dist_info.get("vulnerable_population", 400000) / 1000000) * 0.15))
+
+                wind_factor = min(1.0, peak_wind / 200.0)
+                surge_factor = min(1.0, max_surge_m / 3.0)
+                rain_factor = min(1.0, rain_mm / 200.0)
+                composite_risk = round(0.40 * wind_factor + 0.30 * surge_factor + 0.15 * rain_factor + 0.15 * vuln_score, 2)
+
+                district_metrics[d] = {
+                    "max_surge_m": max_surge_m,
+                    "surge_height_m": max_surge_m,
+                    "wind_kmph": peak_wind,
+                    "wind_speed_kmph": peak_wind,
+                    "rainfall_24h_mm": rain_mm,
+                    "forecast_24h_mm": rain_mm,
+                    "composite_risk": composite_risk,
+                    "cyclone_risk_score": composite_risk,
+                }
+
+    storm_data = {
+        "cyclone_id": payload.cyclone_id,
+        "wind_kmph": peak_wind,
+        "wind_speed_kmph": peak_wind,
+        "district_metrics": district_metrics,
+    }
+
+    # 3. Evaluate contracts
+    eval_results = evaluate_all_contracts(storm_data)
+
+    # 4. Log any TRIGGER_ACTIVE events to Firestore
+    for r in eval_results:
+        if r.get("trigger_met") or r.get("status") == "TRIGGER_ACTIVE":
+            try:
+                log_trigger_to_firestore(r)
+            except Exception as e:
+                logger.warning(f"Error logging trigger {r.get('contract_id')} to Firestore: {e}")
+
+    # 5. Build summary response
+    total_contracts = len(eval_results)
+    triggers_active = sum(1 for r in eval_results if r.get("trigger_met"))
+    total_payout_inr = sum(float(r.get("payout_estimate_inr", 0.0)) for r in eval_results)
+    total_households = sum(int(r.get("households_affected", 0)) for r in eval_results)
+
+    return InsuranceEvaluateResponse(
+        total_contracts=total_contracts,
+        triggers_active=triggers_active,
+        total_payout_inr=total_payout_inr,
+        total_households=total_households,
+        results=[InsuranceTriggerResult(**r) for r in eval_results],
+    )
+
 
 
 
