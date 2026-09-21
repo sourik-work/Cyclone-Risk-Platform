@@ -15,11 +15,20 @@ export interface InsuranceTriggerResult {
   status: 'TRIGGER_ACTIVE' | 'APPROACHING' | 'BELOW_THRESHOLD';
 }
 
+export interface UncertaintyAssessment {
+  positional_rmse_km: number;
+  model_agreement_km?: number | null;
+  trigger_confidence: string;
+  trigger_buffer_pct: number;
+  justification: string;
+}
+
 export interface InsuranceEvaluateResponse {
   total_contracts: number;
   triggers_active: number;
   total_payout_inr: number;
   total_households: number;
+  uncertainty_assessment?: UncertaintyAssessment | null;
   results: InsuranceTriggerResult[];
 }
 
@@ -228,6 +237,26 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
           Monitoring 4 states · 16 districts · 3.08M insured population · Thresholds armed
         </div>
       </div>
+
+      {evalData.uncertainty_assessment && (
+        <div className="bg-slate-900/60 border border-slate-700 rounded p-2 mb-3 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-slate-400">Uncertainty Buffer</span>
+            <span className={`font-bold ${
+              evalData.uncertainty_assessment.trigger_confidence === 'HIGH' ? 'text-emerald-400' :
+              evalData.uncertainty_assessment.trigger_confidence === 'MEDIUM' ? 'text-amber-400' : 'text-red-400'
+            }`}>
+              {evalData.uncertainty_assessment.trigger_confidence} · +{(evalData.uncertainty_assessment.trigger_buffer_pct * 100).toFixed(0)}% margin
+            </span>
+          </div>
+          <div className="text-slate-500 mt-1 leading-relaxed">
+            {evalData.uncertainty_assessment.justification}
+          </div>
+          <div className="text-slate-600 mt-1">
+            Positional RMSE @ 48h: {evalData.uncertainty_assessment.positional_rmse_km.toFixed(1)} km
+          </div>
+        </div>
+      )}
 
       {/* Contract Trigger Rows */}
       <div className="space-y-2.5">

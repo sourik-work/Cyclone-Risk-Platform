@@ -51,7 +51,18 @@ This platform provides **48-hour anticipatory lead time** by combining:
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                            AI MODELING LAYER                                │
-│ Trained LSTM (TrackLSTM v1) · Gemini 3.7 Flash · Gemini 3.1 TTS · Dialogflow│
+│                                                                             │
+│  ┌──────────────────┐  ┌───────────────────┐  ┌─────────────────────────┐   │
+│  │  Trained LSTM    │  │ Gemini 3.7 Flash  │  │ Dialogflow ES + Gemini  │   │
+│  │  (TrackLSTM v1)  │  │ (multimodal +     │  │ (conversational         │   │
+│  │  119k params     │  │  in-context)      │  │  webhook contract)      │   │
+│  │  RMSE 85.6 km    │  │                   │  │                         │   │
+│  └────────┬─────────┘  └────────┬──────────┘  └────────────┬────────────┘   │
+│           │                     │                           │               │
+│           ▼                     ▼                           ▼               │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │       Ensemble Verification · Advisory Generation · Chat UI          │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -179,6 +190,15 @@ exceedance_ratio = current_value / threshold
 affected_ratio = min(exceedance_ratio × 0.10, 0.60)
 households = insured_population × affected_ratio
 ```
+
+**Coefficient provenance:** The 0.10 household-affected coefficient and the 0.60 cap are **illustrative placeholders** chosen to produce realistic payout magnitudes for extreme storms (Fani ₹823 Cr, Amphan ₹904 Cr). They are **not actuarially derived**. A production deployment would calibrate these coefficients against:
+- Historical insurance claims data (e.g., NDRP, CCRIF)
+- Actuarial catastrophe models (RMS, AIR, Verisk)
+- Government post-disaster compensation records (NDMA, state relief funds)
+
+The formula itself is sound; the coefficients are the place where real-world data must be injected.
+
+**Uncertainty-aware triggering:** The insurance engine propagates the forecast model's positional RMSE into the trigger threshold. When two-model agreement is strong (<100 km divergence), contracts trigger with a tight +5% margin. When uncertainty is high, the trigger threshold widens by up to +30%, requiring stronger evidence before payout. This prevents pre-landfall liquidity release from being triggered on low-confidence forecasts — critical for real parametric schemes.
 
 **Realistic payouts:**
 - Cyclone Fani (215 km/h, 3.31m surge): **₹823 Cr**

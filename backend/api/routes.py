@@ -844,16 +844,18 @@ def evaluate_insurance_contracts(payload: InsuranceEvaluateRequest) -> Insurance
                 logger.warning(f"Error logging trigger {r.get('contract_id')} to Firestore: {e}")
 
     # 5. Build summary response
-    total_contracts = len(eval_results)
-    triggers_active = sum(1 for r in eval_results if r.get("trigger_met"))
-    total_payout_inr = sum(float(r.get("payout_estimate_inr", 0.0)) for r in eval_results)
-    total_households = sum(int(r.get("households_affected", 0)) for r in eval_results)
+    total_contracts = eval_results.get("total_contracts", len(eval_results)) if hasattr(eval_results, "get") else len(eval_results)
+    triggers_active = eval_results.get("triggers_active", sum(1 for r in eval_results if r.get("trigger_met"))) if hasattr(eval_results, "get") else sum(1 for r in eval_results if r.get("trigger_met"))
+    total_payout_inr = eval_results.get("total_payout_inr", sum(float(r.get("payout_estimate_inr", 0.0)) for r in eval_results)) if hasattr(eval_results, "get") else sum(float(r.get("payout_estimate_inr", 0.0)) for r in eval_results)
+    total_households = eval_results.get("total_households", sum(int(r.get("households_affected", 0)) for r in eval_results)) if hasattr(eval_results, "get") else sum(int(r.get("households_affected", 0)) for r in eval_results)
+    uncertainty = eval_results.get("uncertainty_assessment") if hasattr(eval_results, "get") else None
 
     return InsuranceEvaluateResponse(
         total_contracts=total_contracts,
         triggers_active=triggers_active,
         total_payout_inr=total_payout_inr,
         total_households=total_households,
+        uncertainty_assessment=uncertainty,
         results=[InsuranceTriggerResult(**r) for r in eval_results],
     )
 

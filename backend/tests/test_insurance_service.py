@@ -259,3 +259,27 @@ def test_api_evaluate_insurance_contracts_fani_vs_amphan():
     # Fani and Amphan MUST produce different payout totals because of different intensities
     assert resp_fani.total_payout_inr != resp_amphan.total_payout_inr
     assert resp_amphan.total_payout_inr > resp_fani.total_payout_inr
+
+
+def test_compute_uncertainty_buffer_and_response_integration():
+    """Tests uncertainty buffer calculation and presence in InsuranceEvaluateResponse."""
+    from backend.services.insurance_service import compute_uncertainty_buffer
+
+    # Fani agreement < 100 km -> HIGH confidence
+    unc_fani = compute_uncertainty_buffer("BOB-02-2019")
+    assert unc_fani["trigger_confidence"] == "HIGH"
+    assert unc_fani["trigger_buffer_pct"] == 0.05
+    assert unc_fani["model_agreement_km"] == 20.6
+
+    # Unknown storm -> confidence derived from RMSE
+    unc_unknown = compute_uncertainty_buffer("UNKNOWN-STORM")
+    assert unc_unknown["model_agreement_km"] is None
+    assert unc_unknown["trigger_confidence"] in ("MEDIUM", "LOW")
+
+    # API response includes uncertainty assessment
+    req = InsuranceEvaluateRequest(cyclone_id="BOB-02-2019")
+    resp = evaluate_insurance_contracts(req)
+    assert resp.uncertainty_assessment is not None
+    assert resp.uncertainty_assessment.trigger_confidence == "HIGH"
+    assert resp.uncertainty_assessment.trigger_buffer_pct == 0.05
+    assert resp.uncertainty_assessment.model_agreement_km == 20.6

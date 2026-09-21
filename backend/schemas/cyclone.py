@@ -428,6 +428,14 @@ class InsuranceEvaluateRequest(BaseModel):
     cyclone_id: str = "BOB-02-2019"
 
 
+class UncertaintyAssessment(BaseModel):
+    positional_rmse_km: float
+    model_agreement_km: Optional[float] = None
+    trigger_confidence: str
+    trigger_buffer_pct: float
+    justification: str
+
+
 class InsuranceEvaluateResponse(BaseModel):
     """Aggregate parametric insurance trigger and payout liquidity evaluation."""
 
@@ -435,6 +443,7 @@ class InsuranceEvaluateResponse(BaseModel):
     triggers_active: int
     total_payout_inr: float
     total_households: int
+    uncertainty_assessment: Optional[UncertaintyAssessment] = None
     results: List[InsuranceTriggerResult]
 
 
