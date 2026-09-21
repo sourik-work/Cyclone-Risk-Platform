@@ -30,3 +30,5 @@ Thumbs.db
 .idea/
 *.swp
 service-account.json
+# Debug screenshots at root
+/*.png
