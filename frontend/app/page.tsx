@@ -295,7 +295,7 @@ export default function Home() {
         const data: AnticipatoryAdvisory = await res.json();
         setAdvisory(data);
       } catch (err: any) {
-        if (err.name === 'AbortError') {
+        if (err.name === 'AbortError' || signal?.aborted) {
           return;
         }
         console.warn(
@@ -304,35 +304,43 @@ export default function Home() {
         );
         setAdvisory(FALLBACK_ADVISORY);
       } finally {
-        setIsLoadingAdvisory(false);
+        if (!signal?.aborted) {
+          setIsLoadingAdvisory(false);
+        }
       }
     },
     []
   );
 
-  // Fetch advisory whenever track, track point, or district changes in historical mode or active live mode
+  // Consolidate into ONE useEffect: debounced advisory fetch with AbortController
   useEffect(() => {
-    if (mode === 'live' && (!liveData || liveData.status === 'monitoring' || !liveData.active_cyclone)) {
-      // In live monitoring state without an active cyclone, use clean monitoring advisory
+    if (mode === 'live' && (!hasActiveCyclone || !liveData?.active_cyclone)) {
       setAdvisory(MONITORING_ADVISORY);
       return;
     }
 
+    const targetCycloneId =
+      mode === 'live' && liveData?.active_cyclone
+        ? liveData.active_cyclone.id || liveData.active_cyclone.name
+        : selectedStormId === 'amphan'
+        ? 'BOB-01-2020'
+        : 'BOB-02-2019';
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       fetchAdvisory(
-        activeTrack.id,
+        targetCycloneId,
         activePointIndex,
         selectedDistrict?.district_name,
         controller.signal
       );
-    }, 200);
+    }, 500);
 
     return () => {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [mode, liveData, activeTrack.id, activePointIndex, selectedDistrict?.district_name, fetchAdvisory]);
+  }, [selectedStormId, activePointIndex, currentLanguage, selectedDistrict?.district_name, mode, hasActiveCyclone]);
 
   const [layerToggles, setLayerToggles] = useState<MapLayerToggles>({
     showTrack: true,
