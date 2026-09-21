@@ -14,7 +14,10 @@ import {
   MapPin,
   TrendingUp,
   Layers,
+  Camera,
 } from 'lucide-react';
+import { SignInButton } from '../auth/SignInButton';
+import { ReportDamageModal } from './ReportDamageModal';
 
 export type DashboardMode = 'historical' | 'live';
 
@@ -40,6 +43,7 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
   const [timeUtc, setTimeUtc] = useState<string>('');
   const [timeIst, setTimeIst] = useState<string>('');
   const [showApacModal, setShowApacModal] = useState<boolean>(false);
+  const [showReportDamage, setShowReportDamage] = useState<boolean>(false);
 
   // Compute dynamic India-scale coverage metrics
   const coverageDistricts =
@@ -217,8 +221,32 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
               );
             })}
           </div>
+
+          {/* Citizen Damage Report Button */}
+          <button
+            id="report-damage-btn"
+            onClick={() => setShowReportDamage(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-400 transition-all duration-200 cursor-pointer shadow-sm"
+            title="Submit Citizen Cyclone Damage Photo"
+          >
+            <Camera className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Report Damage</span>
+          </button>
+
+          {/* Google Firebase Auth */}
+          <SignInButton />
         </div>
       </header>
+
+      {/* Citizen Damage Report Modal */}
+      {showReportDamage && (
+        <ReportDamageModal
+          isOpen={showReportDamage}
+          onClose={() => setShowReportDamage(false)}
+          defaultState={coverageDistricts[0]?.state_name || 'Odisha'}
+          defaultDistrict={coverageDistricts[0]?.district_name || 'Puri'}
+        />
+      )}
 
       {/* APAC Scale Phase 2 Expansion Modal */}
       {showApacModal && (

@@ -43,6 +43,7 @@ import {
   Building2,
   CloudRain,
 } from 'lucide-react';
+import { AlertSubscription } from './AlertSubscription';
 
 interface TelemetrySidebarProps {
   track: CycloneTrack;
@@ -1252,6 +1253,9 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         </div>
       </div>
+
+      {/* FCM Push Alert Subscription Card */}
+      <AlertSubscription currentState={selectedState || 'Odisha'} />
 
       {/* 3. Gemini Multilingual Anticipatory Action Early Warning */}
       <div className="bg-gradient-to-b from-red-950/40 to-slate-900/90 backdrop-blur-md border border-red-500/30 rounded-xl p-4 shadow-xl space-y-3 relative overflow-hidden transition-all duration-300">

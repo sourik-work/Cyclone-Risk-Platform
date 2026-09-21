@@ -24,6 +24,8 @@ import {
 } from '../lib/seedData';
 import { SEED_INFRASTRUCTURE_DATA } from '../lib/infrastructureSeed';
 import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
+import { collection, onSnapshot, query, limit } from 'firebase/firestore';
+import { firestore } from '../lib/firebase';
 
 // Standby track representing quiescent Bay of Bengal for continuous monitoring
 const STANDBY_MONITORING_TRACK: CycloneTrack = {
@@ -155,6 +157,32 @@ export default function Home() {
     }, 30 * 60 * 1000); // 30 minutes
     return () => clearInterval(interval);
   }, [fetchLiveCyclone]);
+
+  // Firestore real-time listener for newly issued cyclone advisories (Workstream 5)
+  useEffect(() => {
+    if (!firestore) return;
+    try {
+      const advisoriesCol = collection(firestore, 'advisories');
+      const q = query(advisoriesCol, limit(10));
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+              const data = change.doc.data();
+              console.log('[Firestore Real-Time Advisory]:', change.doc.id, data);
+            }
+          });
+        },
+        (error) => {
+          console.warn('Firestore onSnapshot listener notice:', error);
+        }
+      );
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn('Failed to set up Firestore advisory listener:', err);
+    }
+  }, []);
 
   // Handle switching mode: automatically disable Earth Engine overlay in live monitoring to prevent stale Fani SAR data
   const handleModeChange = (newMode: DashboardMode) => {
