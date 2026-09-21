@@ -320,8 +320,8 @@ export default function Home() {
     }
 
     const targetCycloneId =
-      mode === 'live' && liveData?.active_cyclone
-        ? liveData.active_cyclone.id || liveData.active_cyclone.name
+      mode === 'live'
+        ? 'IMD-LIVE-ACTIVE'
         : selectedStormId === 'amphan'
         ? 'BOB-01-2020'
         : 'BOB-02-2019';

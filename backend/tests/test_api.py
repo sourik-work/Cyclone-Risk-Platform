@@ -85,6 +85,80 @@ def test_api_get_live_cyclone():
         assert res.active_cyclone is not None
 
 
+def test_api_generate_advisory_live_monitoring():
+    from unittest.mock import patch
+    from backend.schemas.cyclone import AdvisorySeverity, LiveCycloneResponse
+
+    mock_resp = LiveCycloneResponse(
+        active_cyclone=None,
+        last_updated="2026-09-22T00:00:00Z",
+        source="IMD RSMC New Delhi",
+        status="monitoring",
+        message="No active cyclones in Bay of Bengal. Monitoring continuously.",
+    )
+
+    with patch("backend.api.routes._IMD_FETCHER.get_live_cyclone_status", return_value=mock_resp):
+        req = GenerateAdvisoryRequest(cyclone_id="IMD-LIVE-ACTIVE")
+        advisory = generate_advisory(req)
+        assert advisory.cyclone_id == "IMD-LIVE-ACTIVE"
+        assert advisory.severity_level == AdvisorySeverity.MONITORING
+        assert "MONITORING" in advisory.headline
+        assert advisory.recommended_actions == []
+
+
+def test_api_generate_advisory_live_active():
+    from unittest.mock import patch
+    from backend.schemas.cyclone import CycloneTrack, LiveCycloneResponse, TrackCategory, TrackPoint
+
+    pt = TrackPoint(
+        timestamp="2026-09-22T00:00:00Z",
+        latitude=18.5,
+        longitude=86.2,
+        wind_speed_knots=65.0,
+        wind_speed_kmph=120.0,
+        central_pressure_hpa=980.0,
+        category=TrackCategory.VERY_SEVERE_CYCLONIC_STORM,
+    )
+    track = CycloneTrack(
+        id="IMD-LIVE-2026-OVER",
+        name="OVER",
+        season_year=2026,
+        basin="Bay of Bengal",
+        current_status="Very Severe Cyclonic Storm",
+        genesis_time="2026-09-22T00:00:00Z",
+        track_points=[pt],
+    )
+    mock_resp = LiveCycloneResponse(
+        active_cyclone=track,
+        last_updated="2026-09-22T00:00:00Z",
+        source="IMD RSMC New Delhi",
+        status="active",
+        message="Active cyclone detected: OVER in Bay of Bengal.",
+    )
+
+    with patch("backend.api.routes._IMD_FETCHER.get_live_cyclone_status", return_value=mock_resp):
+        # 1. Test with stable ID
+        req1 = GenerateAdvisoryRequest(cyclone_id="IMD-LIVE-ACTIVE")
+        adv1 = generate_advisory(req1)
+        assert "OVER" in adv1.headline
+        assert adv1.max_expected_wind_kmph == 120.0
+
+        # 2. Test with bulletin ID
+        req2 = GenerateAdvisoryRequest(cyclone_id="IMD-LIVE-2026-OVER")
+        adv2 = generate_advisory(req2)
+        assert "OVER" in adv2.headline
+
+
+def test_api_generate_advisory_unknown_404():
+    import pytest
+    from fastapi import HTTPException
+
+    req = GenerateAdvisoryRequest(cyclone_id="UNKNOWN-TRACK-999")
+    with pytest.raises(HTTPException) as exc_info:
+        generate_advisory(req)
+    assert exc_info.value.status_code == 404
+
+
 if __name__ == "__main__":
     test_api_health_check()
     test_api_list_tracks()
@@ -92,4 +166,7 @@ if __name__ == "__main__":
     test_api_get_vulnerability()
     test_api_generate_and_latest_advisory()
     test_api_get_live_cyclone()
+    test_api_generate_advisory_live_monitoring()
+    test_api_generate_advisory_live_active()
+    test_api_generate_advisory_unknown_404()
     print("All API route tests passed successfully!")

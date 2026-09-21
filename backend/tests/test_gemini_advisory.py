@@ -84,7 +84,36 @@ def test_gemini_advisory_generation_multilingual():
     assert "EVACUATION" in action_categories
 
 
+def test_gemini_advisory_generation_from_live_storm():
+    service = GeminiAdvisoryService()
+    live_storm_data = {
+        "cyclone_id": "IMD-LIVE-2026-OVER",
+        "name": "OVER",
+        "category": "Cyclonic Storm",
+        "latitude": 18.2,
+        "longitude": 85.5,
+        "wind_kmph": 85.0,
+        "pressure_hpa": 990.0,
+    }
+
+    advisory = service.generate_advisory(live_storm=live_storm_data, lead_time_hours=12.0)
+    assert isinstance(advisory, AnticipatoryAdvisory)
+    assert advisory.cyclone_id == "IMD-LIVE-2026-OVER"
+    assert "OVER" in advisory.headline
+    assert advisory.max_expected_wind_kmph == 85.0
+    assert len(advisory.multilingual_advisories.english) > 10
+
+
+def test_gemini_advisory_missing_storm_and_live_storm_raises():
+    import pytest
+    service = GeminiAdvisoryService()
+    with pytest.raises(ValueError, match="Either storm.*or live_storm must be provided"):
+        service.generate_advisory()
+
+
 if __name__ == "__main__":
     test_gemini_prompt_formatting()
     test_gemini_advisory_generation_multilingual()
+    test_gemini_advisory_generation_from_live_storm()
+    test_gemini_advisory_missing_storm_and_live_storm_raises()
     print("All Gemini advisory tests passed successfully!")

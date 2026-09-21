@@ -151,6 +151,7 @@ class AdvisorySeverity(str, Enum):
     ALERT = "ALERT"
     WARNING = "WARNING"
     EMERGENCY_ACTION = "EMERGENCY_ACTION"
+    MONITORING = "MONITORING"
 
 
 class AnticipatoryAdvisory(BaseModel):

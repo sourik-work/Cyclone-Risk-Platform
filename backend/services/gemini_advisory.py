@@ -29,6 +29,7 @@ from backend.schemas.cyclone import (
     CycloneTrack,
     DistrictProperties,
     MultilingualAdvisories,
+    TrackCategory,
     TrackPoint,
 )
 
@@ -178,12 +179,85 @@ Rules:
 
     def generate_advisory(
         self,
-        storm: CycloneTrack,
-        current_point: TrackPoint,
-        vulnerable_districts: List[DistrictProperties],
+        storm: Optional[CycloneTrack] = None,
+        current_point: Optional[TrackPoint] = None,
+        vulnerable_districts: Optional[List[DistrictProperties]] = None,
         lead_time_hours: float = 18.0,
+        live_storm: Optional[Dict[str, Any]] = None,
+        track: Optional[CycloneTrack] = None,
     ) -> AnticipatoryAdvisory:
         """Generates multilingual early warnings and actionable anticipatory protocols."""
+        if storm is None and track is not None:
+            storm = track
+
+        if storm is None and live_storm is not None:
+            cid = live_storm.get("cyclone_id") or live_storm.get("id") or "IMD-LIVE-ACTIVE"
+            name = live_storm.get("name") or "Active Storm"
+            raw_cat = live_storm.get("category", "Cyclonic Storm")
+            if isinstance(raw_cat, TrackCategory):
+                cat_enum = raw_cat
+            else:
+                cat_enum = TrackCategory.CYCLONIC_STORM
+                cat_str = str(raw_cat).lower().replace("_", " ").strip()
+                for c in TrackCategory:
+                    if c.value.lower() == cat_str or c.name.lower() == cat_str.replace(" ", "_"):
+                        cat_enum = c
+                        break
+
+            lat = float(live_storm.get("latitude", 18.0))
+            lon = float(live_storm.get("longitude", 86.0))
+            wind_kmph = float(live_storm.get("wind_kmph", 100.0))
+            wind_knots = round(wind_kmph / 1.852, 1)
+            pressure = float(live_storm.get("pressure_hpa", 985.0))
+            now_iso_ts = datetime.now(timezone.utc).isoformat()
+
+            if current_point is None:
+                current_point = TrackPoint(
+                    timestamp=now_iso_ts,
+                    latitude=lat,
+                    longitude=lon,
+                    wind_speed_knots=wind_knots,
+                    wind_speed_kmph=wind_kmph,
+                    gust_speed_kmph=round(wind_kmph * 1.25),
+                    central_pressure_hpa=pressure,
+                    category=cat_enum,
+                    is_forecast=False,
+                    forecast_lead_hours=0,
+                    cone_radius_km=30.0,
+                    heading_degrees=320.0,
+                    forward_speed_kmph=15.0,
+                )
+
+            storm = CycloneTrack(
+                id=cid,
+                name=name,
+                season_year=datetime.now(timezone.utc).year,
+                basin="Bay of Bengal",
+                current_status=cat_enum.value,
+                genesis_time=now_iso_ts,
+                dissipation_time=None,
+                track_points=[current_point],
+            )
+        elif storm is None and live_storm is None:
+            raise ValueError("Either storm (track) or live_storm must be provided")
+
+        if current_point is None:
+            if storm.track_points:
+                current_point = storm.track_points[min(8, len(storm.track_points) - 1)]
+            else:
+                current_point = TrackPoint(
+                    timestamp=datetime.now(timezone.utc).isoformat(),
+                    latitude=18.0,
+                    longitude=86.0,
+                    wind_speed_knots=54.0,
+                    wind_speed_kmph=100.0,
+                    central_pressure_hpa=985.0,
+                    category=TrackCategory.CYCLONIC_STORM,
+                )
+
+        if vulnerable_districts is None:
+            vulnerable_districts = []
+
         target_district_names = [d.district_name for d in vulnerable_districts]
         advisory_id = f"ADV-{storm.name.upper()}-{uuid.uuid4().hex[:6].upper()}"
         now_iso = datetime.now(timezone.utc).isoformat()

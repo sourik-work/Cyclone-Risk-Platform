@@ -13,6 +13,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from backend.schemas.cyclone import (
+    AdvisorySeverity,
     AlertSubscribeRequest,
     AlertSubscribeResponse,
     AnticipatoryAdvisory,
@@ -35,6 +36,7 @@ from backend.schemas.cyclone import (
     InsuranceEvaluateResponse,
     InsuranceTriggerResult,
     LiveCycloneResponse,
+    MultilingualAdvisories,
     OSMFeature,
     RainfallForecast,
     SurgeSimulation,
@@ -156,15 +158,28 @@ def list_cyclone_tracks(
     return summaries
 
 
+def _find_historical_track(cyclone_id: str) -> Optional[CycloneTrack]:
+    """Finds a historical cyclone track by ID or name, or None if not found."""
+    tracks_dir = DATA_DIR / "tracks"
+    if not tracks_dir.exists():
+        return None
+    for file_path in tracks_dir.glob("*.json"):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if data.get("id") == cyclone_id or data.get("name", "").lower() == cyclone_id.lower():
+                    return CycloneTrack.model_validate(data)
+        except Exception:
+            continue
+    return None
+
+
 @router.get("/tracks/{cyclone_id}", response_model=CycloneTrack)
 def get_cyclone_track(cyclone_id: str) -> CycloneTrack:
     """Returns full track points and metadata for a specific cyclone."""
-    tracks_dir = DATA_DIR / "tracks"
-    for file_path in tracks_dir.glob("*.json"):
-        with open(file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if data.get("id") == cyclone_id or data.get("name", "").lower() == cyclone_id.lower():
-                return CycloneTrack.model_validate(data)
+    track = _find_historical_track(cyclone_id)
+    if track:
+        return track
     raise HTTPException(status_code=404, detail=f"Cyclone track '{cyclone_id}' not found")
 
 
@@ -221,16 +236,9 @@ def generate_advisory(req: GenerateAdvisoryRequest) -> AnticipatoryAdvisory:
     """Invokes Gemini 3.7 Flash to generate a multilingual anticipatory advisory."""
     global _LATEST_ADVISORY
 
-    # 1. Fetch cyclone track
-    track = get_cyclone_track(req.cyclone_id)
+    cyclone_id = req.cyclone_id
 
-    # 2. Determine track point (default to peak intensity or near-landfall)
-    if req.point_index is not None and 0 <= req.point_index < len(track.track_points):
-        current_point = track.track_points[req.point_index]
-    else:
-        current_point = track.track_points[min(8, len(track.track_points) - 1)]
-
-    # 3. Fetch coastal vulnerability features
+    # 1. Fetch coastal vulnerability features
     vulnerability_collection = get_coastal_vulnerability()
     all_districts = [feat.properties for feat in vulnerability_collection.features]
 
@@ -241,17 +249,81 @@ def generate_advisory(req: GenerateAdvisoryRequest) -> AnticipatoryAdvisory:
         # Default to highest risk districts
         selected_districts = sorted(all_districts, key=lambda d: d.cyclone_risk_score, reverse=True)[:3]
 
-    # 4. Generate advisory using Gemini 3.7 Flash
     service = GeminiAdvisoryService()
-    advisory = service.generate_advisory(
-        storm=track,
-        current_point=current_point,
-        vulnerable_districts=selected_districts,
-        lead_time_hours=req.lead_time_hours,
-    )
 
-    _LATEST_ADVISORY = advisory
-    return advisory
+    # 2. Try historical track first
+    track = _find_historical_track(cyclone_id)
+    if track:
+        if req.point_index is not None and 0 <= req.point_index < len(track.track_points):
+            current_point = track.track_points[req.point_index]
+        else:
+            current_point = track.track_points[min(8, len(track.track_points) - 1)]
+
+        advisory = service.generate_advisory(
+            storm=track,
+            current_point=current_point,
+            vulnerable_districts=selected_districts,
+            lead_time_hours=req.lead_time_hours,
+        )
+        _LATEST_ADVISORY = advisory
+        return advisory
+
+    # 3. Try live storm if ID starts with IMD-LIVE- or matches live bulletin
+    if cyclone_id.startswith("IMD-LIVE-"):
+        live_data = _IMD_FETCHER.get_live_cyclone_status()
+        if live_data.status == "active" and live_data.active_cyclone:
+            active = live_data.active_cyclone
+            active_id = getattr(active, "id", "") or getattr(active, "cyclone_id", "")
+            if active_id == cyclone_id or cyclone_id == "IMD-LIVE-ACTIVE" or cyclone_id.startswith("IMD-LIVE-"):
+                latest_point = active.track_points[0] if active.track_points else None
+                wind_kmph = (latest_point.wind_speed_kmph or round(latest_point.wind_speed_knots * 1.852)) if latest_point else 85.0
+                pressure_hpa = latest_point.central_pressure_hpa if latest_point else 990.0
+                live_storm_dict = {
+                    "cyclone_id": active_id or cyclone_id,
+                    "name": active.name,
+                    "category": active.current_status,
+                    "latitude": latest_point.latitude if latest_point else 18.0,
+                    "longitude": latest_point.longitude if latest_point else 86.0,
+                    "wind_kmph": float(wind_kmph),
+                    "pressure_hpa": float(pressure_hpa),
+                }
+                advisory = service.generate_advisory(
+                    live_storm=live_storm_dict,
+                    vulnerable_districts=selected_districts,
+                    lead_time_hours=req.lead_time_hours,
+                )
+                _LATEST_ADVISORY = advisory
+                return advisory
+
+        # If Live Mode has no active storm, return a "monitoring" advisory instead of 404
+        monitoring_advisory = AnticipatoryAdvisory(
+            advisory_id=f"ADV-MONITORING-{uuid.uuid4().hex[:6].upper()}",
+            cyclone_id=cyclone_id,
+            issued_at=datetime.now(timezone.utc).isoformat(),
+            severity_level=AdvisorySeverity.MONITORING,
+            lead_time_hours=None,
+            estimated_landfall_time=None,
+            estimated_landfall_location=None,
+            max_expected_wind_kmph=None,
+            max_expected_surge_m=None,
+            target_districts=[],
+            headline="BAY OF BENGAL MONITORING — No active cyclones",
+            multilingual_advisories=MultilingualAdvisories(
+                english="No active cyclones in the Bay of Bengal. Continuous monitoring active.",
+                odia="ବଙ୍ଗୋପସାଗରରେ କୌଣସି ସକ୍ରିୟ ବାତ୍ୟା ନାହିଁ। ନିରନ୍ତର ନିରୀକ୍ଷଣ ଚାଲିଛି।",
+                bengali="বঙ্গোপসাগরে কোনো সক্রিয় ঘূর্ণিঝড় নেই। সার্বক্ষণিক নজরদারি চলছে।",
+                hindi="बंगाल की खाड़ी में कोई सक्रिय चक्रवात नहीं। निरंतर निगरानी सक्रिय है।",
+                telugu="బంగాళాఖాతంలో ఎటువంటి తుఫానులు లేవు. నిరంతర పర్యవేక్షణ కొనసాగుతోంది.",
+                tamil="வங்காள விரிகுடாவில் தீவிர புயல் எதுவும் இல்லை. தொடர் கண்காணிப்பு செயலில் உள்ளது.",
+            ),
+            recommended_actions=[],
+            model="gemini-3.7-flash",
+        )
+        _LATEST_ADVISORY = monitoring_advisory
+        return monitoring_advisory
+
+    # 4. Fallback: 404 with clear message
+    raise HTTPException(status_code=404, detail=f"Cyclone track '{cyclone_id}' not found")
 
 
 @router.get("/advisories/latest", response_model=AnticipatoryAdvisory)
