@@ -153,3 +153,4 @@ pip install -r requirements.txt
 # GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
 
 uvicorn backend.main:app --host 0.0.0.0 --port 8000
+<!-- Trigger Vercel rebuild with updated preset -->
