@@ -46,6 +46,7 @@ import {
 import { AlertSubscription } from './AlertSubscription';
 import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
 import { ExposureReasoningCard } from './ExposureReasoningCard';
+import { ForecastComparisonCard } from './ForecastComparisonCard';
 
 interface TelemetrySidebarProps {
   track: CycloneTrack;
@@ -1550,6 +1551,9 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 5. Dual Model Forecast Comparison Card */}
+      <ForecastComparisonCard cycloneId={track?.id || selectedStormId || 'BOB-02-2019'} />
     </aside>
 
     {/* Broadcast to Community Radio Network Modal */}

@@ -34,6 +34,9 @@ from backend.schemas.cyclone import (
     ForecastTrackPoint,
     ForecastTrackRequest,
     ForecastTrackResponse,
+    GeminiForecastPoint,
+    GeminiForecastRequest,
+    GeminiForecastResponse,
     HazardSummary,
     HistoricalAnalyticsResponse,
     InsuranceEvaluateRequest,
@@ -438,6 +441,52 @@ def forecast_cyclone_track(req: ForecastTrackRequest) -> ForecastTrackResponse:
         model_version=str(metrics.get("model_version", "track_lstm_v1")),
         training_samples=int(metrics.get("training_samples", 8484)),
         model_params=int(metrics.get("model_params", 119872)),
+    )
+
+
+@router.post("/forecast/gemini", response_model=GeminiForecastResponse)
+@router.post("/api/forecast/gemini", response_model=GeminiForecastResponse)
+async def gemini_forecast(req: GeminiForecastRequest):
+    """
+    Predict 48h trajectory using Gemini in-context reasoning.
+    Complementary to POST /api/forecast/track (LSTM-based).
+    """
+    # Load historical track
+    track = _find_historical_track(req.cyclone_id)
+    if not track:
+        raise HTTPException(404, detail=f"Cyclone track '{req.cyclone_id}' not found")
+
+    # Take last N observed points
+    recent = track.track_points[-req.recent_point_count:]
+    recent_dicts = [
+        {
+            "lat": p.latitude,
+            "lon": p.longitude,
+            "wind_kmph": p.wind_speed_kmph if p.wind_speed_kmph is not None else round(p.wind_speed_knots * 1.852, 1),
+            "pressure_hpa": p.central_pressure_hpa,
+            "timestamp": p.timestamp if isinstance(p.timestamp, str) else (p.timestamp.isoformat() if p.timestamp else None),
+        }
+        for p in recent
+    ]
+
+    storm_metadata = {
+        "cyclone_id": track.id,
+        "name": track.name,
+        "category": track.current_status,
+        "basin": track.basin,
+    }
+
+    from backend.services.gemini_forecast_service import predict_track_via_gemini
+    result = predict_track_via_gemini(recent_dicts, storm_metadata)
+
+    return GeminiForecastResponse(
+        cyclone_id=req.cyclone_id,
+        model=result.get("model", "gemini-3.7-flash-in-context"),
+        forecast=result.get("forecast", []),
+        reasoning=result.get("reasoning", ""),
+        confidence=result.get("confidence", "MEDIUM"),
+        method=result.get("method", "in-context time-series reasoning"),
+        error=result.get("error"),
     )
 
 

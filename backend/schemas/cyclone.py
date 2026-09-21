@@ -471,3 +471,33 @@ class ExposureReasoningResponse(BaseModel):
     reasoning_source: str = "gemini-3.7-flash-multimodal"
 
 
+class GeminiForecastRequest(BaseModel):
+    """Request payload for in-context Gemini cyclone forecasting."""
+
+    cyclone_id: str
+    recent_point_count: int = 5  # how many recent points to send to Gemini
+
+
+class GeminiForecastPoint(BaseModel):
+    """Single predicted trajectory point from Gemini."""
+
+    lead_hours: int
+    lat: float
+    lon: float
+    wind_kmph: float
+    pressure_hpa: float
+
+
+class GeminiForecastResponse(BaseModel):
+    """Response payload containing Gemini in-context trajectory forecast and reasoning."""
+
+    cyclone_id: str
+    model: str
+    forecast: List[GeminiForecastPoint]
+    reasoning: str
+    confidence: str
+    method: str
+    error: Optional[str] = None
+
+
+
