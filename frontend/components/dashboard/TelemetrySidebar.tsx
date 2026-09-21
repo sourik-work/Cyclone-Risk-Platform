@@ -45,6 +45,7 @@ import {
 } from 'lucide-react';
 import { AlertSubscription } from './AlertSubscription';
 import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
+import { ExposureReasoningCard } from './ExposureReasoningCard';
 
 interface TelemetrySidebarProps {
   track: CycloneTrack;
@@ -1148,6 +1149,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 2.55 Gemini Exposure Reasoning Card (Workstream 11b: Multimodal Reasoning over SAR + Infrastructure) */}
+      <ExposureReasoningCard
+        districtName={selectedDistrict?.district_name || 'Puri'}
+        cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
+      />
 
       {/* 2.6 Hazard Forecast Card (Workstream 2: Rainfall Damage Pathway & Storm Surge Modeling) */}
       <div

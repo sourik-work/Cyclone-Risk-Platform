@@ -127,14 +127,16 @@ class ExponentialBackoffRetry:
 
 
 def with_exponential_backoff(
-    max_attempts: int = 5,
+    max_attempts: Any = 5,
     initial_delay_seconds: float = 1.0,
     max_delay_seconds: float = 30.0,
     backoff_multiplier: float = 2.0,
     jitter: bool = True,
     retryable_exceptions: Tuple[Type[Exception], ...] = (Exception,),
-) -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """Convenience factory function returning an ExponentialBackoffRetry decorator."""
+) -> Any:
+    """Convenience factory function returning an ExponentialBackoffRetry decorator. Supports bare or parameterized usage."""
+    if callable(max_attempts):
+        return ExponentialBackoffRetry()(max_attempts)
     return ExponentialBackoffRetry(
         max_attempts=max_attempts,
         initial_delay_seconds=initial_delay_seconds,

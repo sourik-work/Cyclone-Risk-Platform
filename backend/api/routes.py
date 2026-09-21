@@ -27,6 +27,8 @@ from backend.schemas.cyclone import (
     CycloneTrack,
     DataGovStats,
     DataSourceInfo,
+    ExposureReasoningRequest,
+    ExposureReasoningResponse,
     FAOWHOIndicators,
     FCMNotificationRequest,
     ForecastTrackPoint,
@@ -866,6 +868,83 @@ async def chat_message(payload: ChatMessage):
         intent=result["intent"],
         session_id=payload.session_id,
     )
+
+
+@router.post("/exposure/reason", response_model=ExposureReasoningResponse)
+@router.post("/api/exposure/reason", response_model=ExposureReasoningResponse)
+async def reason_exposure(req: ExposureReasoningRequest):
+    """Gemini multimodal reasoning over SAR flood extent + infrastructure geometry."""
+    # 1. Get storm data (surge, wind, rainfall for the district)
+    from backend.services.surge_service import simulate_surge
+    from backend.services.rainfall_service import get_rainfall_forecast
+    from backend.services.rainfall_service import _load_track_max_wind
+
+    surge = simulate_surge(req.cyclone_id, req.district_name)
+    rain = get_rainfall_forecast(req.district_name, req.cyclone_id)
+    wind = _load_track_max_wind(req.cyclone_id)
+
+    storm_data = {
+        "wind_kmph": wind,
+        "pressure_hpa": 950,  # from track
+        "surge_m": surge.get("max_surge_m"),
+        "rainfall_mm": rain.get("forecast_24h_mm"),
+    }
+
+    # 2. Get flood extent bbox from surge simulation polygon
+    flood_polygon = surge.get("inundation_polygon", {})
+    geom = flood_polygon.get("geometry", flood_polygon) if isinstance(flood_polygon, dict) else {}
+    coords = geom.get("coordinates", [[]])[0] if geom else []
+    if coords:
+        lats = [c[1] for c in coords]
+        lons = [c[0] for c in coords]
+        flood_extent_bbox = {
+            "min_lat": min(lats),
+            "max_lat": max(lats),
+            "min_lon": min(lons),
+            "max_lon": max(lons),
+            "area_km2": surge.get("inundation_area_km2", 0),
+        }
+    else:
+        flood_extent_bbox = {"min_lat": 0, "max_lat": 0, "min_lon": 0, "max_lon": 0, "area_km2": 0}
+
+    # 3. Get infrastructure assets in the district
+    from backend.services.infrastructure_service import load_infrastructure
+    infra_fc = load_infrastructure(state=None, asset_type=None)
+    district_assets = []
+    d_name_lower = req.district_name.lower().strip()
+    for f in infra_fc.get("features", []):
+        p = f.get("properties", {})
+        d = p.get("district", "").lower().strip()
+        served = [s.lower().strip() for s in p.get("districts_served", [])] if isinstance(p.get("districts_served"), list) else []
+        if d == d_name_lower or d_name_lower in served or (d_name_lower in d):
+            asset_info = dict(p)
+            geom_f = f.get("geometry", {})
+            coords_f = geom_f.get("coordinates", [])
+            if geom_f.get("type") == "Point" and len(coords_f) >= 2:
+                asset_info["lon"] = coords_f[0]
+                asset_info["lat"] = coords_f[1]
+            district_assets.append(asset_info)
+
+    # Limit to 20 assets to keep prompt compact
+    district_assets = district_assets[:20]
+
+    # 4. Call Gemini
+    from backend.services.exposure_reasoning_service import reason_about_exposure
+    result = reason_about_exposure(
+        district_name=req.district_name,
+        storm_data=storm_data,
+        flood_extent_bbox=flood_extent_bbox,
+        infrastructure=district_assets,
+    )
+
+    return ExposureReasoningResponse(
+        district_name=req.district_name,
+        narrative=result.get("narrative", ""),
+        critical_assets=result.get("critical_assets", []),
+        recommended_actions=result.get("recommended_actions", []),
+        confidence=result.get("confidence", "LOW"),
+    )
+
 
 
 

@@ -452,3 +452,22 @@ class ChatResponse(BaseModel):
     intent: str
     session_id: str
 
+
+class ExposureReasoningRequest(BaseModel):
+    """Request payload for Gemini multimodal exposure reasoning."""
+
+    district_name: str
+    cyclone_id: str
+
+
+class ExposureReasoningResponse(BaseModel):
+    """Response payload containing narrative exposure analysis and critical assets."""
+
+    district_name: str
+    narrative: str
+    critical_assets: List[Dict[str, Any]]
+    recommended_actions: List[str]
+    confidence: str
+    reasoning_source: str = "gemini-3.7-flash-multimodal"
+
+
