@@ -10,6 +10,7 @@ import {
   Sparkles,
   Minimize2,
 } from 'lucide-react';
+import { getAuthHeader } from '../../lib/api';
 
 interface ChatItem {
   id: string;
@@ -82,10 +83,12 @@ export const ChatWidget: React.FC = () => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
     try {
+      const authHeader = await getAuthHeader();
       const res = await fetch(`${backendUrl}/api/chat/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...authHeader,
         },
         body: JSON.stringify({
           message: query,

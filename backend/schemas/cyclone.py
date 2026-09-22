@@ -1,8 +1,45 @@
 """Pydantic schemas for cyclone tracks, vulnerability features, and anticipatory advisories."""
 
+from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
+
+
+class ApprovalState(str, Enum):
+    """Human-in-the-loop operational approval lifecycle for advisories and insurance payouts."""
+
+    DRAFT = "DRAFT"
+    PENDING_APPROVAL = "PENDING_APPROVAL"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    DISPATCHED = "DISPATCHED"
+
+
+class ApprovalRequest(BaseModel):
+    """Payload to approve an advisory or insurance liquidity disbursement."""
+
+    approved_by: Optional[str] = Field(default="dispatcher", description="Officer/Dispatcher identifier")
+    notes: Optional[str] = Field(default=None, description="Operational sign-off notes")
+
+
+class RejectionRequest(BaseModel):
+    """Payload to reject an advisory or insurance payout."""
+
+    rejected_by: Optional[str] = Field(default="officer", description="Officer identifier")
+    reason: str = Field(description="Operational reason for rejecting dispatch")
+
+
+class AdvisoryAuditEntry(BaseModel):
+    """Audit log record for advisory state changes."""
+
+    audit_id: str
+    advisory_id: str
+    cyclone_id: str
+    state: ApprovalState
+    actor: Optional[str] = None
+    timestamp: datetime
+    notes_or_reason: Optional[str] = None
 
 
 class TrackCategory(str, Enum):
@@ -171,6 +208,10 @@ class AnticipatoryAdvisory(BaseModel):
     multilingual_advisories: MultilingualAdvisories
     recommended_actions: List[ActionItem]
     model: str = Field(default="gemini-3.7-flash", description="Model used to generate advisory")
+    approval_state: ApprovalState = Field(default=ApprovalState.DRAFT, description="Human-in-the-loop approval state")
+    approved_by: Optional[str] = Field(default=None, description="Officer / Dispatcher identifier who approved")
+    approved_at: Optional[datetime] = Field(default=None, description="Timestamp of operational approval")
+    rejection_reason: Optional[str] = Field(default=None, description="Reason if rejected")
 
 
 class LiveCycloneResponse(BaseModel):
@@ -444,7 +485,12 @@ class InsuranceEvaluateResponse(BaseModel):
     total_payout_inr: float
     total_households: int
     uncertainty_assessment: Optional[UncertaintyAssessment] = None
-    results: List[InsuranceTriggerResult]
+    evaluation_id: Optional[str] = Field(default=None, description="Unique identifier for the evaluation session")
+    results: List[InsuranceTriggerResult] = Field(default_factory=list, description="Contract evaluation outcomes")
+    approval_state: ApprovalState = Field(default=ApprovalState.DRAFT, description="Human-in-the-loop approval state")
+    approved_by: Optional[str] = Field(default=None, description="Officer / Dispatcher identifier who approved")
+    approved_at: Optional[datetime] = Field(default=None, description="Timestamp of liquidity approval")
+    rejection_reason: Optional[str] = Field(default=None, description="Reason if rejected")
 
 
 class ChatMessage(BaseModel):

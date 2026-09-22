@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { ShieldCheck, Coins, CheckCircle2, Clock, RefreshCw, Zap, Loader2 } from 'lucide-react';
+import { ShieldCheck, Coins, CheckCircle2, XCircle, Clock, RefreshCw, Zap, Loader2 } from 'lucide-react';
 import { fetchWithCache } from '../../lib/cache';
+import { getAuthHeader } from '../../lib/api';
 
 export interface InsuranceTriggerResult {
   contract_id: string;
@@ -25,12 +26,17 @@ export interface UncertaintyAssessment {
 }
 
 export interface InsuranceEvaluateResponse {
+  evaluation_id?: string | null;
   total_contracts: number;
   triggers_active: number;
   total_payout_inr: number;
   total_households: number;
   uncertainty_assessment?: UncertaintyAssessment | null;
   results: InsuranceTriggerResult[];
+  approval_state?: 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'DISPATCHED';
+  approved_by?: string | null;
+  approved_at?: string | null;
+  rejection_reason?: string | null;
 }
 
 export interface InsuranceTriggerPanelProps {
@@ -123,10 +129,14 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
       const targetId =
         mode === 'live' && !hasActiveCyclone ? 'calm-baseline' : cycloneId || 'BOB-02-2019';
+      const authHeader = await getAuthHeader();
 
       const res = await fetch(`${backendUrl}/api/insurance/evaluate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader,
+        },
         body: JSON.stringify({ cyclone_id: targetId }),
       });
 
@@ -148,6 +158,61 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
       setLoading(false);
     }
   }, [cycloneId, mode, hasActiveCyclone]);
+
+  const [isActionInProgress, setIsActionInProgress] = useState<boolean>(false);
+
+  const approvePayout = async () => {
+    setIsActionInProgress(true);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const authHeader = await getAuthHeader();
+      const res = await fetch(`${backendUrl}/api/insurance/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader,
+        },
+        body: JSON.stringify({
+          approved_by: 'Authorized Disaster Finance Officer',
+          notes: 'Approved parametric liquidity disbursement for relief funds.',
+        }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setData(updated);
+      }
+    } catch (e) {
+      console.warn('Failed to approve payout:', e);
+    } finally {
+      setIsActionInProgress(false);
+    }
+  };
+
+  const rejectPayout = async () => {
+    setIsActionInProgress(true);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const authHeader = await getAuthHeader();
+      const res = await fetch(`${backendUrl}/api/insurance/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader,
+        },
+        body: JSON.stringify({
+          reason: 'Disaster finance review: held pending ground damage validation.',
+        }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setData(updated);
+      }
+    } catch (e) {
+      console.warn('Failed to reject payout:', e);
+    } finally {
+      setIsActionInProgress(false);
+    }
+  };
 
   useEffect(() => {
     fetchEvaluation();
@@ -222,6 +287,60 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
       {mode === 'live' && !hasActiveCyclone && (
         <div className="bg-green-900/30 border border-green-700 text-green-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
           🛰️ MONITORING — No active cyclone. 4 contracts armed. Awaiting IMD bulletin.
+        </div>
+      )}
+
+      {/* Human-in-the-Loop Approval Gate for Insurance Payouts */}
+      {evalData.approval_state === 'PENDING_APPROVAL' && evalData.triggers_active > 0 && (
+        <div className="bg-amber-900/40 border border-amber-600 rounded-lg p-3 my-2 shadow-md">
+          <div className="text-amber-200 text-xs font-semibold flex items-center gap-1.5 font-mono">
+            <span>⏸ PENDING HUMAN APPROVAL</span>
+          </div>
+          <div className="text-amber-100 text-xs mt-1 leading-relaxed">
+            Parametric payout liquidity release has not been dispatched. An authorized officer must approve before payout disbursement.
+          </div>
+          <div className="flex gap-2 mt-2.5">
+            <button
+              id="btn-approve-insurance"
+              onClick={approvePayout}
+              disabled={isActionInProgress}
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+            >
+              {isActionInProgress ? <Loader2 className="w-3 h-3 animate-spin" /> : '✓'} Approve & Disburse
+            </button>
+            <button
+              id="btn-reject-insurance"
+              onClick={rejectPayout}
+              disabled={isActionInProgress}
+              className="px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+            >
+              ✕ Reject
+            </button>
+          </div>
+        </div>
+      )}
+
+      {evalData.approval_state === 'DISPATCHED' && (
+        <div className="bg-emerald-950/60 border border-emerald-500/50 rounded-lg p-2.5 my-2 flex items-center justify-between text-xs text-emerald-200 font-mono">
+          <div className="flex items-center gap-1.5 font-semibold text-emerald-300">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>✓ LIQUIDITY DISBURSED TO RELIEF ACCOUNTS</span>
+          </div>
+          <span className="text-[10px] text-emerald-400">
+            {evalData.approved_by ? `Approved by ${evalData.approved_by}` : 'Disbursed'}
+          </span>
+        </div>
+      )}
+
+      {evalData.approval_state === 'REJECTED' && (
+        <div className="bg-rose-950/60 border border-rose-500/50 rounded-lg p-2.5 my-2 text-xs text-rose-200 font-mono">
+          <div className="flex items-center gap-1.5 font-semibold text-rose-300">
+            <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <span>✕ DISBURSEMENT REJECTED</span>
+          </div>
+          <div className="text-[11px] text-rose-200 mt-1">
+            Reason: {evalData.rejection_reason || 'Rejected by disaster finance officer'}
+          </div>
         </div>
       )}
 

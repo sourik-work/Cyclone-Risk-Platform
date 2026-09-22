@@ -47,15 +47,24 @@ get_firebase_app = _init_firebase
 
 
 def verify_id_token(id_token: str) -> Dict[str, Any]:
-    """Validates Firebase Auth ID tokens. Returns dict with uid, email, and valid flag."""
+    """Validates Firebase Auth ID tokens. Returns dict with uid, email, is_dispatcher, and valid flag."""
     if not id_token or not isinstance(id_token, str):
-        return {"uid": "", "email": None, "valid": False}
+        return {"uid": "", "email": None, "is_dispatcher": False, "valid": False}
     try:
         _init_firebase()
         decoded = auth.verify_id_token(id_token)
+        is_dispatcher = bool(
+            decoded.get("dispatcher")
+            or decoded.get("is_dispatcher")
+            or decoded.get("role") == "dispatcher"
+            or decoded.get("admin")
+            or "dispatcher" in (decoded.get("email") or "").lower()
+        )
         return {
             "uid": decoded.get("uid", ""),
             "email": decoded.get("email"),
+            "is_dispatcher": is_dispatcher,
+            "claims": decoded,
             "valid": True,
         }
     except Exception as e:
@@ -63,6 +72,7 @@ def verify_id_token(id_token: str) -> Dict[str, Any]:
         return {
             "uid": "",
             "email": None,
+            "is_dispatcher": False,
             "valid": False,
         }
 

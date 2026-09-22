@@ -210,17 +210,23 @@ export interface ActionItem {
   target_audience: string;
 }
 
+export type ApprovalState = 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'DISPATCHED';
+
 export interface AnticipatoryAdvisory {
   advisory_id: string;
   cyclone_id: string;
   issued_at: string;
-  severity_level: 'WATCH' | 'ALERT' | 'WARNING' | 'EMERGENCY_ACTION';
-  lead_time_hours?: number;
+  severity_level: 'WATCH' | 'ALERT' | 'WARNING' | 'EMERGENCY_ACTION' | 'MONITORING' | string;
+  approval_state?: ApprovalState;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  rejection_reason?: string | null;
+  lead_time_hours?: number | null;
   estimated_landfall_time?: string | null;
   estimated_landfall_location?: string | null;
   max_expected_wind_kmph?: number | null;
   max_expected_surge_m?: number | null;
-  target_districts: string[];
+  target_districts: any[];
   headline: string;
   multilingual_advisories: MultilingualAdvisories;
   recommended_actions: ActionItem[];

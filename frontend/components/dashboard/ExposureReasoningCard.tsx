@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Brain, Sparkles, Loader2, AlertCircle, CheckCircle2, ShieldAlert, RefreshCw } from 'lucide-react';
+import { getAuthHeader } from '../../lib/api';
 
 interface CriticalAsset {
   name: string;
@@ -43,10 +44,12 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
     const timeoutId = setTimeout(() => controller.abort(), 120000);
 
     try {
+      const authHeader = await getAuthHeader();
       const res = await fetch(`${backendUrl}/api/exposure/reason`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...authHeader,
         },
         body: JSON.stringify({
           district_name: districtName,

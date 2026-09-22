@@ -28,6 +28,7 @@ import { fetchWithCache, getCachedData } from '../lib/cache';
 import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
 import { collection, onSnapshot, query, limit } from 'firebase/firestore';
 import { firestore } from '../lib/firebase';
+import { getAuthHeader } from '../lib/api';
 
 // Standby track representing quiescent Bay of Bengal for continuous monitoring
 const STANDBY_MONITORING_TRACK: CycloneTrack = {
@@ -352,10 +353,12 @@ export default function Home() {
       }
 
       try {
+        const authHeaders = await getAuthHeader();
         const res = await fetch(`${backendUrl}/api/advisories/generate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...authHeaders,
           },
           body: JSON.stringify({
             cyclone_id: cycloneId,

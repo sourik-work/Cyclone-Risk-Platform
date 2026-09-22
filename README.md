@@ -2,6 +2,7 @@
 
 > An AI-powered predictive risk and vulnerability modeling platform for Bay of Bengal cyclones — shifting disaster response from post-landfall recovery to **pre-landfall anticipatory action**.
 
+![Tests](https://github.com/sourik-work/Cyclone-Risk-Platform/actions/workflows/test.yml/badge.svg)
 ![Status](https://img.shields.io/badge/status-production%20ready-emerald)
 ![Python](https://img.shields.io/badge/Python-3.12-yellow)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
@@ -95,7 +96,7 @@ This platform provides **48-hour anticipatory lead time** by combining:
 ### AI Forecasting (TrackLSTM)
 - **Trained LSTM** on IMD best-track data
 - **119,872 parameters** | 4-point input → 16-point output (48 hours at 3-hour intervals)
-- **RMSE @ 24h: 85.6 km** (better than operational IMD accuracy)
+- **RMSE @ 24h: 85.6 km** on two historical case studies (Fani 2019, Amphan 2020). Comparable to operational IMD accuracy on these specific cases — not a claim of general superiority.
 - **RMSE @ 48h: 155.6 km**
 - **Wind MAE: 7.3 km/h** | **Pressure MAE: 2.9 hPa**
 
@@ -118,6 +119,8 @@ The platform runs **two independent predictive approaches** in parallel and comp
 When the two models agree within 100 km, we report **HIGH confidence**. When they diverge beyond 200 km, the dashboard shows an amber warning. This is real ensemble forecast verification logic — the same principle NOAA uses for multi-model hurricane guidance.
 
 **Caveat:** This is illustrative agreement on two historical cases, not a statistically robust ensemble validation. A production deployment would validate across a full test set of 20+ historical cyclones.
+
+**Validation caveat:** The current ensemble is validated on 2 historical cyclones. Training uses ~8,484 sequences derived from IMD best-track data with synthetic augmentation (perturbed positions, wind scalings). We do not currently disclose the augmentation/real-signal ratio — a production version would publish this and validate against a 20+ storm held-out test set.
 
 ### Multilingual Advisories
 - **6 Indian languages**: English, Hindi, Odia, Bengali, Telugu, Tamil
@@ -251,6 +254,57 @@ The `/api/exposure/reason` endpoint sends the following context to **Gemini 3.7 
 | **data.gov.in** | Open data | State/district socio-economic indicators |
 | **OpenStreetMap** | Infrastructure | Roads, hospitals, shelters |
 | **FAO / WHO** | Public health | Food insecurity, nutrition, disease prevalence |
+
+---
+
+## Human-in-the-Loop Safety Gate
+
+Every advisory and insurance trigger passes through an approval state machine:
+
+```text
+DRAFT → PENDING_APPROVAL → APPROVED → DISPATCHED
+                       ↘ REJECTED
+```
+
+**Why:** In real disaster response, no LLM-generated advisory should go directly to a DISCOM, ODRAF, or insurance partner without human review. Our platform generates the advisory, then requires an authorized officer with the `dispatcher` role to explicitly approve before FCM dispatch or payout release.
+
+**Audit trail:** Every state transition is logged to Firestore with `approved_by`, `approved_at`, and reason. The full audit can be retrieved via `GET /api/advisories/{id}/audit`.
+
+**Authorization:** Approval endpoints require a Firebase ID token with a custom `dispatcher` claim. This is enforced at the API layer, not the UI.
+
+---
+
+## Security & Access Control
+
+- **Authentication:** All state-mutating endpoints require a valid Firebase ID token
+- **Authorization:** Dispatch and approval endpoints require the `dispatcher` custom claim
+- **Rate limiting:** 10 requests/minute per IP on LLM-heavy endpoints
+- **Audit logging:** Every approval decision logged to Firestore
+
+Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain public for the demo.
+
+---
+
+## Testing & CI/CD
+
+- **119 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, schemas, and integration flows
+- **Frontend build** validated via `npm run build` (Next.js 16 Turbopack, 0 errors)
+- **CI/CD:** GitHub Actions runs tests + build on every push
+- **Coverage:** Core services (`forecast_service`, `insurance_service`, `gemini_advisory`, `imd_fetcher`, `surge_service`, `rainfall_service`) have dedicated test files
+
+---
+
+## Performance & Scale
+
+| Metric | Value |
+|--------|-------|
+| Backend deployment | Render.com free tier (0.1 CPU, 512 MB RAM) |
+| Frontend deployment | Vercel edge CDN |
+| Average API response (cached) | <200ms |
+| Gemini advisory generation | 15-30s (LLM inference) |
+| Forecast inference (LSTM) | <500ms (CPU) |
+| Concurrent users (tested) | 10 (free tier limit) |
+| Scale path | Render → Cloud Run with autoscaling (0→N) |
 
 ---
 

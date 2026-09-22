@@ -42,11 +42,14 @@ import {
   Zap,
   Building2,
   CloudRain,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react';
 import { AlertSubscription } from './AlertSubscription';
 import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
 import { ExposureReasoningCard } from './ExposureReasoningCard';
 import { ForecastComparisonCard } from './ForecastComparisonCard';
+import { getAuthHeader } from '../../lib/api';
 
 interface TelemetrySidebarProps {
   track: CycloneTrack;
@@ -249,7 +252,71 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   selectedStormId,
 }) => {
   const currentPoint: TrackPoint = track.track_points[activePointIndex] || track.track_points[0];
-  const effectiveAdvisory = advisory || FALLBACK_ADVISORY;
+  const [localAdvisoryOverride, setLocalAdvisoryOverride] = useState<AnticipatoryAdvisory | null>(null);
+  const [isApprovalActionLoading, setIsApprovalActionLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLocalAdvisoryOverride(null);
+  }, [advisory?.advisory_id]);
+
+  const currentAdvisory = localAdvisoryOverride || advisory;
+  const effectiveAdvisory = currentAdvisory || FALLBACK_ADVISORY;
+  const isAuthorizedDispatcher = true;
+
+  const approveAdvisory = async () => {
+    if (!currentAdvisory?.advisory_id) return;
+    setIsApprovalActionLoading(true);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const authHeader = await getAuthHeader();
+      const res = await fetch(`${backendUrl}/api/advisories/${currentAdvisory.advisory_id}/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader,
+        },
+        body: JSON.stringify({
+          approved_by: 'Authorized Operational Dispatcher',
+          notes: 'Approved anticipatory advisory for regional emergency broadcast to DISCOM & ODRAF.',
+        }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setLocalAdvisoryOverride(updated);
+      }
+    } catch (err) {
+      console.warn('Failed to approve advisory:', err);
+    } finally {
+      setIsApprovalActionLoading(false);
+    }
+  };
+
+  const rejectAdvisory = async () => {
+    if (!currentAdvisory?.advisory_id) return;
+    setIsApprovalActionLoading(true);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const authHeader = await getAuthHeader();
+      const res = await fetch(`${backendUrl}/api/advisories/${currentAdvisory.advisory_id}/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader,
+        },
+        body: JSON.stringify({
+          reason: 'Operational safety review: advisory held pending ground validation.',
+        }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setLocalAdvisoryOverride(updated);
+      }
+    } catch (err) {
+      console.warn('Failed to reject advisory:', err);
+    } finally {
+      setIsApprovalActionLoading(false);
+    }
+  };
 
   // Future track points defining the uncertainty cone
   const forecastTrackPoints = useMemo(() => {
@@ -1464,6 +1531,62 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         ) : (
           <>
+            {/* Human-in-the-Loop Approval Gate Banner */}
+            {currentAdvisory?.approval_state === 'PENDING_APPROVAL' && (
+              <div className="bg-amber-900/40 border border-amber-600 rounded-lg p-3 my-2 shadow-md">
+                <div className="text-amber-200 text-xs font-semibold flex items-center gap-1.5 font-mono">
+                  <span>⏸ PENDING HUMAN APPROVAL</span>
+                </div>
+                <div className="text-amber-100 text-xs mt-1 leading-relaxed">
+                  This advisory has not been dispatched. An authorized officer must approve before broadcast.
+                </div>
+                {isAuthorizedDispatcher && (
+                  <div className="flex gap-2 mt-2.5">
+                    <button
+                      id="btn-approve-advisory"
+                      onClick={approveAdvisory}
+                      disabled={isApprovalActionLoading}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+                    >
+                      {isApprovalActionLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : '✓'} Approve & Dispatch
+                    </button>
+                    <button
+                      id="btn-reject-advisory"
+                      onClick={rejectAdvisory}
+                      disabled={isApprovalActionLoading}
+                      className="px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+                    >
+                      ✕ Reject
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentAdvisory?.approval_state === 'DISPATCHED' && (
+              <div className="bg-emerald-950/60 border border-emerald-500/50 rounded-lg p-2.5 my-2 flex items-center justify-between text-xs text-emerald-200 font-mono">
+                <div className="flex items-center gap-1.5 font-semibold text-emerald-300">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>✓ DISPATCHED TO AUTHORITIES</span>
+                </div>
+                <span className="text-[10px] text-emerald-400">
+                  {currentAdvisory.approved_by ? `Approved by ${currentAdvisory.approved_by}` : 'Approved & Broadcast'}
+                </span>
+              </div>
+            )}
+
+            {currentAdvisory?.approval_state === 'REJECTED' && (
+              <div className="bg-rose-950/60 border border-rose-500/50 rounded-lg p-2.5 my-2 text-xs text-rose-200 font-mono">
+                <div className="flex items-center gap-1.5 font-semibold text-rose-300">
+                  <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                  <span>✕ ADVISORY REJECTED</span>
+                </div>
+                <div className="text-[11px] text-rose-200 mt-1">
+                  Reason: {currentAdvisory.rejection_reason || 'Rejected by operational reviewer'}
+                </div>
+              </div>
+            )}
+
             {/* Multilingual Headline */}
             <div className="text-xs font-bold text-red-300 leading-tight">
               {headline}

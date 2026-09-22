@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Brain, Cpu, Sparkles, Loader2, CheckCircle2, AlertTriangle, Info, RefreshCw } from 'lucide-react';
 import { CycloneTrack } from '../map/types';
+import { getAuthHeader } from '../../lib/api';
 
 interface LstmForecastPoint {
   lat?: number;
@@ -111,11 +112,15 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
       const lstmTimeoutId = setTimeout(() => lstmController.abort(), 60000);
 
       try {
+        const authHeader = await getAuthHeader();
         // TASK 1: Parallelize with Promise.allSettled without blocking on individual fetches
         const [lstmSettled, geminiSettled] = await Promise.allSettled([
           fetch(`${backendUrl}/api/forecast/track`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...authHeader,
+            },
             body: JSON.stringify({
               cyclone_id: cycloneId,
               recent_point_indices: indices,
@@ -127,7 +132,10 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
           }),
           fetch(`${backendUrl}/api/forecast/gemini`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...authHeader,
+            },
             body: JSON.stringify({
               cyclone_id: cycloneId,
               recent_point_count: 4,

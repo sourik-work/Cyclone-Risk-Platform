@@ -21,6 +21,17 @@ try:
     HAS_BQ = True
 except ImportError:
     HAS_BQ = False
+    class _MockBigQuery:
+        @staticmethod
+        def ScalarQueryParameter(name, type_, value):
+            return {"name": name, "type": type_, "value": value}
+        @staticmethod
+        def QueryJobConfig(**kwargs):
+            class _Config:
+                def __init__(self, **kw):
+                    self.__dict__.update(kw)
+            return _Config(**kwargs)
+    bigquery = _MockBigQuery()
 
 PROJECT_ID = os.getenv("GCP_PROJECT_ID", "cyclone-risk-platform")
 DATASET_ID = os.getenv("BIGQUERY_DATASET", "cyclone_risk_dw")

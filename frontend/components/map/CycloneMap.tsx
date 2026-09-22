@@ -16,6 +16,7 @@ import {
 import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
 import { MapFallbackRadar } from './MapFallbackRadar';
 import { Radio, Layers, Satellite, Sliders, Cpu, Compass, Zap, Activity, CloudRain, Waves } from 'lucide-react';
+import { getAuthHeader } from '../../lib/api';
 
 const AUTHENTICATED_EE_TILE_URL =
   'https://earthengine.googleapis.com/v1/projects/cyclone-risk-platform/maps/b3a9fb812b939765aa9e34a318c3149b-39495b43e12ed39f1a31ec4eae471f26/tiles/{z}/{x}/{y}?key=AIzaSyBWf8E_V67W3PenTBi2Q5OR2MU-DDCk1jw';
@@ -276,26 +277,29 @@ const GoogleMapsAiForecastLayer: React.FC<{
       forecastEndIndex,
     ];
 
-    fetch(`${backendUrl}/api/forecast/track`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        cyclone_id: cycloneId,
-        recent_point_indices: recentIndices,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Forecast API returned ${res.status}`);
-        return res.json();
+    getAuthHeader().then((authHeader) => {
+      if (!isMounted) return;
+      fetch(`${backendUrl}/api/forecast/track`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeader },
+        body: JSON.stringify({
+          cyclone_id: cycloneId,
+          recent_point_indices: recentIndices,
+        }),
       })
-      .then((data: ForecastTrackResponse) => {
-        if (isMounted) {
-          setAiForecast(data);
-        }
-      })
-      .catch((err) => {
-        console.warn('Failed to fetch AI forecast from TrackLSTM service:', err);
-      });
+        .then((res) => {
+          if (!res.ok) throw new Error(`Forecast API returned ${res.status}`);
+          return res.json();
+        })
+        .then((data: ForecastTrackResponse) => {
+          if (isMounted) {
+            setAiForecast(data);
+          }
+        })
+        .catch((err) => {
+          console.warn('Failed to fetch AI forecast from TrackLSTM service:', err);
+        });
+    });
 
     return () => {
       isMounted = false;
@@ -875,25 +879,28 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
     const targetDistrict = selectedDistrict?.district_name || (selectedState === 'West Bengal' ? 'Purba Medinipur' : selectedState === 'Andhra Pradesh' ? 'Visakhapatnam' : selectedState === 'Tamil Nadu' ? 'Chennai' : 'Puri');
 
     // 1. Fetch surge simulation
-    fetch(`${backendUrl}/api/surge/simulate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        cyclone_id: cycloneId,
-        district_id: targetDistrict,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Surge API returned ${res.status}`);
-        return res.json();
+    getAuthHeader().then((authHeader) => {
+      if (!isMounted) return;
+      fetch(`${backendUrl}/api/surge/simulate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeader },
+        body: JSON.stringify({
+          cyclone_id: cycloneId,
+          district_id: targetDistrict,
+        }),
       })
-      .then((data: SurgeSimulation) => {
-        if (isMounted) setSurgeData(data);
-      })
-      .catch((err) => {
-        console.warn('Failed to fetch surge simulation, using fallback:', err);
-        if (isMounted) setSurgeData(computeLocalSurge(cycloneId, targetDistrict, selectedState));
-      });
+        .then((res) => {
+          if (!res.ok) throw new Error(`Surge API returned ${res.status}`);
+          return res.json();
+        })
+        .then((data: SurgeSimulation) => {
+          if (isMounted) setSurgeData(data);
+        })
+        .catch((err) => {
+          console.warn('Failed to fetch surge simulation, using fallback:', err);
+          if (isMounted) setSurgeData(computeLocalSurge(cycloneId, targetDistrict, selectedState));
+        });
+    });
 
     // 2. Fetch rainfall forecasts for all districts in current state
     const stateFeatures = vulnerabilityData.features.filter(

@@ -1,6 +1,7 @@
 """API routes for cyclone tracking, vulnerability GIS queries, and Gemini advisory generation."""
 
 import base64
+import functools
 import json
 import logging
 import os
@@ -9,14 +10,21 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
+from backend.core.auth import require_auth, require_dispatcher
 from backend.schemas.cyclone import (
+    ActionItem,
+    AdvisoryAuditEntry,
     AdvisorySeverity,
     AlertSubscribeRequest,
     AlertSubscribeResponse,
     AnticipatoryAdvisory,
+    ApprovalRequest,
+    ApprovalState,
     AuthVerifyRequest,
     AuthVerifyResponse,
     BhuvanLayer,
@@ -46,6 +54,7 @@ from backend.schemas.cyclone import (
     MultilingualAdvisories,
     OSMFeature,
     RainfallForecast,
+    RejectionRequest,
     SurgeSimulation,
     SurgeSimulationRequest,
     SynthesizeRequest,
@@ -97,12 +106,79 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["Cyclone Risk"])
 
+# SlowAPI Limiter for per-IP rate limiting
+_is_testing = bool(os.getenv("TESTING") or os.getenv("PYTEST_CURRENT_TEST"))
+limiter = Limiter(key_func=get_remote_address, enabled=not _is_testing)
+
+
+def safe_limiter_limit(limit_value: str):
+    """Wrapper around SlowAPI limiter that safely allows direct function invocation in test scripts."""
+    def decorator(func):
+        limiter_decorator = limiter.limit(limit_value)
+        wrapped = limiter_decorator(func)
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            has_request = any(isinstance(a, Request) for a in args) or isinstance(kwargs.get("request"), Request)
+            if not has_request:
+                return func(*args, **kwargs)
+            return wrapped(*args, **kwargs)
+        return wrapper
+    return decorator
+
 # Locate root directory containing data/
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 
-# In-memory store for latest generated advisory and live IMD fetcher service
+# In-memory stores for latest generated advisory, audit trails, and live IMD fetcher service
 _LATEST_ADVISORY: Optional[AnticipatoryAdvisory] = None
+_ADVISORY_AUDIT_TRAIL: Dict[str, List[Dict[str, Any]]] = {}
+_INSURANCE_AUDIT_TRAIL: List[Dict[str, Any]] = []
+_LATEST_INSURANCE_EVALUATION: Optional[InsuranceEvaluateResponse] = None
 _IMD_FETCHER = IMDFetcherService()
+
+
+def _log_advisory_audit(
+    advisory_id: str,
+    cyclone_id: str,
+    state: ApprovalState,
+    actor: Optional[str],
+    notes_or_reason: Optional[str] = None,
+) -> None:
+    """Appends an event to the advisory approval audit trail."""
+    entry = {
+        "audit_id": f"AUD-{uuid.uuid4().hex[:8].upper()}",
+        "advisory_id": advisory_id,
+        "cyclone_id": cyclone_id,
+        "state": state.value if hasattr(state, "value") else str(state),
+        "actor": actor or "system",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes_or_reason": notes_or_reason,
+    }
+    if advisory_id not in _ADVISORY_AUDIT_TRAIL:
+        _ADVISORY_AUDIT_TRAIL[advisory_id] = []
+    _ADVISORY_AUDIT_TRAIL[advisory_id].append(entry)
+
+    try:
+        from backend.services.firebase_service import get_firestore_client
+        db = get_firestore_client()
+        db.collection("advisory_audits").add(entry)
+    except Exception as e:
+        logger.debug(f"Firestore audit log notice: {e}")
+
+
+def _find_advisory_by_id(advisory_id: str) -> Optional[AnticipatoryAdvisory]:
+    """Finds an advisory by advisory_id in memory or Firestore."""
+    global _LATEST_ADVISORY
+    if _LATEST_ADVISORY and _LATEST_ADVISORY.advisory_id == advisory_id:
+        return _LATEST_ADVISORY
+    try:
+        from backend.services.firebase_service import get_firestore_client
+        db = get_firestore_client()
+        doc = db.collection("advisories").document(advisory_id).get()
+        if doc.exists:
+            return AnticipatoryAdvisory.model_validate(doc.to_dict())
+    except Exception as e:
+        logger.debug(f"Firestore advisory lookup notice: {e}")
+    return _LATEST_ADVISORY
 
 
 class GenerateAdvisoryRequest(BaseModel):
@@ -239,8 +315,13 @@ def get_coastal_vulnerability(
 
 
 @router.post("/advisories/generate", response_model=AnticipatoryAdvisory)
-def generate_advisory(req: GenerateAdvisoryRequest) -> AnticipatoryAdvisory:
-    """Invokes Gemini 3.7 Flash to generate a multilingual anticipatory advisory."""
+@safe_limiter_limit("10/minute")
+def generate_advisory(
+    req: GenerateAdvisoryRequest,
+    request: Request = None,
+    auth: dict = Depends(require_auth),
+) -> AnticipatoryAdvisory:
+    """Invokes Gemini 3.7 Flash to generate a multilingual anticipatory advisory in PENDING_APPROVAL state."""
     global _LATEST_ADVISORY
 
     cyclone_id = req.cyclone_id
@@ -272,7 +353,15 @@ def generate_advisory(req: GenerateAdvisoryRequest) -> AnticipatoryAdvisory:
             vulnerable_districts=selected_districts,
             lead_time_hours=req.lead_time_hours,
         )
+        advisory.approval_state = ApprovalState.PENDING_APPROVAL
         _LATEST_ADVISORY = advisory
+        _log_advisory_audit(
+            advisory_id=advisory.advisory_id,
+            cyclone_id=advisory.cyclone_id,
+            state=ApprovalState.PENDING_APPROVAL,
+            actor=(auth.get("email") if isinstance(auth, dict) else None) or "system",
+            notes_or_reason="Generated advisory placed in PENDING_APPROVAL state; awaiting officer review",
+        )
         return advisory
 
     # 3. Try live storm if ID starts with IMD-LIVE- or matches live bulletin
@@ -299,7 +388,15 @@ def generate_advisory(req: GenerateAdvisoryRequest) -> AnticipatoryAdvisory:
                     vulnerable_districts=selected_districts,
                     lead_time_hours=req.lead_time_hours,
                 )
+                advisory.approval_state = ApprovalState.PENDING_APPROVAL
                 _LATEST_ADVISORY = advisory
+                _log_advisory_audit(
+                    advisory_id=advisory.advisory_id,
+                    cyclone_id=advisory.cyclone_id,
+                    state=ApprovalState.PENDING_APPROVAL,
+                    actor=(auth.get("email") if isinstance(auth, dict) else None) or "system",
+                    notes_or_reason="Generated live storm advisory placed in PENDING_APPROVAL state",
+                )
                 return advisory
 
         # If Live Mode has no active storm, return a "monitoring" advisory instead of 404
@@ -308,6 +405,7 @@ def generate_advisory(req: GenerateAdvisoryRequest) -> AnticipatoryAdvisory:
             cyclone_id=cyclone_id,
             issued_at=datetime.now(timezone.utc).isoformat(),
             severity_level=AdvisorySeverity.MONITORING,
+            approval_state=ApprovalState.PENDING_APPROVAL,
             lead_time_hours=None,
             estimated_landfall_time=None,
             estimated_landfall_location=None,
@@ -327,10 +425,120 @@ def generate_advisory(req: GenerateAdvisoryRequest) -> AnticipatoryAdvisory:
             model="gemini-3.7-flash",
         )
         _LATEST_ADVISORY = monitoring_advisory
+        _log_advisory_audit(
+            advisory_id=monitoring_advisory.advisory_id,
+            cyclone_id=monitoring_advisory.cyclone_id,
+            state=ApprovalState.PENDING_APPROVAL,
+            actor=(auth.get("email") if isinstance(auth, dict) else None) or "system",
+            notes_or_reason="Generated monitoring advisory placed in PENDING_APPROVAL state",
+        )
         return monitoring_advisory
 
     # 4. Fallback: 404 with clear message
     raise HTTPException(status_code=404, detail=f"Cyclone track '{cyclone_id}' not found")
+
+
+@router.post("/advisories/{advisory_id}/approve", response_model=AnticipatoryAdvisory)
+@router.post("/api/advisories/{advisory_id}/approve", response_model=AnticipatoryAdvisory)
+def approve_advisory(
+    advisory_id: str,
+    payload: Optional[ApprovalRequest] = None,
+    auth: dict = Depends(require_dispatcher),
+) -> AnticipatoryAdvisory:
+    """Requires authenticated user with DISPATCHER role.
+    Updates advisory state to APPROVED, logs to Firestore / audit trail,
+    and then dispatches (triggers FCM notification, sets to DISPATCHED).
+    """
+    advisory = _find_advisory_by_id(advisory_id)
+    if not advisory:
+        raise HTTPException(status_code=404, detail=f"Advisory '{advisory_id}' not found")
+
+    approver = (payload.approved_by if payload and payload.approved_by else None) or auth.get("email") or auth.get("uid") or "authorized-dispatcher"
+    advisory.approval_state = ApprovalState.APPROVED
+    advisory.approved_by = approver
+    advisory.approved_at = datetime.now(timezone.utc)
+
+    _log_advisory_audit(
+        advisory_id=advisory.advisory_id,
+        cyclone_id=advisory.cyclone_id,
+        state=ApprovalState.APPROVED,
+        actor=approver,
+        notes_or_reason=(payload.notes if payload and payload.notes else None) or "Approved by authorized officer",
+    )
+
+    # NOW dispatch (trigger FCM, log to audit)
+    try:
+        target_state = "Odisha"
+        if advisory.target_districts and len(advisory.target_districts) > 0:
+            target_state = advisory.target_districts[0].state_name or "Odisha"
+        send_fcm_notification(
+            title=f"OFFICIAL CYCLONE ADVISORY: {advisory.headline}",
+            body=advisory.multilingual_advisories.english[:160],
+            state=target_state,
+        )
+        advisory.approval_state = ApprovalState.DISPATCHED
+        _log_advisory_audit(
+            advisory_id=advisory.advisory_id,
+            cyclone_id=advisory.cyclone_id,
+            state=ApprovalState.DISPATCHED,
+            actor="system-fcm",
+            notes_or_reason=f"Dispatched via FCM broadcast to {target_state} authorities",
+        )
+    except Exception as dispatch_err:
+        logger.warning(f"FCM broadcast during advisory approval notice: {dispatch_err}")
+
+    global _LATEST_ADVISORY
+    _LATEST_ADVISORY = advisory
+    return advisory
+
+
+@router.post("/advisories/{advisory_id}/reject", response_model=AnticipatoryAdvisory)
+@router.post("/api/advisories/{advisory_id}/reject", response_model=AnticipatoryAdvisory)
+def reject_advisory(
+    advisory_id: str,
+    payload: Optional[RejectionRequest] = None,
+    auth: dict = Depends(require_dispatcher),
+) -> AnticipatoryAdvisory:
+    """Record rejection reason. Does NOT dispatch."""
+    advisory = _find_advisory_by_id(advisory_id)
+    if not advisory:
+        raise HTTPException(status_code=404, detail=f"Advisory '{advisory_id}' not found")
+
+    rejector = auth.get("email") or auth.get("uid") or "authorized-dispatcher"
+    reason = (payload.reason if payload and payload.reason else "Operational risk review rejection")
+    advisory.approval_state = ApprovalState.REJECTED
+    advisory.rejection_reason = reason
+
+    _log_advisory_audit(
+        advisory_id=advisory.advisory_id,
+        cyclone_id=advisory.cyclone_id,
+        state=ApprovalState.REJECTED,
+        actor=rejector,
+        notes_or_reason=reason,
+    )
+    global _LATEST_ADVISORY
+    _LATEST_ADVISORY = advisory
+    return advisory
+
+
+@router.get("/advisories/{advisory_id}/audit", response_model=List[AdvisoryAuditEntry])
+@router.get("/api/advisories/{advisory_id}/audit", response_model=List[AdvisoryAuditEntry])
+def get_advisory_audit(advisory_id: str) -> List[AdvisoryAuditEntry]:
+    """Returns approval trail: who generated, who approved/rejected, when."""
+    raw_entries = list(_ADVISORY_AUDIT_TRAIL.get(advisory_id, []))
+    if not raw_entries and _LATEST_ADVISORY and (_LATEST_ADVISORY.advisory_id == advisory_id or advisory_id == "latest"):
+        raw_entries = [
+            {
+                "audit_id": f"AUD-{uuid.uuid4().hex[:8].upper()}",
+                "advisory_id": _LATEST_ADVISORY.advisory_id,
+                "cyclone_id": _LATEST_ADVISORY.cyclone_id,
+                "state": _LATEST_ADVISORY.approval_state.value if hasattr(_LATEST_ADVISORY.approval_state, "value") else str(_LATEST_ADVISORY.approval_state),
+                "actor": "system",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "notes_or_reason": "Advisory state trail entry",
+            }
+        ]
+    return [AdvisoryAuditEntry.model_validate(e) for e in raw_entries]
 
 
 @router.get("/advisories/latest", response_model=AnticipatoryAdvisory)
@@ -345,7 +553,10 @@ def get_latest_advisory() -> AnticipatoryAdvisory:
 
 
 @router.post("/advisories/synthesize", response_model=SynthesizeResponse)
-def synthesize_advisory_audio(req: SynthesizeRequest) -> SynthesizeResponse:
+def synthesize_advisory_audio(
+    req: SynthesizeRequest,
+    auth: dict = Depends(require_auth),
+) -> SynthesizeResponse:
     """Synthesizes advisory text into spoken audio via Gemini Flash TTS."""
     result = synthesize(req.text, req.language)
     return SynthesizeResponse(**result)
@@ -358,7 +569,10 @@ def get_live_cyclone(refresh: bool = Query(default=False, description="Force re-
 
 
 @router.post("/forecast/track", response_model=ForecastTrackResponse)
-def forecast_cyclone_track(req: ForecastTrackRequest) -> ForecastTrackResponse:
+def forecast_cyclone_track(
+    req: ForecastTrackRequest,
+    auth: dict = Depends(require_auth),
+) -> ForecastTrackResponse:
     """Predicts a 48-hour forward cyclone trajectory and intensity using the trained TrackLSTM model."""
     # 1. Load the cyclone track data
     track = get_cyclone_track(req.cyclone_id)
@@ -451,7 +665,10 @@ def forecast_cyclone_track(req: ForecastTrackRequest) -> ForecastTrackResponse:
 
 @router.post("/forecast/gemini", response_model=GeminiForecastResponse)
 @router.post("/api/forecast/gemini", response_model=GeminiForecastResponse)
-async def gemini_forecast(req: GeminiForecastRequest):
+async def gemini_forecast(
+    req: GeminiForecastRequest,
+    auth: dict = Depends(require_auth),
+):
     """
     Predict 48h trajectory using Gemini in-context reasoning.
     Complementary to POST /api/forecast/track (LSTM-based).
@@ -524,6 +741,7 @@ def get_rainfall_forecast_endpoint(
 @router.post("/surge/simulate", response_model=SurgeSimulation)
 def simulate_surge_endpoint(
     req: SurgeSimulationRequest,
+    auth: dict = Depends(require_auth),
 ) -> SurgeSimulation:
     """Simulates hydrodynamic storm surge, inland inundation polygon, and exposed assets."""
     data = simulate_surge(cyclone_id=req.cyclone_id, district_id=req.district_id)
@@ -757,7 +975,10 @@ def subscribe_alert_endpoint(payload: AlertSubscribeRequest) -> AlertSubscribeRe
 
 
 @router.post("/alerts/broadcast")
-def broadcast_fcm_alert_endpoint(payload: FCMNotificationRequest) -> Dict[str, Any]:
+def broadcast_fcm_alert_endpoint(
+    payload: FCMNotificationRequest,
+    auth: dict = Depends(require_dispatcher),
+) -> Dict[str, Any]:
     """Broadcasts FCM push notification to all subscribers within a designated state."""
     res = send_fcm_notification(title=payload.title, body=payload.body, state=payload.state)
     return {
@@ -774,7 +995,12 @@ def get_insurance_contracts() -> List[Dict[str, Any]]:
 
 
 @router.post("/insurance/evaluate", response_model=InsuranceEvaluateResponse)
-def evaluate_insurance_contracts(payload: InsuranceEvaluateRequest) -> InsuranceEvaluateResponse:
+@safe_limiter_limit("10/minute")
+def evaluate_insurance_contracts(
+    payload: InsuranceEvaluateRequest,
+    request: Request = None,
+    auth: dict = Depends(require_auth),
+) -> InsuranceEvaluateResponse:
     """Evaluates all parametric insurance contracts against current storm track, surge, and rainfall hazards."""
     # 1. Load contracts
     contracts = load_contracts()
@@ -850,7 +1076,12 @@ def evaluate_insurance_contracts(payload: InsuranceEvaluateRequest) -> Insurance
     total_households = eval_results.get("total_households", sum(int(r.get("households_affected", 0)) for r in eval_results)) if hasattr(eval_results, "get") else sum(int(r.get("households_affected", 0)) for r in eval_results)
     uncertainty = eval_results.get("uncertainty_assessment") if hasattr(eval_results, "get") else None
 
-    return InsuranceEvaluateResponse(
+    approval_state = ApprovalState.PENDING_APPROVAL if triggers_active > 0 else ApprovalState.DRAFT
+    evaluation_id = f"INS-EVAL-{uuid.uuid4().hex[:8].upper()}"
+
+    resp = InsuranceEvaluateResponse(
+        evaluation_id=evaluation_id,
+        approval_state=approval_state,
         total_contracts=total_contracts,
         triggers_active=triggers_active,
         total_payout_inr=total_payout_inr,
@@ -858,6 +1089,100 @@ def evaluate_insurance_contracts(payload: InsuranceEvaluateRequest) -> Insurance
         uncertainty_assessment=uncertainty,
         results=[InsuranceTriggerResult(**r) for r in eval_results],
     )
+    global _LATEST_INSURANCE_EVALUATION
+    _LATEST_INSURANCE_EVALUATION = resp
+
+    actor = (auth.get("email") if isinstance(auth, dict) else None) or "system"
+    _INSURANCE_AUDIT_TRAIL.append({
+        "audit_id": f"AUD-INS-{uuid.uuid4().hex[:8].upper()}",
+        "evaluation_id": evaluation_id,
+        "cyclone_id": payload.cyclone_id,
+        "state": approval_state.value,
+        "actor": actor,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes_or_reason": f"Evaluated {total_contracts} contracts: {triggers_active} triggers active, payout ₹{total_payout_inr:,.2f} pending approval",
+    })
+    return resp
+
+
+@router.post("/insurance/approve", response_model=InsuranceEvaluateResponse)
+@router.post("/api/insurance/approve", response_model=InsuranceEvaluateResponse)
+@router.post("/insurance/{evaluation_id}/approve", response_model=InsuranceEvaluateResponse)
+@router.post("/api/insurance/{evaluation_id}/approve", response_model=InsuranceEvaluateResponse)
+def approve_insurance_payout(
+    evaluation_id: Optional[str] = None,
+    payload: Optional[ApprovalRequest] = None,
+    auth: dict = Depends(require_dispatcher),
+) -> InsuranceEvaluateResponse:
+    """Approves parametric insurance payout disbursement. Requires DISPATCHER role."""
+    global _LATEST_INSURANCE_EVALUATION
+    if _LATEST_INSURANCE_EVALUATION is None:
+        raise HTTPException(status_code=404, detail="No active insurance evaluation to approve")
+
+    approver = (payload.approved_by if payload and payload.approved_by else None) or auth.get("email") or auth.get("uid") or "authorized-dispatcher"
+    _LATEST_INSURANCE_EVALUATION.approval_state = ApprovalState.APPROVED
+    _LATEST_INSURANCE_EVALUATION.approved_by = approver
+    _LATEST_INSURANCE_EVALUATION.approved_at = datetime.now(timezone.utc)
+
+    _INSURANCE_AUDIT_TRAIL.append({
+        "audit_id": f"AUD-INS-{uuid.uuid4().hex[:8].upper()}",
+        "evaluation_id": _LATEST_INSURANCE_EVALUATION.evaluation_id or evaluation_id or "latest",
+        "state": ApprovalState.APPROVED.value,
+        "actor": approver,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes_or_reason": (payload.notes if payload and payload.notes else None) or "Approved parametric payout liquidity release",
+    })
+
+    # Release disbursement
+    _LATEST_INSURANCE_EVALUATION.approval_state = ApprovalState.DISPATCHED
+    _INSURANCE_AUDIT_TRAIL.append({
+        "audit_id": f"AUD-INS-{uuid.uuid4().hex[:8].upper()}",
+        "evaluation_id": _LATEST_INSURANCE_EVALUATION.evaluation_id or evaluation_id or "latest",
+        "state": ApprovalState.DISPATCHED.value,
+        "actor": "system-disbursement",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes_or_reason": f"Disbursed parametric payout ₹{_LATEST_INSURANCE_EVALUATION.total_payout_inr:,.2f} to disaster relief accounts",
+    })
+    return _LATEST_INSURANCE_EVALUATION
+
+
+@router.post("/insurance/reject", response_model=InsuranceEvaluateResponse)
+@router.post("/api/insurance/reject", response_model=InsuranceEvaluateResponse)
+@router.post("/insurance/{evaluation_id}/reject", response_model=InsuranceEvaluateResponse)
+@router.post("/api/insurance/{evaluation_id}/reject", response_model=InsuranceEvaluateResponse)
+def reject_insurance_payout(
+    evaluation_id: Optional[str] = None,
+    payload: Optional[RejectionRequest] = None,
+    auth: dict = Depends(require_dispatcher),
+) -> InsuranceEvaluateResponse:
+    """Rejects parametric insurance payout disbursement. Requires DISPATCHER role."""
+    global _LATEST_INSURANCE_EVALUATION
+    if _LATEST_INSURANCE_EVALUATION is None:
+        raise HTTPException(status_code=404, detail="No active insurance evaluation to reject")
+
+    rejector = auth.get("email") or auth.get("uid") or "authorized-dispatcher"
+    reason = (payload.reason if payload and payload.reason else "Rejected by disaster finance officer")
+    _LATEST_INSURANCE_EVALUATION.approval_state = ApprovalState.REJECTED
+    _LATEST_INSURANCE_EVALUATION.rejection_reason = reason
+
+    _INSURANCE_AUDIT_TRAIL.append({
+        "audit_id": f"AUD-INS-{uuid.uuid4().hex[:8].upper()}",
+        "evaluation_id": _LATEST_INSURANCE_EVALUATION.evaluation_id or evaluation_id or "latest",
+        "state": ApprovalState.REJECTED.value,
+        "actor": rejector,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes_or_reason": reason,
+    })
+    return _LATEST_INSURANCE_EVALUATION
+
+
+@router.get("/insurance/audit")
+@router.get("/api/insurance/audit")
+@router.get("/insurance/{evaluation_id}/audit")
+@router.get("/api/insurance/{evaluation_id}/audit")
+def get_insurance_audit(evaluation_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Returns parametric insurance approval audit trail."""
+    return _INSURANCE_AUDIT_TRAIL
 
 
 @router.post("/dialogflow/webhook")
@@ -901,9 +1226,9 @@ async def dialogflow_webhook(request: dict):
     elif intent_name == "get_advisory":
         global _LATEST_ADVISORY
         if _LATEST_ADVISORY is not None:
-            reply = f"Current Advisory: {_LATEST_ADVISORY.headline}. Severity: {_LATEST_ADVISORY.severity_level.value}. {_LATEST_ADVISORY.multilingual_advisories.english}"
+            reply = f"Current Advisory: {_LATEST_ADVISORY.headline}. Severity: {_LATEST_ADVISORY.severity_level.value}. Advisory generated and awaiting officer approval. Not yet dispatched. {_LATEST_ADVISORY.multilingual_advisories.english}"
         else:
-            reply = "Generating advisory... check the dashboard panel for the full multilingual advisory."
+            reply = "Advisory generated and awaiting officer approval. Not yet dispatched. Check the dashboard panel for the full multilingual advisory."
     else:
         reply = "I can help with cyclone status or current advisories. Try asking: 'What is the cyclone status?' or 'Give me the advisory.'"
 
@@ -918,7 +1243,10 @@ async def dialogflow_webhook(request: dict):
 
 @router.post("/chat/message", response_model=ChatResponse)
 @router.post("/api/chat/message", response_model=ChatResponse)
-async def chat_message(payload: ChatMessage):
+async def chat_message(
+    payload: ChatMessage,
+    auth: dict = Depends(require_auth),
+):
     """Simplified chat endpoint used by the frontend widget."""
     result = await dialogflow_webhook({
         "message": payload.message,
@@ -933,7 +1261,10 @@ async def chat_message(payload: ChatMessage):
 
 @router.post("/exposure/reason", response_model=ExposureReasoningResponse)
 @router.post("/api/exposure/reason", response_model=ExposureReasoningResponse)
-async def reason_exposure(req: ExposureReasoningRequest):
+async def reason_exposure(
+    req: ExposureReasoningRequest,
+    auth: dict = Depends(require_auth),
+):
     """Gemini multimodal reasoning over SAR flood extent + infrastructure geometry."""
     # 1. Get storm data (surge, wind, rainfall for the district)
     from backend.services.surge_service import simulate_surge

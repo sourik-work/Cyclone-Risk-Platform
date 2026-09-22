@@ -5,13 +5,20 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.api.routes import router
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
+from backend.api.routes import router, limiter
 
 app = FastAPI(
     title="Cyclone Risk & Anticipatory Action Platform API",
     version="1.0.0",
     description="AI-powered predictive risk modeling for Bay of Bengal cyclones",
 )
+
+# SlowAPI rate limiting configuration
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS configuration
 allowed_origins = [
