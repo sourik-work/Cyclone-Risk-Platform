@@ -837,15 +837,15 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
     <>
       <aside className="w-full lg:w-96 flex flex-col gap-4 overflow-y-auto pr-1 select-none">
       {/* 1. Storm Telemetry Card */}
-      <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-xl space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+      <div className="card-glass p-4 space-y-3">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-text-secondary">
               STORM TELEMETRY • {track.basin}
             </span>
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2 tracking-tight">
               <span>CYCLONE {track.name.toUpperCase()}</span>
-              <span className="text-xs font-mono font-normal text-slate-400">({track.id})</span>
+              <span className="text-xs font-mono font-normal text-text-tertiary">({track.id})</span>
             </h2>
           </div>
           <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
@@ -855,71 +855,71 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
         {/* Telemetry Metrics Grid */}
         <div className="grid grid-cols-2 gap-2.5 text-xs">
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <Wind className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
+            <div className="flex items-center gap-1.5 text-text-secondary">
+              <Wind className="w-3.5 h-3.5 text-accent-cyan" />
               <span>Sustained Wind</span>
             </div>
-            <div className="font-mono text-base font-bold text-slate-100">
+            <div className="metric-display text-base font-bold text-text-primary">
               {windKmph}{' '}
-              <span className="text-[11px] font-normal text-slate-400">km/h</span>
+              <span className="text-[11px] font-normal text-text-secondary">km/h</span>
             </div>
-            <div className="text-[10px] text-slate-500 font-mono">
+            <div className="text-[10px] text-text-tertiary mono-data">
               Gusts to {gustKmph} km/h ({currentPoint.wind_speed_knots} kts)
             </div>
           </div>
 
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-slate-400">
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
+            <div className="flex items-center gap-1.5 text-text-secondary">
               <Gauge className="w-3.5 h-3.5 text-purple-400" />
               <span>Central Pressure</span>
             </div>
-            <div className="font-mono text-base font-bold text-slate-100">
+            <div className="metric-display text-base font-bold text-text-primary">
               {currentPoint.central_pressure_hpa}{' '}
-              <span className="text-[11px] font-normal text-slate-400">hPa</span>
+              <span className="text-[11px] font-normal text-text-secondary">hPa</span>
             </div>
-            <div className="text-[10px] text-slate-500 font-mono">
+            <div className="text-[10px] text-text-tertiary mono-data">
               {currentPoint.central_pressure_hpa < 950 ? 'Extremely Intense' : 'Standard Depression'}
             </div>
           </div>
 
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-slate-400">
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
+            <div className="flex items-center gap-1.5 text-text-secondary">
               <Compass className="w-3.5 h-3.5 text-amber-400" />
               <span>Position (Lat/Lon)</span>
             </div>
-            <div className="font-mono text-xs font-semibold text-slate-200">
+            <div className="mono-data text-xs font-semibold text-text-primary">
               {currentPoint.latitude.toFixed(2)}°N, {currentPoint.longitude.toFixed(2)}°E
             </div>
-            <div className="text-[10px] text-slate-500 font-mono">
+            <div className="text-[10px] text-text-tertiary mono-data">
               {currentPoint.is_forecast ? `Lead: +${currentPoint.forecast_lead_hours}h` : 'Observed RSMC'}
             </div>
           </div>
 
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-slate-400">
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
+            <div className="flex items-center gap-1.5 text-text-secondary">
               <Navigation className="w-3.5 h-3.5 text-emerald-400" />
               <span>Movement</span>
             </div>
-            <div className="font-mono text-xs font-semibold text-slate-200">
+            <div className="mono-data text-xs font-semibold text-text-primary">
               {currentPoint.forward_speed_kmph || 18} km/h @ {currentPoint.heading_degrees || 35}°
             </div>
-            <div className="text-[10px] text-slate-500 font-mono">Bearing: North-Northeast</div>
+            <div className="text-[10px] text-text-tertiary mono-data">Bearing: North-Northeast</div>
           </div>
         </div>
       </div>
 
       {/* 2. Coastal District Vulnerability Card */}
-      <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-xl space-y-3.5">
+      <div className="card-glass p-4 space-y-3.5">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
           <div className="flex items-center gap-2">
-            <Waves className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+            <Waves className="w-4 h-4 text-accent-cyan" />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
               COASTAL IMPACT ASSESSMENT
             </h3>
           </div>
-          <span className="text-[10px] text-slate-400 font-mono">
+          <span className="text-[10px] text-text-secondary font-mono">
             {activeState.toUpperCase()} RISK GRID
           </span>
         </div>
@@ -939,7 +939,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
               name="state-selector-dropdown"
               value={activeState}
               onChange={(e) => handleStateClick(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 text-slate-100 font-medium text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all cursor-pointer shadow-inner"
+              className="w-full bg-surface-2 border border-white/[0.08] text-text-primary font-medium text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-accent-cyan transition-all cursor-pointer shadow-inner"
             >
               {COASTAL_STATES.map((state) => (
                 <option key={state} value={state} className="bg-slate-900 text-slate-100 py-1">
@@ -1041,32 +1041,32 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
             {/* District Stats Grid */}
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-slate-950/60 border border-slate-800 p-2 rounded-lg">
-                <div className="text-slate-400 flex items-center gap-1">
-                  <Waves className="w-3 h-3 text-cyan-400" /> Storm Surge
+              <div className="bg-surface-2 border border-white/[0.06] p-2 rounded-xl">
+                <div className="text-text-secondary flex items-center gap-1">
+                  <Waves className="w-3 h-3 text-accent-cyan" /> Storm Surge
                 </div>
-                <div className="font-mono font-bold text-slate-100 text-sm mt-0.5">
+                <div className="metric-display font-bold text-text-primary text-sm mt-0.5">
                   {selectedDistrict.storm_surge_risk_m ?? selectedDistrict.inundation_risk ?? 4.0} meters
                 </div>
-                <div className="text-[10px] text-slate-500">Inundation Threat</div>
+                <div className="text-[10px] text-text-tertiary">Inundation Threat</div>
               </div>
 
-              <div className="bg-slate-950/60 border border-slate-800 p-2 rounded-lg">
-                <div className="text-slate-400 flex items-center gap-1">
+              <div className="bg-surface-2 border border-white/[0.06] p-2 rounded-xl">
+                <div className="text-text-secondary flex items-center gap-1">
                   <Users className="w-3 h-3 text-amber-400" /> Kutcha Population
                 </div>
-                <div suppressHydrationWarning className="font-mono font-bold text-amber-300 text-sm mt-0.5">
+                <div suppressHydrationWarning className="metric-display font-bold text-amber-300 text-sm mt-0.5">
                   {formatCount(selectedDistrict.vulnerable_population ?? selectedDistrict.kutcha_population ?? 0)}
                 </div>
-                <div className="text-[10px] text-slate-500">Require Evacuation</div>
+                <div className="text-[10px] text-text-tertiary">Require Evacuation</div>
               </div>
 
-              <div className="bg-slate-950/60 border border-slate-800 p-2 rounded-lg col-span-2">
-                <div className="flex items-center justify-between text-slate-400">
+              <div className="bg-surface-2 border border-white/[0.06] p-2 rounded-xl col-span-2">
+                <div className="flex items-center justify-between text-text-secondary">
                   <span className="flex items-center gap-1">
                     <Shield className="w-3 h-3 text-emerald-400" /> Shelter Capacity vs Need
                   </span>
-                  <span suppressHydrationWarning className="text-[11px] font-mono text-red-400 font-semibold">
+                  <span suppressHydrationWarning className="text-[11px] mono-data text-red-400 font-semibold">
                     Deficit: -
                     {formatCount(
                       Math.max(
@@ -1077,14 +1077,14 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                     )}
                   </span>
                 </div>
-                <div suppressHydrationWarning className="text-xs font-mono text-slate-200 mt-1">
+                <div suppressHydrationWarning className="text-xs mono-data text-text-primary mt-1">
                   Cap: {formatCount(selectedDistrict.shelter_capacity)} in {selectedDistrict.shelter_count ?? selectedDistrict.evac_shelters} shelters
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="text-xs text-slate-400 p-4 text-center border border-dashed border-slate-800 rounded-lg">
+          <div className="text-xs text-text-secondary p-4 text-center border border-dashed border-white/[0.08] rounded-xl">
             Select any coastal district above or click on its map polygon to view exposure and evacuation deficits.
           </div>
         )}
@@ -1093,16 +1093,16 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       {/* 2.5 Infrastructure Exposure Card (Phase 1, Workstream 1) */}
       <div
         id="infrastructure-exposure-card"
-        className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-xl space-y-3"
+        className="card-glass p-4 space-y-3"
       >
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-400" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
               INFRASTRUCTURE EXPOSURE
             </h3>
           </div>
-          <span className="text-[10px] text-amber-400 font-mono font-semibold">
+          <span className="text-[10px] text-amber-400 mono-data font-semibold">
             {(selectedDistrict?.district_name || activeState).toUpperCase()}
           </span>
         </div>
@@ -1111,9 +1111,10 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         {districtInfrastructure.coastalWarningTier === 'CRITICAL' && (
           <div
             id="coastal-exposure-warning-badge"
-            className="flex items-center gap-2 p-2.5 rounded-lg bg-red-500/15 border border-red-500/40 text-red-300 text-xs font-mono shadow-sm"
+            className="flex items-center gap-2 p-3 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs mono-data backdrop-blur-sm"
           >
-            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
             <div className="leading-tight">
               <span className="font-bold text-red-200">CRITICAL STORM EXPOSURE:</span>{' '}
               <span>{districtInfrastructure.criticalCoastalAssetsCount} asset(s) within 5km of shore AND inside the forecast cone</span>
@@ -1125,8 +1126,9 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         {districtInfrastructure.coastalWarningTier === 'ELEVATED' && (
           <div
             id="coastal-exposure-warning-badge"
-            className="flex items-center gap-2 p-2.5 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-mono shadow-sm"
+            className="flex items-center gap-2 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs mono-data backdrop-blur-sm"
           >
+            <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
             <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
             <div className="leading-tight">
               <span className="font-bold text-amber-200">ELEVATED COASTAL RISK:</span>{' '}
@@ -1139,11 +1141,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         {districtInfrastructure.coastalWarningTier === 'COASTAL_PROXIMITY' && (
           <div
             id="coastal-exposure-warning-badge"
-            className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-500/15 border border-slate-600/40 text-slate-400 text-xs font-mono"
+            className="flex items-center gap-2 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-text-secondary text-xs mono-data"
           >
-            <Info className="w-4 h-4 text-slate-500 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-text-tertiary shrink-0" />
+            <Info className="w-4 h-4 text-text-tertiary shrink-0" />
             <div className="leading-tight">
-              <span className="font-medium text-slate-300">COASTAL PROXIMITY:</span>{' '}
+              <span className="font-medium text-text-primary">COASTAL PROXIMITY:</span>{' '}
               <span>{districtInfrastructure.coastalAssetsCount} asset(s) within 5km of shoreline (informational)</span>
             </div>
           </div>
@@ -1152,12 +1155,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         {/* Summary metrics grid */}
         <div className="grid grid-cols-2 gap-2 text-xs">
           {/* Substations */}
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="flex items-center gap-1 font-medium text-slate-300">
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+            <div className="flex items-center justify-between text-text-secondary">
+              <span className="flex items-center gap-1 font-medium text-text-primary">
                 <Zap className="w-3.5 h-3.5 text-amber-400" /> Substations
               </span>
-              <span className="font-mono font-bold text-amber-400">
+              <span className="mono-data font-bold text-amber-400">
                 {districtInfrastructure.substations.length}
               </span>
             </div>
@@ -1185,12 +1188,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
 
           {/* Arterial Roads */}
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="flex items-center gap-1 font-medium text-slate-300">
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+            <div className="flex items-center justify-between text-text-secondary">
+              <span className="flex items-center gap-1 font-medium text-text-primary">
                 <Navigation className="w-3.5 h-3.5 text-blue-400" /> Arterial Roads
               </span>
-              <span className="font-mono font-bold text-blue-400">
+              <span className="mono-data font-bold text-blue-400">
                 {districtInfrastructure.roads.length}
               </span>
             </div>
@@ -1215,12 +1218,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
 
           {/* Hospitals */}
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="flex items-center gap-1 font-medium text-slate-300">
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+            <div className="flex items-center justify-between text-text-secondary">
+              <span className="flex items-center gap-1 font-medium text-text-primary">
                 <Building2 className="w-3.5 h-3.5 text-rose-400" /> Hospitals
               </span>
-              <span className="font-mono font-bold text-rose-400">
+              <span className="mono-data font-bold text-rose-400">
                 {districtInfrastructure.totalHospitalBeds} beds
               </span>
             </div>
@@ -1247,12 +1250,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
 
           {/* Shelters */}
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="flex items-center gap-1 font-medium text-slate-300">
+          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+            <div className="flex items-center justify-between text-text-secondary">
+              <span className="flex items-center gap-1 font-medium text-text-primary">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" /> Shelters
               </span>
-              <span className="font-mono font-bold text-emerald-400">
+              <span className="mono-data font-bold text-emerald-400">
                 {districtInfrastructure.totalShelterCapacity} cap
               </span>
             </div>
@@ -1296,13 +1299,13 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       {/* 2.6 Hazard Forecast Card (Workstream 2: Rainfall Damage Pathway & Storm Surge Modeling) */}
       <div
         id="hazard-forecast-card"
-        className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-xl space-y-3.5 transition-all duration-300"
+        className="card-glass p-4 space-y-3.5 transition-all duration-300"
       >
         {/* Header with Title, Loading, and Overall Risk Badge */}
-        <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
-          <div className="flex items-center gap-2 text-cyan-400">
-            <Waves className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+        <div className="flex items-center justify-between gap-2 border-b border-white/[0.06] pb-2.5">
+          <div className="flex items-center gap-2 text-accent-cyan">
+            <Waves className="w-4 h-4 text-accent-cyan" />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
               HAZARD FORECAST
             </h3>
           </div>
@@ -1355,23 +1358,23 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
           {/* 3-column Rainfall Accumulation (24h, 48h, 72h) */}
           <div id="rainfall-forecast-grid" className="grid grid-cols-3 gap-2">
-            <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
-              <div className="text-[10px] text-slate-400 font-mono">24h Rain</div>
-              <div className="text-sm font-mono font-bold text-blue-300">{rainfall24h} mm</div>
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2 text-center">
+              <div className="text-[10px] text-text-tertiary mono-data">24h Rain</div>
+              <div className="text-sm mono-data font-bold text-blue-300">{rainfall24h} mm</div>
             </div>
-            <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
-              <div className="text-[10px] text-slate-400 font-mono">48h Rain</div>
-              <div className="text-sm font-mono font-bold text-blue-400">{rainfall48h} mm</div>
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2 text-center">
+              <div className="text-[10px] text-text-tertiary mono-data">48h Rain</div>
+              <div className="text-sm mono-data font-bold text-blue-400">{rainfall48h} mm</div>
             </div>
-            <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
-              <div className="text-[10px] text-slate-400 font-mono">72h Rain</div>
-              <div className="text-sm font-mono font-bold text-blue-500">{rainfall72h} mm</div>
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2 text-center">
+              <div className="text-[10px] text-text-tertiary mono-data">72h Rain</div>
+              <div className="text-sm mono-data font-bold text-blue-500">{rainfall72h} mm</div>
             </div>
           </div>
         </div>
 
         {/* 2. Storm Surge Inundation Section */}
-        <div className="space-y-1.5 pt-1.5 border-t border-slate-800/80">
+        <div className="space-y-1.5 pt-1.5 border-t border-white/[0.06]">
           <div className="flex items-center justify-between text-xs">
             <span className="flex items-center gap-1.5 font-medium text-slate-300">
               <Waves className="w-3.5 h-3.5 text-cyan-400" /> Storm Surge Hydrodynamics
@@ -1383,24 +1386,24 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
           {/* 3-column Surge Simulation (Max Height, Inundation Area, Affected Pop) */}
           <div id="surge-simulation-grid" className="grid grid-cols-3 gap-2">
-            <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
-              <div className="text-[10px] text-slate-400 font-mono">Peak Surge</div>
-              <div className="text-sm font-mono font-bold text-cyan-300">{surgeHeight} m</div>
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2 text-center">
+              <div className="text-[10px] text-text-tertiary mono-data">Peak Surge</div>
+              <div className="text-sm mono-data font-bold text-accent-cyan">{surgeHeight} m</div>
             </div>
-            <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
-              <div className="text-[10px] text-slate-400 font-mono">Inundation</div>
-              <div className="text-sm font-mono font-bold text-cyan-400">{surgeArea} km²</div>
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2 text-center">
+              <div className="text-[10px] text-text-tertiary mono-data">Inundation</div>
+              <div className="text-sm mono-data font-bold text-cyan-400">{surgeArea} km²</div>
             </div>
-            <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
-              <div className="text-[10px] text-slate-400 font-mono">Affected Pop</div>
-              <div className="text-sm font-mono font-bold text-rose-300">{formatCount(surgePop)}</div>
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2 text-center">
+              <div className="text-[10px] text-text-tertiary mono-data">Affected Pop</div>
+              <div className="text-sm mono-data font-bold text-rose-300">{formatCount(surgePop)}</div>
             </div>
           </div>
 
           {/* Key Exposed Infrastructure Assets */}
-          <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 bg-slate-950/40 px-2.5 py-1.5 rounded-lg border border-slate-800/50">
+          <div className="flex items-center justify-between text-[11px] mono-data text-text-secondary bg-surface-2 px-2.5 py-1.5 rounded-xl border border-white/[0.06]">
             <span>Exposed:</span>
-            <span className="text-slate-300 truncate text-[10px]">
+            <span className="text-text-primary truncate text-[10px]">
               🏥 {surgeAssets.hospitals_at_risk || 1} hosp • 🏕️ {surgeAssets.shelters_activated || 1} shelters • 🛣️ {surgeAssets.roads_submerged_km || 25} km
             </span>
           </div>
@@ -1432,14 +1435,14 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       />
 
       {/* 3. Gemini Multilingual Anticipatory Action Early Warning */}
-      <div className="bg-gradient-to-b from-red-950/40 to-slate-900/90 backdrop-blur-md border border-red-500/30 rounded-xl p-4 shadow-xl space-y-3 relative overflow-hidden transition-all duration-300">
+      <div className="card-glass bg-gradient-to-b from-red-950/30 to-transparent border-red-500/20 p-4 space-y-3 relative overflow-hidden transition-all duration-300">
         {/* Top subtle glow bar when loading */}
         {isLoadingAdvisory && (
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 via-red-500 to-amber-500 animate-pulse" />
         )}
 
         {/* Header with Title, Powered by Badge, and Window Badge */}
-        <div className="flex items-center justify-between gap-2 border-b border-red-500/20 pb-2.5">
+        <div className="flex items-center justify-between gap-2 border-b border-red-500/20 pb-2.5" >
           <div className="flex items-center gap-2 text-red-400 min-w-0">
             <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
             <div className="flex flex-col min-w-0">
@@ -1606,30 +1609,31 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           <>
             {/* Human-in-the-Loop Approval Gate Banner */}
             {currentAdvisory?.approval_state === 'PENDING_APPROVAL' && (
-              <div className="bg-amber-900/40 border border-amber-600 rounded-lg p-3 my-2 shadow-md">
-                <div className="text-amber-200 text-xs font-semibold flex items-center gap-1.5 font-mono">
-                  <span>⏸ PENDING HUMAN APPROVAL</span>
+              <div className="bg-amber-500/10 border border-amber-500/40 rounded-2xl p-3.5 my-2 backdrop-blur-sm">
+                <div className="text-amber-200 text-xs font-semibold flex items-center gap-2 mono-data">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                  <span>PENDING HUMAN APPROVAL</span>
                 </div>
-                <div className="text-amber-100 text-xs mt-1 leading-relaxed">
+                <div className="text-amber-100/80 text-xs mt-1.5 leading-relaxed">
                   This advisory has not been dispatched. An authorized officer must approve before broadcast.
                 </div>
                 {isAuthorizedDispatcher && (
-                  <div className="flex gap-2 mt-2.5">
+                  <div className="flex gap-2 mt-3">
                     <button
                       id="btn-approve-advisory"
                       onClick={approveAdvisory}
                       disabled={isApprovalActionLoading}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+                      className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs mono-data font-bold cursor-pointer transition-all shadow flex items-center gap-1.5 disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      {isApprovalActionLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : '✓'} Approve & Dispatch
+                      {isApprovalActionLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />} Approve & Dispatch
                     </button>
                     <button
                       id="btn-reject-advisory"
                       onClick={rejectAdvisory}
                       disabled={isApprovalActionLoading}
-                      className="px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+                      className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 rounded-xl text-xs mono-data font-bold cursor-pointer transition-all flex items-center gap-1.5 disabled:opacity-50"
                     >
-                      ✕ Reject
+                      <XCircle className="w-3 h-3" /> Reject
                     </button>
                   </div>
                 )}
@@ -1637,10 +1641,11 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             )}
 
             {currentAdvisory?.approval_state === 'DISPATCHED' && (
-              <div className="bg-emerald-950/60 border border-emerald-500/50 rounded-lg p-2.5 my-2 flex items-center justify-between text-xs text-emerald-200 font-mono">
-                <div className="flex items-center gap-1.5 font-semibold text-emerald-300">
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3 my-2 flex items-center justify-between text-xs text-emerald-200 mono-data backdrop-blur-sm">
+                <div className="flex items-center gap-2 font-semibold text-emerald-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>✓ DISPATCHED TO AUTHORITIES</span>
+                  <span>DISPATCHED TO AUTHORITIES</span>
                 </div>
                 <span className="text-[10px] text-emerald-400">
                   {currentAdvisory.approved_by ? `Approved by ${currentAdvisory.approved_by}` : 'Approved & Broadcast'}
@@ -1649,12 +1654,13 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             )}
 
             {currentAdvisory?.approval_state === 'REJECTED' && (
-              <div className="bg-rose-950/60 border border-rose-500/50 rounded-lg p-2.5 my-2 text-xs text-rose-200 font-mono">
-                <div className="flex items-center gap-1.5 font-semibold text-rose-300">
+              <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-3 my-2 text-xs text-rose-200 mono-data backdrop-blur-sm">
+                <div className="flex items-center gap-2 font-semibold text-rose-300">
+                  <span className="w-2 h-2 rounded-full bg-rose-400 shrink-0" />
                   <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
-                  <span>✕ ADVISORY REJECTED</span>
+                  <span>ADVISORY REJECTED</span>
                 </div>
-                <div className="text-[11px] text-rose-200 mt-1">
+                <div className="text-[11px] text-rose-200/80 mt-1.5">
                   Reason: {currentAdvisory.rejection_reason || 'Rejected by operational reviewer'}
                 </div>
               </div>
@@ -1682,7 +1688,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             )}
 
             {/* Multilingual Detailed Warning */}
-            <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
+            <p className="text-xs text-text-primary leading-relaxed bg-surface-2 p-3 rounded-xl border border-white/[0.06]">
               {message}
             </p>
 
@@ -1719,57 +1725,57 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       </div>
 
       {/* 4. TrackLSTM Model Validation Card */}
-      <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-xl space-y-3">
+      <div className="card-glass p-4 space-y-3">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
           <div className="flex items-center gap-2 text-yellow-400">
             <Cpu className="w-4 h-4 text-yellow-400" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
               MODEL VALIDATION
             </h3>
           </div>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 font-semibold">
+          <span className="text-[10px] mono-data px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 font-semibold">
             TrackLSTM v1
           </span>
         </div>
 
         {/* Training Badge */}
-        <div className="px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-[11px] text-slate-300 flex items-center gap-2">
+        <div className="px-2.5 py-1.5 rounded-xl bg-surface-2 border border-white/[0.06] text-[11px] text-text-primary flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-          <span className="text-[10px] font-mono leading-tight text-slate-300">
+          <span className="text-[10px] mono-data leading-tight text-text-secondary">
             Trained on IMD best-track data with synthetic augmentation
           </span>
         </div>
 
         {/* Validation Metric Grids */}
-        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
-            <div className="text-[10px] text-slate-400">Position RMSE @ 24h</div>
+        <div className="grid grid-cols-2 gap-2 text-xs mono-data">
+          <div className="bg-surface-2 p-2.5 rounded-xl border border-white/[0.06]">
+            <div className="text-[10px] text-text-tertiary">Position RMSE @ 24h</div>
             <div className="text-sm font-bold text-yellow-400 mt-0.5">85.6 km</div>
           </div>
-          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
-            <div className="text-[10px] text-slate-400">Position RMSE @ 48h</div>
+          <div className="bg-surface-2 p-2.5 rounded-xl border border-white/[0.06]">
+            <div className="text-[10px] text-text-tertiary">Position RMSE @ 48h</div>
             <div className="text-sm font-bold text-amber-400 mt-0.5">155.6 km</div>
           </div>
-          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
-            <div className="text-[10px] text-slate-400">Wind Speed MAE</div>
-            <div className="text-sm font-bold text-cyan-400 mt-0.5">7.3 km/h</div>
+          <div className="bg-surface-2 p-2.5 rounded-xl border border-white/[0.06]">
+            <div className="text-[10px] text-text-tertiary">Wind Speed MAE</div>
+            <div className="text-sm font-bold text-accent-cyan mt-0.5">7.3 km/h</div>
           </div>
-          <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
-            <div className="text-[10px] text-slate-400">Pressure MAE</div>
+          <div className="bg-surface-2 p-2.5 rounded-xl border border-white/[0.06]">
+            <div className="text-[10px] text-text-tertiary">Pressure MAE</div>
             <div className="text-sm font-bold text-indigo-400 mt-0.5">2.9 hPa</div>
           </div>
         </div>
 
         {/* Model Architecture & Training Metadata */}
-        <div className="pt-2 border-t border-slate-800/80 text-[11px] font-mono text-slate-400 space-y-1">
+        <div className="pt-2 border-t border-white/[0.06] text-[11px] mono-data text-text-secondary space-y-1">
           <div className="flex items-center justify-between">
             <span>Model:</span>
-            <span className="text-slate-200 font-semibold">LSTM 2-layer, 119,872 params</span>
+            <span className="text-text-primary font-semibold">LSTM 2-layer, 119,872 params</span>
           </div>
           <div className="flex items-center justify-between">
             <span>Training samples:</span>
-            <span className="text-slate-200 font-semibold">8,484</span>
+            <span className="text-text-primary font-semibold">8,484</span>
           </div>
         </div>
       </div>
@@ -1880,21 +1886,24 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl text-xs font-mono font-medium shadow-2xl border transition-all duration-300 ${
+          className={`pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl text-xs mono-data font-medium shadow-2xl border backdrop-blur-xl transition-all duration-300 animate-fadeIn ${
             toast.type === 'success'
-              ? 'bg-slate-900/95 border-emerald-500/80 text-emerald-300 shadow-emerald-500/20'
-              : 'bg-slate-900/95 border-red-500/80 text-red-300 shadow-red-500/20'
+              ? 'bg-surface-1/95 border-emerald-500/50 text-emerald-300 shadow-emerald-500/10'
+              : 'bg-surface-1/95 border-red-500/50 text-red-300 shadow-red-500/10'
           }`}
         >
+          <span className={`w-2 h-2 rounded-full shrink-0 ${
+            toast.type === 'success' ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'
+          }`} />
           {toast.type === 'success' ? (
-            <Radio className="w-4 h-4 text-emerald-400 shrink-0 animate-pulse" />
+            <Radio className="w-4 h-4 text-emerald-400 shrink-0" />
           ) : (
             <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
           )}
           <span className="flex-1">{toast.message}</span>
           <button
             onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
-            className="text-slate-400 hover:text-white ml-2 cursor-pointer"
+            className="text-text-tertiary hover:text-text-primary ml-2 cursor-pointer transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>

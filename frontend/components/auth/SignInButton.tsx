@@ -97,12 +97,12 @@ export const SignInButton: React.FC = () => {
   return (
     <div className="relative inline-flex items-center">
       {user ? (
-        <div className="flex items-center gap-2 bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 shadow-sm">
+        <div className="flex items-center gap-2 card-glass border-border-subtle rounded-md px-2.5 py-1.5 shadow-sm">
           {user.photoURL ? (
             <img
               src={user.photoURL}
               alt={user.displayName || 'User'}
-              className="w-5 h-5 rounded-full ring-1 ring-cyan-400/50"
+              className="w-5 h-5 rounded-full ring-1 ring-accent-cyan/50"
             />
           ) : (
             <div className="w-5 h-5 rounded-full bg-cyan-600 text-[10px] font-bold text-white flex items-center justify-center">
@@ -112,7 +112,7 @@ export const SignInButton: React.FC = () => {
 
           <div className="flex items-center gap-1.5 max-w-[120px] sm:max-w-[160px]">
             <span
-              className="text-xs font-medium text-slate-200 truncate"
+              className="text-xs font-medium text-text-primary truncate"
               title={user.email || user.displayName || 'User'}
             >
               {user.email || user.displayName}
@@ -127,7 +127,7 @@ export const SignInButton: React.FC = () => {
           <button
             onClick={handleSignOut}
             title="Sign out"
-            className="text-slate-400 hover:text-red-400 transition-colors p-1 hover:bg-slate-800 rounded-lg cursor-pointer ml-1"
+            className="text-text-tertiary hover:text-red-400 transition-colors p-1 hover:bg-white/5 rounded-sm cursor-pointer ml-1"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>
@@ -136,7 +136,7 @@ export const SignInButton: React.FC = () => {
         <button
           onClick={handleSignIn}
           disabled={loading}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-cyan-400/50 transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold card-glass hover:border-accent-cyan/50 text-text-primary transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50"
           title="Sign in with Google"
         >
           {loading ? (

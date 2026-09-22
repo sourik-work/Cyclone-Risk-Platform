@@ -80,52 +80,52 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
 
   return (
     <>
-      <header className="w-full bg-[#090e17] border-b border-slate-800 px-6 py-3 flex flex-wrap items-center justify-between gap-4 select-none">
+      <header className="w-full min-h-[72px] bg-surface-1/80 backdrop-blur-xl border-b border-subtle px-6 py-5 flex flex-wrap items-center justify-between gap-4 select-none z-30">
         {/* Platform Brand & Status */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <div
-            className={`p-2 rounded-lg border ${
+            className={`p-2.5 rounded-md border ${
               mode === 'live'
                 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                 : 'bg-red-500/10 border-red-500/20 text-red-400'
             }`}
           >
-            <ShieldAlert className="w-6 h-6 animate-pulse" />
+            <ShieldAlert className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-base font-bold tracking-wider text-slate-100 uppercase font-mono">
-                CYCLONE RISK & ANTICIPATORY PLATFORM
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl font-semibold tracking-tight text-text-primary">
+                Cyclone Risk & Anticipatory Platform
               </h1>
               {mode === 'live' ? (
                 liveStatus === 'active' ? (
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-500/20 text-red-400 border border-red-500/30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
-                    LIVE: ACTIVE CYCLONE
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/15 text-red-300 border border-red-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
+                    Live: Active Cyclone
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    LIVE MONITORING (IMD RSMC)
+                    Live Monitoring (IMD RSMC)
                   </span>
                 )
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                  HISTORICAL: {stormStatus || 'ACTIVE ADVISORY'}
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan animate-pulse"></span>
+                  Historical: {stormStatus || 'Active Advisory'}
                 </span>
               )}
 
               {/* Dynamic India-Scale Serving Coverage Badge */}
               <span
                 id="platform-coverage-badge"
-                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-blue-950/70 text-cyan-300 border border-cyan-500/40 shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-medium card-glass text-accent-cyan border-border-subtle shadow-sm"
               >
-                <MapPin className="w-3 h-3 text-cyan-400" />
+                <MapPin className="w-3 h-3 text-accent-cyan" />
                 Serving {uniqueStatesCount} states · {districtCount} districts · {formattedPopulationAtRisk} population at risk
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-text-secondary mt-0.5">
               Bay of Bengal Predictive Vulnerability & Pre-Landfall Evacuation Engine
             </p>
           </div>
@@ -137,25 +137,25 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           <button
             id="btn-apac-scale"
             onClick={() => setShowApacModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/40 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium card-glass hover:bg-white/5 text-indigo-300 border-border-subtle transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
             title="Preview Phase 2 Asia-Pacific Regional Scale Expansion"
           >
             <Globe2 className="w-3.5 h-3.5 text-indigo-400" />
             <span>APAC Scale</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-indigo-500/20 text-indigo-200 border border-indigo-400/30 font-mono">
               Phase 2
             </span>
           </button>
 
           {/* Historical vs Live Mode Toggle */}
-          <div className="flex items-center bg-slate-950 border border-slate-800 p-1 rounded-xl shadow-inner">
+          <div className="flex items-center card-glass p-1 rounded-md shadow-inner border-border-subtle">
             <button
               id="mode-toggle-historical"
               onClick={() => onModeChange('historical')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 mode === 'historical'
-                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/30 scale-105 border border-cyan-300'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+                  ? 'bg-accent-cyan text-slate-950 shadow-md shadow-cyan-500/20 scale-[1.02] border border-cyan-300'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent'
               }`}
               title="Historical Cyclone Replays (Fani, Amphan)"
             >
@@ -165,10 +165,10 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
             <button
               id="mode-toggle-live"
               onClick={() => onModeChange('live')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 mode === 'live'
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/30 scale-105 border border-emerald-300'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20 scale-[1.02] border border-emerald-300'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent'
               }`}
               title="Live IMD RSMC New Delhi Feed"
             >
@@ -178,16 +178,16 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           </div>
 
           {/* UTC / IST Digital Clock */}
-          <div className="hidden xl:flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg font-mono text-xs text-slate-300">
-            <Activity className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-cyan-300">{timeUtc || '--:--:-- UTC'}</span>
-            <span className="text-slate-600">•</span>
+          <div className="hidden xl:flex items-center gap-2 card-glass border-border-subtle px-3 py-1.5 rounded-md font-mono text-xs text-text-secondary">
+            <Activity className="w-3.5 h-3.5 text-accent-cyan" />
+            <span className="text-accent-cyan">{timeUtc || '--:--:-- UTC'}</span>
+            <span className="text-text-tertiary">•</span>
             <span className="text-amber-300">{timeIst || '--:--:-- IST'}</span>
           </div>
 
           {/* Multilingual Selector */}
-          <div className="flex items-center gap-1.5 bg-slate-950 border border-slate-800 p-1.5 rounded-xl shadow-inner">
-            <Globe2 className="w-4 h-4 text-slate-400 ml-1.5 mr-1 shrink-0" />
+          <div className="flex items-center gap-1.5 card-glass border-border-subtle p-1 rounded-md shadow-inner">
+            <Globe2 className="w-4 h-4 text-text-tertiary ml-1 mr-0.5 shrink-0" />
             {SUPPORTED_LANGUAGES.map((lang) => {
               const isSelected =
                 currentLanguage === lang.code ||
@@ -209,10 +209,10 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                   key={lang.code}
                   id={`lang-btn-${lang.code}`}
                   onClick={() => onLanguageChange(lang.code)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-sm text-xs font-medium transition-all duration-200 cursor-pointer ${
                     isSelected
-                      ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/30 scale-105 border border-cyan-300 ring-2 ring-cyan-400/40'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent'
+                      ? 'bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/40 shadow-[0_0_12px_rgba(0,229,255,0.2)] font-semibold'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent'
                   }`}
                   title={`${lang.name} (${lang.nativeName})`}
                 >
@@ -226,7 +226,7 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           <button
             id="report-damage-btn"
             onClick={() => setShowReportDamage(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-400 transition-all duration-200 cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium card-glass text-amber-300 hover:border-amber-400/50 hover:bg-white/5 transition-all duration-200 cursor-pointer shadow-sm"
             title="Submit Citizen Cyclone Damage Photo"
           >
             <Camera className="w-3.5 h-3.5" />
