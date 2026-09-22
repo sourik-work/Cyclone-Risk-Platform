@@ -9,7 +9,9 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r backend/requirements.txt
-      - run: pytest -o pythonpath=. backend/tests -v
+      - run: python -m pytest -o pythonpath=. backend/tests -v
+        env:
+          TESTING: "true"
   build-frontend:
     runs-on: ubuntu-latest
     steps:

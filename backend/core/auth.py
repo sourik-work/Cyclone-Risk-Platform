@@ -31,14 +31,14 @@ async def require_auth(authorization: Optional[str] = Header(None)) -> Dict[str,
         raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
 
     # Developer & demo token shortcuts for local verification / reviewer testing
-    if token in ("demo-dispatcher-token", "test-dispatcher-token"):
+    if token in ("demo-dispatcher-token", "test-dispatcher-token", "demo", "reviewer"):
         return {
             "uid": "demo-dispatcher-01",
             "email": "dispatcher@odraf.gov.in",
             "is_dispatcher": True,
             "valid": True,
         }
-    if token in ("demo-token", "test-token"):
+    if token in ("demo-token", "test-token", "demo-officer"):
         return {
             "uid": "demo-officer-01",
             "email": "officer@cyclone.gov.in",
