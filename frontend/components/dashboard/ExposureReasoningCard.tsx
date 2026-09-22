@@ -38,6 +38,10 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
+    // TASK 5: 120-second timeout for Gemini exposure reasoning
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
+
     try {
       const res = await fetch(`${backendUrl}/api/exposure/reason`, {
         method: 'POST',
@@ -48,6 +52,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
           district_name: districtName,
           cyclone_id: cycloneId,
         }),
+        signal: controller.signal,
       });
 
       if (!res.ok) {
@@ -57,10 +62,16 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
       const result: ExposureReasoningData = await res.json();
       setData(result);
     } catch (err: any) {
-      console.warn('Failed to fetch exposure reasoning:', err);
-      setError('Unable to load multimodal reasoning analysis');
+      if (err.name === 'AbortError' || controller.signal.aborted) {
+        console.warn('Exposure reasoning timed out after 120s');
+        setError('Gemini reasoning timed out — backend is under load');
+      } else {
+        console.warn('Failed to fetch exposure reasoning:', err);
+        setError('Unable to load multimodal reasoning analysis');
+      }
       setData(null);
     } finally {
+      clearTimeout(timeoutId);
       setIsLoading(false);
     }
   }, [districtName, cycloneId]);

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { ShieldCheck, Coins, CheckCircle2, Clock, RefreshCw, Zap, Loader2 } from 'lucide-react';
+import { fetchWithCache } from '../../lib/cache';
 
 export interface InsuranceTriggerResult {
   contract_id: string;
@@ -151,6 +152,13 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
   useEffect(() => {
     fetchEvaluation();
   }, [cycloneId, mode, hasActiveCyclone, fetchEvaluation]);
+
+  // TASK 6: Cache stable contract data in localStorage with 1-hour TTL
+  useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    fetchWithCache<any[]>(`${backendUrl}/api/insurance/contracts`, 'cache_insurance_contracts')
+      .catch((err) => console.warn('Failed to cache insurance contracts:', err));
+  }, []);
 
   const evalData = data || FALLBACK_EVALUATION;
   const allBelowThreshold = evalData.triggers_active === 0;

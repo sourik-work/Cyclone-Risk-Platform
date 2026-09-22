@@ -24,6 +24,7 @@ import {
   SEED_ALL_COASTAL_VULNERABILITY,
 } from '../lib/seedData';
 import { SEED_INFRASTRUCTURE_DATA } from '../lib/infrastructureSeed';
+import { fetchWithCache, getCachedData } from '../lib/cache';
 import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
 import { collection, onSnapshot, query, limit } from 'firebase/firestore';
 import { firestore } from '../lib/firebase';
@@ -99,6 +100,36 @@ const MONITORING_ADVISORY: AnticipatoryAdvisory = {
 };
 
 export default function Home() {
+  // TASK 4: Cold-start status banner state
+  const [isColdStart, setIsColdStart] = useState<boolean>(false);
+
+  // TASK 2: Fire an early warmup ping to trigger Render cold start ASAP
+  useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    let isResolved = false;
+
+    // TASK 4: If initial health check takes >5s, show cold-start banner
+    const coldStartTimer = setTimeout(() => {
+      if (!isResolved) {
+        setIsColdStart(true);
+      }
+    }, 5000);
+
+    fetch(`${backendUrl}/api/health`, { method: 'GET' })
+      .then(() => {
+        isResolved = true;
+        clearTimeout(coldStartTimer);
+        setIsColdStart(false);
+      })
+      .catch(() => {
+        // Render backend may be warming up
+      });
+
+    return () => {
+      clearTimeout(coldStartTimer);
+    };
+  }, []);
+
   // Mode toggle: 'historical' (default) vs 'live'
   const [mode, setMode] = useState<DashboardMode>('historical');
 
@@ -114,6 +145,36 @@ export default function Home() {
   const [liveData, setLiveData] = useState<LiveCycloneResponse | null>(null);
   const [isLoadingLive, setIsLoadingLive] = useState<boolean>(false);
   const [liveError, setLiveError] = useState<string | null>(null);
+
+  // Live infrastructure data state (with instant embedded fallback)
+  const [infrastructureData, setInfrastructureData] = useState<InfrastructureFeatureCollection>(SEED_INFRASTRUCTURE_DATA);
+
+  // TASK 1 & TASK 6: Parallelize all API calls on mount with Promise.allSettled & 1-hour localStorage cache
+  useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
+    const bootstrapData = async () => {
+      // Fire all non-blocking initial fetches in parallel — NO sequential awaits
+      const [tracksRes, infraRes, contractsRes, liveRes] = await Promise.allSettled([
+        fetchWithCache<any[]>(`${backendUrl}/api/tracks`, 'cache_tracks'),
+        fetchWithCache<InfrastructureFeatureCollection>(`${backendUrl}/api/infrastructure`, 'cache_infrastructure'),
+        fetchWithCache<any[]>(`${backendUrl}/api/insurance/contracts`, 'cache_insurance_contracts'),
+        fetch(`${backendUrl}/api/cyclone/live`).then((r) => (r.ok ? r.json() : null)),
+      ]);
+
+      // Clear cold start as soon as any endpoint settles
+      setIsColdStart(false);
+
+      if (infraRes.status === 'fulfilled' && infraRes.value?.features?.length) {
+        setInfrastructureData(infraRes.value);
+      }
+      if (liveRes.status === 'fulfilled' && liveRes.value) {
+        setLiveData(liveRes.value);
+      }
+    };
+
+    bootstrapData();
+  }, []);
 
   // Fetch live IMD bulletin status
   const fetchLiveCyclone = useCallback(async (forceRefresh = false) => {
@@ -280,6 +341,16 @@ export default function Home() {
     ) => {
       setIsLoadingAdvisory(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
+      // TASK 5: 120-second timeout for Gemini advisory generation
+      const timeoutController = new AbortController();
+      const timeoutId = setTimeout(() => timeoutController.abort(), 120000);
+
+      const abortHandler = () => timeoutController.abort();
+      if (signal) {
+        signal.addEventListener('abort', abortHandler, { once: true });
+      }
+
       try {
         const res = await fetch(`${backendUrl}/api/advisories/generate`, {
           method: 'POST',
@@ -292,7 +363,7 @@ export default function Home() {
             target_districts: districtName ? [districtName] : undefined,
             lead_time_hours: 18.0,
           }),
-          signal,
+          signal: timeoutController.signal,
         });
 
         if (!res.ok) {
@@ -301,6 +372,7 @@ export default function Home() {
 
         const data: AnticipatoryAdvisory = await res.json();
         setAdvisory(data);
+        setIsColdStart(false);
       } catch (err: any) {
         if (err.name === 'AbortError' || signal?.aborted) {
           return;
@@ -311,6 +383,10 @@ export default function Home() {
         );
         setAdvisory(FALLBACK_ADVISORY);
       } finally {
+        clearTimeout(timeoutId);
+        if (signal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
         if (!signal?.aborted) {
           setIsLoadingAdvisory(false);
         }
@@ -366,28 +442,6 @@ export default function Home() {
     showSurge: true, // Enabled: Storm surge zone polygon
   });
 
-  // Live infrastructure data state (with instant embedded fallback)
-  const [infrastructureData, setInfrastructureData] = useState<InfrastructureFeatureCollection>(SEED_INFRASTRUCTURE_DATA);
-
-  // Fetch updated infrastructure data from backend /api/infrastructure
-  useEffect(() => {
-    const fetchInfrastructure = async () => {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-      try {
-        const res = await fetch(`${backendUrl}/api/infrastructure`);
-        if (res.ok) {
-          const data: InfrastructureFeatureCollection = await res.json();
-          if (data && data.features && data.features.length > 0) {
-            setInfrastructureData(data);
-          }
-        }
-      } catch (err) {
-        console.warn('Using embedded infrastructure seed data:', err);
-      }
-    };
-    fetchInfrastructure();
-  }, []);
-
   const handleToggleLayer = (key: keyof MapLayerToggles) => {
     setLayerToggles((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -429,6 +483,21 @@ export default function Home() {
 
       {/* Main Operations Center Layout */}
       <div className="flex-1 p-4 lg:p-6 flex flex-col gap-4 max-w-[1750px] w-full mx-auto">
+        {/* TASK 4: Cold-Start Warmup Banner */}
+        {isColdStart && (
+          <div
+            id="cold-start-banner"
+            className="bg-amber-900/40 border border-amber-700 text-amber-200 px-4 py-2 text-sm rounded-xl flex items-center justify-between gap-3 shadow-lg backdrop-blur-md animate-fadeIn"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-base animate-pulse">⏳</span>
+              <span>Backend is warming up (first visit only — takes 30-60s). All data will load automatically.</span>
+            </div>
+            <span className="text-xs font-mono text-amber-300/70 hidden sm:inline">
+              Render Free Tier Cold Start
+            </span>
+          </div>
+        )}
         {/* Live Mode Monitoring Banner: displayed when in Live Mode and monitoring continuously */}
         {mode === 'live' && (!liveData || liveData.status === 'monitoring' || !liveData.active_cyclone) && (
           <div

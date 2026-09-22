@@ -103,44 +103,63 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
       const startIdx = Math.max(0, endIdx - 3);
       const indices = [startIdx, startIdx + 1, startIdx + 2, endIdx];
 
-      // Execute both forecast calls in parallel
-      const [lstmRes, geminiRes] = await Promise.all([
-        fetch(`${backendUrl}/api/forecast/track`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cyclone_id: cycloneId,
-            recent_point_indices: indices,
-          }),
-        }),
-        fetch(`${backendUrl}/api/forecast/gemini`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cyclone_id: cycloneId,
-            recent_point_count: 4,
-            end_index: endIdx,
-          }),
-        }),
-      ]);
+      // TASK 5: 120-second timeout for Gemini endpoint
+      const geminiController = new AbortController();
+      const geminiTimeoutId = setTimeout(() => geminiController.abort(), 120000);
 
-      if (lstmRes.ok) {
-        const lstmData: LstmForecastResponse = await lstmRes.json();
-        setLstm(lstmData);
-      } else {
-        setLstm(null);
-      }
+      const lstmController = new AbortController();
+      const lstmTimeoutId = setTimeout(() => lstmController.abort(), 60000);
 
-      if (geminiRes.ok) {
-        const geminiData: GeminiForecastResponse = await geminiRes.json();
-        setGemini(geminiData);
-      } else {
-        setGemini(null);
+      try {
+        // TASK 1: Parallelize with Promise.allSettled without blocking on individual fetches
+        const [lstmSettled, geminiSettled] = await Promise.allSettled([
+          fetch(`${backendUrl}/api/forecast/track`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              cyclone_id: cycloneId,
+              recent_point_indices: indices,
+            }),
+            signal: lstmController.signal,
+          }).then(async (res) => {
+            if (!res.ok) throw new Error(`LSTM returned HTTP ${res.status}`);
+            return res.json();
+          }),
+          fetch(`${backendUrl}/api/forecast/gemini`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              cyclone_id: cycloneId,
+              recent_point_count: 4,
+              end_index: endIdx,
+            }),
+            signal: geminiController.signal,
+          }).then(async (res) => {
+            if (!res.ok) throw new Error(`Gemini returned HTTP ${res.status}`);
+            return res.json();
+          }),
+        ]);
+
+        if (lstmSettled.status === 'fulfilled') {
+          setLstm(lstmSettled.value as LstmForecastResponse);
+        } else {
+          console.warn('TrackLSTM forecast failed:', lstmSettled.reason);
+          setLstm(null);
+        }
+
+        if (geminiSettled.status === 'fulfilled') {
+          setGemini(geminiSettled.value as GeminiForecastResponse);
+        } else {
+          console.warn('Gemini forecast failed:', geminiSettled.reason);
+          setGemini(null);
+        }
+      } finally {
+        clearTimeout(geminiTimeoutId);
+        clearTimeout(lstmTimeoutId);
       }
     } catch (err: any) {
       console.warn('Failed to fetch forecast comparison:', err);
       setError('Unable to load full model comparison');
-      // On fetch failure, clear previous state instead of showing stale data (TASK 3)
       setLstm(null);
       setGemini(null);
     } finally {
