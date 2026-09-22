@@ -154,7 +154,13 @@ The alternative — using Gemini function-calling directly with no Dialogflow �
 - **15 arterial road corridors** (NH-16, NH-5, NH-60, Marine Drive)
 - **50 hospitals/shelters** with bed capacity and generator status
 - **"AT RISK"** badges when assets fall within the forecast uncertainty cone
-- **"CRITICAL COASTAL EXPOSURE"** warning for assets within 5 km of shoreline
+
+**Three-tier coastal classification:**
+- **CRITICAL STORM EXPOSURE** — assets within 5km of coast AND inside forecast cone (storm active)
+- **ELEVATED COASTAL RISK** — assets within 5km of coast, outside forecast cone (storm active)
+- **COASTAL PROXIMITY** — assets within 5km of coast, no active storm (informational)
+
+This distinguishes geographic coastal vulnerability from storm-specific exposure — a critical distinction for pre-landfall decision-making.
 
 ---
 

@@ -44,6 +44,7 @@ import {
   CloudRain,
   CheckCircle2,
   XCircle,
+  Info,
 } from 'lucide-react';
 import { AlertSubscription } from './AlertSubscription';
 import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
@@ -437,7 +438,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       .map((f) => {
         const coords = f.geometry.coordinates as [number, number];
         const atRisk = isPointInCone(coords[1], coords[0]);
-        return { ...f.properties, is_at_risk: atRisk };
+        return { ...f.properties, is_at_risk: atRisk, latitude: coords[1], longitude: coords[0] };
       });
 
     // 2. Arterial Roads
@@ -471,7 +472,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       .map((f) => {
         const coords = f.geometry.coordinates as [number, number];
         const atRisk = isPointInCone(coords[1], coords[0]);
-        return { ...f.properties, is_at_risk: atRisk };
+        return { ...f.properties, is_at_risk: atRisk, latitude: coords[1], longitude: coords[0] };
       });
 
     // 4. Cyclone Shelters
@@ -485,7 +486,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       .map((f) => {
         const coords = f.geometry.coordinates as [number, number];
         const atRisk = isPointInCone(coords[1], coords[0]);
-        return { ...f.properties, is_at_risk: atRisk };
+        return { ...f.properties, is_at_risk: atRisk, latitude: coords[1], longitude: coords[0] };
       });
 
     const totalHospitalBeds = hospitals.reduce((acc, h) => acc + (h.bed_capacity || 0), 0);
@@ -497,6 +498,26 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       (a) => a.distance_from_coast_km != null && a.distance_from_coast_km <= 5.0
     );
 
+    // Only elevate to CRITICAL when a storm is present AND assets are in the forecast cone
+    const criticalCoastalAssets = coastalAssets.filter((a) => {
+      const lat = (a as any).latitude;
+      const lon = (a as any).longitude;
+      return (a as any).is_at_risk || (lat != null && lon != null && isPointInCone(lat, lon));
+    });
+
+    const isLiveQuiet = mode === 'live' && !hasActiveCyclone;
+    const stormActive = !isLiveQuiet && Boolean(forecastTrackPoints && forecastTrackPoints.length > 0);
+
+    // Three-tier classification
+    let coastalWarningTier: 'CRITICAL' | 'ELEVATED' | 'COASTAL_PROXIMITY' | 'NONE' = 'NONE';
+    if (stormActive && criticalCoastalAssets.length > 0) {
+      coastalWarningTier = 'CRITICAL';
+    } else if (stormActive && coastalAssets.length > 0) {
+      coastalWarningTier = 'ELEVATED';
+    } else if (coastalAssets.length > 0) {
+      coastalWarningTier = 'COASTAL_PROXIMITY';
+    }
+
     return {
       substations,
       roads,
@@ -504,10 +525,20 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       shelters,
       totalHospitalBeds,
       totalShelterCapacity,
-      hasCoastalWarning: coastalAssets.length > 0,
+      coastalWarningTier,
+      hasCoastalWarning: coastalWarningTier !== 'NONE',
       coastalAssetsCount: coastalAssets.length,
+      criticalCoastalAssetsCount: criticalCoastalAssets.length,
     };
-  }, [infrastructureData, selectedDistrict, activeState, isPointInCone]);
+  }, [
+    infrastructureData,
+    selectedDistrict,
+    activeState,
+    isPointInCone,
+    forecastTrackPoints,
+    mode,
+    hasActiveCyclone,
+  ]);
 
   // Hazard Forecast State (Rainfall Accumulation & Storm Surge Hydrodynamics)
   const [hazardData, setHazardData] = useState<HazardSummary | null>(null);
@@ -1076,16 +1107,44 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </span>
         </div>
 
-        {/* Warning badge if any asset within 5km of coast */}
-        {districtInfrastructure.hasCoastalWarning && (
+        {/* CRITICAL — storm active + assets in surge cone */}
+        {districtInfrastructure.coastalWarningTier === 'CRITICAL' && (
+          <div
+            id="coastal-exposure-warning-badge"
+            className="flex items-center gap-2 p-2.5 rounded-lg bg-red-500/15 border border-red-500/40 text-red-300 text-xs font-mono shadow-sm"
+          >
+            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 animate-pulse" />
+            <div className="leading-tight">
+              <span className="font-bold text-red-200">CRITICAL STORM EXPOSURE:</span>{' '}
+              <span>{districtInfrastructure.criticalCoastalAssetsCount} asset(s) within 5km of shore AND inside the forecast cone</span>
+            </div>
+          </div>
+        )}
+
+        {/* ELEVATED — storm active, coastal assets but not in cone */}
+        {districtInfrastructure.coastalWarningTier === 'ELEVATED' && (
           <div
             id="coastal-exposure-warning-badge"
             className="flex items-center gap-2 p-2.5 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-mono shadow-sm"
           >
             <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
             <div className="leading-tight">
-              <span className="font-bold text-amber-200">CRITICAL COASTAL EXPOSURE:</span>{' '}
-              <span>{districtInfrastructure.coastalAssetsCount} asset(s) located within 5km of shoreline</span>
+              <span className="font-bold text-amber-200">ELEVATED COASTAL RISK:</span>{' '}
+              <span>{districtInfrastructure.coastalAssetsCount} coastal asset(s) — currently outside storm cone</span>
+            </div>
+          </div>
+        )}
+
+        {/* COASTAL_PROXIMITY — no storm, just geographic info */}
+        {districtInfrastructure.coastalWarningTier === 'COASTAL_PROXIMITY' && (
+          <div
+            id="coastal-exposure-warning-badge"
+            className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-500/15 border border-slate-600/40 text-slate-400 text-xs font-mono"
+          >
+            <Info className="w-4 h-4 text-slate-500 shrink-0" />
+            <div className="leading-tight">
+              <span className="font-medium text-slate-300">COASTAL PROXIMITY:</span>{' '}
+              <span>{districtInfrastructure.coastalAssetsCount} asset(s) within 5km of shoreline (informational)</span>
             </div>
           </div>
         )}
