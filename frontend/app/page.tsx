@@ -212,30 +212,36 @@ export default function Home() {
     return selectedStormId === 'amphan' ? SEED_AMPHAN_TRACK : SEED_FANI_TRACK;
   }, [mode, selectedStormId, hasActiveCyclone, liveData]);
 
-  // Default active point index
+  // Default active point index based on track length
   const defaultIndex = useMemo(() => {
+    const totalPoints = activeTrack.track_points.length;
     if (mode === 'live') {
-      return Math.max(0, activeTrack.track_points.length - 1);
+      return Math.max(0, totalPoints - 1);
     }
-    return selectedStormId === 'amphan' ? 6 : 7;
-  }, [mode, selectedStormId, activeTrack]);
+    return Math.min(7, Math.max(0, totalPoints - 1));
+  }, [mode, activeTrack]);
 
   const [activePointIndex, setActivePointIndex] = useState<number>(defaultIndex);
 
-  // Sync activePointIndex when storm or mode changes
+  // Sync activePointIndex and reset derived state when storm or mode changes (TASK 2)
   useEffect(() => {
+    const totalPoints = activeTrack.track_points.length;
     if (mode === 'live') {
       setActivePointIndex(0);
     } else {
-      setActivePointIndex(selectedStormId === 'amphan' ? 6 : 7);
+      setActivePointIndex(Math.min(7, Math.max(0, totalPoints - 1)));
     }
-  }, [mode, selectedStormId]);
+    // Reset derived state on storm switch
+    setAdvisory(null);
+  }, [mode, selectedStormId, activeTrack]);
 
   // Handle Historical storm selection
   const handleSelectStorm = (stormId: string) => {
     setSelectedStormId(stormId);
     const track = stormId === 'amphan' ? SEED_AMPHAN_TRACK : SEED_FANI_TRACK;
-    setActivePointIndex(stormId === 'amphan' ? 6 : 7);
+    const totalPoints = track.track_points.length;
+    setActivePointIndex(Math.min(7, Math.max(0, totalPoints - 1)));
+    setAdvisory(null);
     if (stormId === 'amphan') {
       // Hide Earth Engine overlay by default when viewing Amphan (tile pending)
       setLayerToggles((prev) => ({ ...prev, showEarthEngine: false }));
@@ -329,9 +335,11 @@ export default function Home() {
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
+      const totalPoints = activeTrack.track_points.length;
+      const forecastEndIndex = Math.min(activePointIndex, Math.max(0, totalPoints - 1));
       fetchAdvisory(
         targetCycloneId,
-        activePointIndex,
+        forecastEndIndex,
         selectedDistrict?.district_name,
         controller.signal
       );
@@ -341,7 +349,7 @@ export default function Home() {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [selectedStormId, activePointIndex, currentLanguage, selectedDistrict?.district_name, mode, hasActiveCyclone]);
+  }, [selectedStormId, activePointIndex, currentLanguage, selectedDistrict?.district_name, mode, hasActiveCyclone, activeTrack, fetchAdvisory]);
 
   const [layerToggles, setLayerToggles] = useState<MapLayerToggles>({
     showTrack: true,

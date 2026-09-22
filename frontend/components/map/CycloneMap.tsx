@@ -261,13 +261,20 @@ const GoogleMapsAiForecastLayer: React.FC<{
     }
 
     let isMounted = true;
+    setAiForecast(null);
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
     const cycloneId = track.name ? track.name.toLowerCase() : track.id;
 
-    // Use the 4 observed points leading up to the active point
-    const endIdx = Math.max(3, Math.min(activePointIndex, track.track_points.length - 1));
-    const startIdx = Math.max(0, endIdx - 3);
-    const recentIndices = [startIdx, startIdx + 1, startIdx + 2, startIdx + 3];
+    // Compute last 4 indices dynamically based on the CURRENT track length
+    const totalPoints = track.track_points.length;
+    const forecastEndIndex = Math.max(3, Math.min(activePointIndex, totalPoints - 1));
+    const forecastStartIndex = Math.max(0, forecastEndIndex - 3);
+    const recentIndices = [
+      forecastStartIndex,
+      forecastStartIndex + 1,
+      forecastStartIndex + 2,
+      forecastEndIndex,
+    ];
 
     fetch(`${backendUrl}/api/forecast/track`, {
       method: 'POST',

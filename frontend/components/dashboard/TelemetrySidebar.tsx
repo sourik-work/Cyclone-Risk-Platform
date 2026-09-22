@@ -453,6 +453,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
     const targetState = selectedDistrict?.state_name || activeState;
 
     setIsLoadingHazards(true);
+    setHazardData(null);
     fetch(
       `${backendUrl}/api/hazards/summary?district=${encodeURIComponent(targetDistrictName)}&cyclone_id=${encodeURIComponent(cycloneId)}`
     )
@@ -1153,6 +1154,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
       {/* 2.55 Gemini Exposure Reasoning Card (Workstream 11b: Multimodal Reasoning over SAR + Infrastructure) */}
       <ExposureReasoningCard
+        key={`exposure-${track.id || selectedStormId}-${selectedDistrict?.district_name || 'Puri'}`}
         districtName={selectedDistrict?.district_name || 'Puri'}
         cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
       />
@@ -1276,11 +1278,16 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
       {/* Parametric Insurance Triggers Card */}
       <InsuranceTriggerPanel
-        cycloneId={mode === 'live' ? (liveData?.active_cyclone?.cyclone_id || 'calm-baseline') : (selectedStormId || track?.id || 'BOB-02-2019')}
+        key={`insurance-${track?.id || selectedStormId}`}
+        cycloneId={
+          mode === 'live'
+            ? liveData?.active_cyclone?.cyclone_id || 'calm-baseline'
+            : track?.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')
+        }
         mode={mode}
         hasActiveCyclone={mode === 'live' && (hasActiveCyclone !== undefined ? hasActiveCyclone : !!liveData?.active_cyclone)}
-        cycloneName={mode === 'live' ? (liveData?.active_cyclone?.name || null) : (track?.name || 'Fani')}
-        cycloneCategory={mode === 'live' ? (liveData?.active_cyclone?.current_status || null) : (track?.current_status || 'Extremely Severe Cyclonic Storm')}
+        cycloneName={mode === 'live' ? (liveData?.active_cyclone?.name || null) : (track?.name || (selectedStormId === 'amphan' ? 'Amphan' : 'Fani'))}
+        cycloneCategory={mode === 'live' ? (liveData?.active_cyclone?.current_status || null) : (track?.current_status || 'Super Cyclonic Storm')}
         currentState={selectedState || 'Odisha'}
       />
 
@@ -1305,8 +1312,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                 </span>
               </div>
               <span className="text-[10px] font-mono text-slate-400 font-medium truncate">
-                {effectiveAdvisory.severity_level?.replace(/_/g, ' ') || 'ALERT'}
-                {effectiveAdvisory.target_districts?.length ? ` • ${effectiveAdvisory.target_districts.join(', ')}` : ''}
+                {isLoadingAdvisory || !advisory
+                  ? 'Synthesizing advisory...'
+                  : effectiveAdvisory.severity_level?.replace(/_/g, ' ') || 'ALERT'}
+                {!isLoadingAdvisory && advisory && effectiveAdvisory.target_districts?.length
+                  ? ` • ${effectiveAdvisory.target_districts.join(', ')}`
+                  : ''}
               </span>
             </div>
           </div>
@@ -1350,7 +1361,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             <button
               id="btn-play-advisory"
               onClick={handlePlayAdvisory}
-              disabled={ttsState === 'loading'}
+              disabled={ttsState === 'loading' || isLoadingAdvisory || !advisory}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer select-none ${
                 ttsState === 'playing'
                   ? 'bg-[#00e5ff] text-slate-950 border border-[#00e5ff] shadow-[0_0_16px_rgba(0,229,255,0.6)]'
@@ -1440,60 +1451,75 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </button>
         </div>
 
-        {/* Multilingual Headline */}
-        <div className="text-xs font-bold text-red-300 leading-tight">
-          {headline}
-        </div>
-
-        {/* Dynamic Storm Surge & Wind Impact Highlights */}
-        {(effectiveAdvisory.max_expected_wind_kmph || effectiveAdvisory.max_expected_surge_m) && (
-          <div className="flex items-center gap-2 text-[10px] font-mono flex-wrap">
-            {effectiveAdvisory.max_expected_wind_kmph && (
-              <span className="px-2 py-0.5 rounded bg-slate-950/80 border border-slate-800 text-slate-300">
-                Peak Wind: <span className="text-amber-400 font-bold">{effectiveAdvisory.max_expected_wind_kmph} km/h</span>
-              </span>
-            )}
-            {effectiveAdvisory.max_expected_surge_m && (
-              <span className="px-2 py-0.5 rounded bg-slate-950/80 border border-slate-800 text-slate-300">
-                Max Surge: <span className="text-cyan-400 font-bold">+{effectiveAdvisory.max_expected_surge_m}m</span>
-              </span>
-            )}
+        {/* Advisory Body: Loading skeleton or actual content */}
+        {isLoadingAdvisory || !advisory ? (
+          <div className="py-8 flex flex-col items-center justify-center gap-2.5 text-center bg-slate-950/60 rounded-lg border border-red-500/20 p-4">
+            <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
+            <p className="text-xs text-amber-300 font-mono font-semibold">
+              Synthesizing Gemini Multilingual Anticipatory Advisory...
+            </p>
+            <p className="text-[10px] text-slate-500">
+              Evaluating pre-landfall trajectory & coastal risk parameters
+            </p>
           </div>
-        )}
+        ) : (
+          <>
+            {/* Multilingual Headline */}
+            <div className="text-xs font-bold text-red-300 leading-tight">
+              {headline}
+            </div>
 
-        {/* Multilingual Detailed Warning */}
-        <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
-          {message}
-        </p>
+            {/* Dynamic Storm Surge & Wind Impact Highlights */}
+            {(effectiveAdvisory.max_expected_wind_kmph || effectiveAdvisory.max_expected_surge_m) && (
+              <div className="flex items-center gap-2 text-[10px] font-mono flex-wrap">
+                {effectiveAdvisory.max_expected_wind_kmph && (
+                  <span className="px-2 py-0.5 rounded bg-slate-950/80 border border-slate-800 text-slate-300">
+                    Peak Wind: <span className="text-amber-400 font-bold">{effectiveAdvisory.max_expected_wind_kmph} km/h</span>
+                  </span>
+                )}
+                {effectiveAdvisory.max_expected_surge_m && (
+                  <span className="px-2 py-0.5 rounded bg-slate-950/80 border border-slate-800 text-slate-300">
+                    Max Surge: <span className="text-cyan-400 font-bold">+{effectiveAdvisory.max_expected_surge_m}m</span>
+                  </span>
+                )}
+              </div>
+            )}
 
-        {/* Recommended Immediate Actions */}
-        <div className="space-y-1.5 pt-1">
-          <div className="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 uppercase font-mono">
-            <AlertTriangle className="w-3.5 h-3.5" />
-            TRIGGER PROTOCOL:
-          </div>
-          {actions.length > 0 ? (
-            <div className="space-y-1.5">
-              {actions.map((act, idx) => (
-                <div key={idx} className="text-xs text-slate-300 pl-2 border-l-2 border-amber-500/50">
-                  <span className="text-[10px] font-mono font-bold text-amber-400 mr-1.5">[{act.category}]</span>
-                  <span>{act.action}</span>
-                  {act.target_audience && (
-                    <span className="block text-[10px] text-slate-400 font-mono mt-0.5">
-                      Target: {act.target_audience} ({act.urgency?.replace(/_/g, ' ')})
-                    </span>
-                  )}
+            {/* Multilingual Detailed Warning */}
+            <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
+              {message}
+            </p>
+
+            {/* Recommended Immediate Actions */}
+            <div className="space-y-1.5 pt-1">
+              <div className="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 uppercase font-mono">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                TRIGGER PROTOCOL:
+              </div>
+              {actions.length > 0 ? (
+                <div className="space-y-1.5">
+                  {actions.map((act, idx) => (
+                    <div key={idx} className="text-xs text-slate-300 pl-2 border-l-2 border-amber-500/50">
+                      <span className="text-[10px] font-mono font-bold text-amber-400 mr-1.5">[{act.category}]</span>
+                      <span>{act.action}</span>
+                      {act.target_audience && (
+                        <span className="block text-[10px] text-slate-400 font-mono mt-0.5">
+                          Target: {act.target_audience} ({act.urgency?.replace(/_/g, ' ')})
+                        </span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              ) : (
+                <div className="text-xs text-slate-300 pl-2 border-l-2 border-amber-500/50">
+                  {emergencyActions[langKey] ||
+                    emergencyActions.english ||
+                    emergencyActions.en}
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="text-xs text-slate-300 pl-2 border-l-2 border-amber-500/50">
-              {emergencyActions[langKey] ||
-                emergencyActions.english ||
-                emergencyActions.en}
-            </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* 4. TrackLSTM Model Validation Card */}
@@ -1554,8 +1580,10 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
       {/* 5. Dual Model Forecast Comparison Card */}
       <ForecastComparisonCard
-        cycloneId={track?.id || selectedStormId || 'BOB-02-2019'}
+        key={`forecast-comp-${track?.id || selectedStormId}`}
+        cycloneId={track?.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
         track={track}
+        activePointIndex={activePointIndex}
         currentTimeIndex={activePointIndex}
       />
     </aside>

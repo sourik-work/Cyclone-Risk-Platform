@@ -34,6 +34,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
     if (!districtName) return;
     setIsLoading(true);
     setError(null);
+    setData(null);
 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
@@ -58,6 +59,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
     } catch (err: any) {
       console.warn('Failed to fetch exposure reasoning:', err);
       setError('Unable to load multimodal reasoning analysis');
+      setData(null);
     } finally {
       setIsLoading(false);
     }

@@ -49,6 +49,7 @@ interface ForecastComparisonCardProps {
   cycloneId: string;
   track?: CycloneTrack | null;
   currentTimeIndex?: number;
+  activePointIndex?: number;
 }
 
 function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -69,30 +70,38 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
   cycloneId,
   track,
   currentTimeIndex,
+  activePointIndex,
 }) => {
   const [lstm, setLstm] = useState<LstmForecastResponse | null>(null);
   const [gemini, setGemini] = useState<GeminiForecastResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const effectivePointIndex =
+    activePointIndex !== undefined
+      ? activePointIndex
+      : currentTimeIndex !== undefined
+      ? currentTimeIndex
+      : 7;
+
   const fetchForecasts = useCallback(async () => {
     if (!cycloneId) return;
     setIsLoading(true);
     setError(null);
+    setLstm(null);
+    setGemini(null);
 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
     try {
-      // Use the current scrubber position as the forecast starting point
-      // Take the 4 points ending at the current scrubber position
-      const effectiveIndex =
-        currentTimeIndex !== undefined
-          ? currentTimeIndex
-          : cycloneId === 'BOB-01-2020'
-          ? 6
-          : 7;
-      const startIndex = Math.max(3, effectiveIndex); // ensure we have 4 points
-      const indices = [startIndex - 3, startIndex - 2, startIndex - 1, startIndex];
+      // Dynamic index calculation based on track length
+      const totalPoints = track?.track_points?.length || 12;
+      const endIdx = Math.max(
+        Math.min(3, totalPoints - 1),
+        Math.min(effectivePointIndex, totalPoints - 1)
+      );
+      const startIdx = Math.max(0, endIdx - 3);
+      const indices = [startIdx, startIdx + 1, startIdx + 2, endIdx];
 
       // Execute both forecast calls in parallel
       const [lstmRes, geminiRes] = await Promise.all([
@@ -110,7 +119,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
           body: JSON.stringify({
             cyclone_id: cycloneId,
             recent_point_count: 4,
-            end_index: startIndex, // pass the end index to Gemini
+            end_index: endIdx,
           }),
         }),
       ]);
@@ -118,23 +127,30 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
       if (lstmRes.ok) {
         const lstmData: LstmForecastResponse = await lstmRes.json();
         setLstm(lstmData);
+      } else {
+        setLstm(null);
       }
 
       if (geminiRes.ok) {
         const geminiData: GeminiForecastResponse = await geminiRes.json();
         setGemini(geminiData);
+      } else {
+        setGemini(null);
       }
     } catch (err: any) {
       console.warn('Failed to fetch forecast comparison:', err);
       setError('Unable to load full model comparison');
+      // On fetch failure, clear previous state instead of showing stale data (TASK 3)
+      setLstm(null);
+      setGemini(null);
     } finally {
       setIsLoading(false);
     }
-  }, [cycloneId, currentTimeIndex]);
+  }, [cycloneId, effectivePointIndex, track]);
 
   useEffect(() => {
     fetchForecasts();
-  }, [fetchForecasts]);
+  }, [cycloneId, effectivePointIndex, fetchForecasts]);
 
   // Landfall / 48h endpoints comparison
   const lstm48h = lstm?.model_forecast?.[lstm.model_forecast.length - 1];
@@ -209,13 +225,13 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
               <div className="bg-slate-900/60 px-2 py-1.5 rounded border border-slate-800/60">
                 <span className="text-slate-400 block text-[10px]">Predicted 48h Landfall</span>
                 <span className="text-slate-200 font-semibold">
-                  {lstm48h ? `${lstmLat.toFixed(2)}°N, ${lstmLon.toFixed(2)}°E` : '20.15°N, 85.80°E'}
+                  {lstm48h ? `${lstmLat.toFixed(2)}°N, ${lstmLon.toFixed(2)}°E` : lstm ? 'Trajectory computed' : 'Evaluating...'}
                 </span>
               </div>
               <div className="bg-slate-900/60 px-2 py-1.5 rounded border border-slate-800/60">
                 <span className="text-slate-400 block text-[10px]">Validation RMSE</span>
                 <span className="text-amber-300 font-semibold">
-                  {lstm ? `${lstm.rmse_24h_km} km @ 24h · ${lstm.rmse_48h_km} km @ 48h` : '85.6 km @ 24h · 155.6 km @ 48h'}
+                  {lstm ? `${lstm.rmse_24h_km} km @ 24h · ${lstm.rmse_48h_km} km @ 48h` : 'Validation metrics pending'}
                 </span>
               </div>
             </div>
@@ -241,7 +257,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
               <div className="bg-slate-900/60 px-2 py-1.5 rounded border border-slate-800/60">
                 <span className="text-slate-400 block text-[10px]">Predicted 48h Landfall</span>
                 <span className="text-slate-200 font-semibold">
-                  {gemini48h ? `${gemini48h.lat.toFixed(2)}°N, ${gemini48h.lon.toFixed(2)}°E` : '20.30°N, 86.10°E'}
+                  {gemini48h ? `${gemini48h.lat.toFixed(2)}°N, ${gemini48h.lon.toFixed(2)}°E` : gemini ? 'In-context predicted' : 'Evaluating...'}
                 </span>
               </div>
               <div className="bg-slate-900/60 px-2 py-1.5 rounded border border-slate-800/60">

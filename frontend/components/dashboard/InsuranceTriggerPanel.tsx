@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { ShieldCheck, Coins, CheckCircle2, Clock, RefreshCw, Zap } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { ShieldCheck, Coins, CheckCircle2, Clock, RefreshCw, Zap, Loader2 } from 'lucide-react';
 
 export interface InsuranceTriggerResult {
   contract_id: string;
@@ -114,9 +114,10 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchEvaluation = async () => {
+  const fetchEvaluation = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setData(null);
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
       const targetId =
@@ -137,15 +138,19 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
     } catch (err: any) {
       console.warn('Failed to fetch parametric insurance evaluation, using fallback:', err);
       setError(err?.message || 'Using cached insurance models');
-      setData(FALLBACK_EVALUATION);
+      // Reset uncertainty state on failure (TASK 4)
+      setData({
+        ...FALLBACK_EVALUATION,
+        uncertainty_assessment: null,
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [cycloneId, mode, hasActiveCyclone]);
 
   useEffect(() => {
     fetchEvaluation();
-  }, [cycloneId, mode, hasActiveCyclone]);
+  }, [cycloneId, mode, hasActiveCyclone, fetchEvaluation]);
 
   const evalData = data || FALLBACK_EVALUATION;
   const allBelowThreshold = evalData.triggers_active === 0;
@@ -181,21 +186,30 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
         </div>
       </div>
 
-      {/* TASK 2: Context Banner — Explains why numbers are what they are */}
-      {mode === 'historical' && (
-        <div className="bg-cyan-900/30 border border-cyan-700 text-cyan-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
-          📊 RETROSPECTIVE ANALYSIS — Simulated trigger evaluation for {cycloneName || 'Cyclone'}
+      {/* Loading state that hides stale data (TASK 5) */}
+      {loading ? (
+        <div className="py-8 flex flex-col items-center justify-center gap-2.5 text-slate-400 text-xs font-mono">
+          <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+          <span className="text-slate-300 font-semibold">Evaluating parametric insurance triggers for {cycloneName || cycloneId}...</span>
+          <span className="text-[10px] text-slate-500">Calculating wind, surge & composite hazard exceedances</span>
         </div>
-      )}
+      ) : (
+        <>
+          {/* TASK 2: Context Banner — Explains why numbers are what they are */}
+          {mode === 'historical' && (
+            <div className="bg-cyan-900/30 border border-cyan-700 text-cyan-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
+              📊 RETROSPECTIVE ANALYSIS — Simulated trigger evaluation for {cycloneName || 'Cyclone'}
+            </div>
+          )}
 
-      {mode === 'live' && hasActiveCyclone && (
-        <div className="bg-amber-900/30 border border-amber-700 text-amber-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
-          ⚠️ LIVE EVALUATION — {cycloneCategory || 'System'} &ldquo;{cycloneName || 'Active Cyclone'}&rdquo; detected.{' '}
-          {allBelowThreshold
-            ? 'Storm intensity below payout thresholds — contracts on standby.'
-            : 'TRIGGERS ACTIVE.'}
-        </div>
-      )}
+          {mode === 'live' && hasActiveCyclone && (
+            <div className="bg-amber-900/30 border border-amber-700 text-amber-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
+              ⚠️ LIVE EVALUATION — {cycloneCategory || 'System'} &ldquo;{cycloneName || 'Active Cyclone'}&rdquo; detected.{' '}
+              {allBelowThreshold
+                ? 'Storm intensity below payout thresholds — contracts on standby.'
+                : 'TRIGGERS ACTIVE.'}
+            </div>
+          )}
 
       {mode === 'live' && !hasActiveCyclone && (
         <div className="bg-green-900/30 border border-green-700 text-green-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
@@ -378,6 +392,8 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
           );
         })}
       </div>
+      </>
+      )}
 
       {/* TASK 5: Updated Payout Formula Tooltip / Methodology Note */}
       <div className="pt-2 text-[10px] text-slate-400 font-sans border-t border-slate-800/60 leading-tight">
