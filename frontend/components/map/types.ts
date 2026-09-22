@@ -334,4 +334,22 @@ export interface RainfallDamageResponse {
   data_sources?: string[];
 }
 
+export interface TriageAsset {
+  asset_id: string;
+  name: string;
+  type: string;
+  district?: string | null;
+  state?: string | null;
+  triage_score: number;
+  distance_to_forecast_km: number;
+  reason: string;
+}
+
+export interface TriageResponse {
+  cyclone_id: string;
+  total_assets_evaluated: number;
+  top_priority_assets: TriageAsset[];
+}
+
+
 

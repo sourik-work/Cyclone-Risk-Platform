@@ -300,10 +300,10 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 
 ## Testing & CI/CD
 
-- **129 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, terrain-aware rainfall damage pathways, schemas, and integration flows
+- **135 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, terrain-aware rainfall damage pathways, infrastructure triage ranking, schemas, and integration flows
 - **Frontend build** validated via `npm run build` (Next.js 16 Turbopack, 0 errors)
 - **CI/CD:** GitHub Actions runs tests + build on every push
-- **Coverage:** Core services (`forecast_service`, `insurance_service`, `gemini_advisory`, `imd_fetcher`, `surge_service`, `rainfall_service`, `rainfall_damage_service`) have dedicated test files
+- **Coverage:** Core services (`forecast_service`, `insurance_service`, `gemini_advisory`, `imd_fetcher`, `surge_service`, `rainfall_service`, `rainfall_damage_service`, `triage_service`) have dedicated test files
 
 ---
 

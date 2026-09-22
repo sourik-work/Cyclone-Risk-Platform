@@ -50,6 +50,7 @@ import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
 import { ExposureReasoningCard } from './ExposureReasoningCard';
 import { ForecastComparisonCard } from './ForecastComparisonCard';
 import { RainfallDamagePanel } from './RainfallDamagePanel';
+import { TriageRankingCard } from './TriageRankingCard';
 import { getAuthHeader } from '../../lib/api';
 
 interface TelemetrySidebarProps {
@@ -1225,6 +1226,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         key={`exposure-${track.id || selectedStormId}-${selectedDistrict?.district_name || 'Puri'}`}
         districtName={selectedDistrict?.district_name || 'Puri'}
         cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
+      />
+
+      {/* 2.58 Infrastructure Triage Ranking (Workstream 16: Operational Criticality Priority Ranking) */}
+      <TriageRankingCard
+        cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
+        stormName={track.name || (selectedStormId === 'amphan' ? 'Amphan' : 'Fani')}
       />
 
       {/* 2.6 Hazard Forecast Card (Workstream 2: Rainfall Damage Pathway & Storm Surge Modeling) */}

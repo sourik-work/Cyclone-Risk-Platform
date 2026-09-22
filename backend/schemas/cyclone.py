@@ -589,5 +589,34 @@ class RainfallDamageResponse(BaseModel):
     )
 
 
+class TriageAsset(BaseModel):
+    """Prioritized infrastructure asset assessed for pre-landfall operational action."""
+
+    asset_id: str
+    name: str
+    type: str
+    district: Optional[str] = None
+    state: Optional[str] = None
+    triage_score: float
+    distance_to_forecast_km: float
+    reason: str
+
+
+class TriageRequest(BaseModel):
+    """Request payload to rank critical infrastructure for a cyclone."""
+
+    cyclone_id: str
+    top_n: int = 10
+
+
+class TriageResponse(BaseModel):
+    """Ranked infrastructure triage recommendations."""
+
+    cyclone_id: str
+    total_assets_evaluated: int
+    top_priority_assets: List[TriageAsset]
+
+
+
 
 

@@ -20,6 +20,9 @@ from .cyclone import (
     RainfallDamageRequest,
     DamagePathway,
     RainfallDamageResponse,
+    TriageAsset,
+    TriageRequest,
+    TriageResponse,
 )
 
 __all__ = [
@@ -42,4 +45,7 @@ __all__ = [
     "RainfallDamageRequest",
     "DamagePathway",
     "RainfallDamageResponse",
+    "TriageAsset",
+    "TriageRequest",
+    "TriageResponse",
 ]

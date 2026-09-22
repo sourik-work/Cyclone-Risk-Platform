@@ -60,6 +60,9 @@ from backend.schemas.cyclone import (
     SurgeSimulationRequest,
     SynthesizeRequest,
     SynthesizeResponse,
+    TriageAsset,
+    TriageRequest,
+    TriageResponse,
     VulnerabilityFeatureCollection,
 )
 from backend.services.bigquery_service import (
@@ -727,6 +730,55 @@ def get_infrastructure(
     state_param = state if isinstance(state, str) else getattr(state, "default", None)
     type_param = type if isinstance(type, str) else getattr(type, "default", None)
     return load_infrastructure(asset_type=type_param, state=state_param)
+
+
+@router.post("/triage/rank", response_model=TriageResponse)
+@router.post("/api/triage/rank", response_model=TriageResponse)
+def triage_rank_endpoint(
+    req: TriageRequest,
+    auth: dict = Depends(require_auth),
+) -> TriageResponse:
+    """Ranks critical infrastructure assets by operational triage priority for a storm."""
+    from backend.services.infrastructure_service import load_infrastructure
+    from backend.services.triage_service import rank_assets_for_action
+
+    # 1. Retrieve storm track coordinates
+    track = _find_historical_track(req.cyclone_id)
+    storm_data: Dict[str, Any] = {"cyclone_id": req.cyclone_id}
+    if track and track.track_points:
+        storm_data["track_points"] = [
+            {"latitude": pt.latitude, "longitude": pt.longitude}
+            for pt in track.track_points
+        ]
+        latest_pt = track.track_points[-1]
+        storm_data["latitude"] = latest_pt.latitude
+        storm_data["longitude"] = latest_pt.longitude
+    else:
+        live_status = _IMD_FETCHER.get_live_cyclone_status()
+        if live_status.active_cyclone and live_status.active_cyclone.track_points:
+            storm_data["track_points"] = [
+                {"latitude": pt.latitude, "longitude": pt.longitude}
+                for pt in live_status.active_cyclone.track_points
+            ]
+            latest_pt = live_status.active_cyclone.track_points[-1]
+            storm_data["latitude"] = latest_pt.latitude
+            storm_data["longitude"] = latest_pt.longitude
+        else:
+            storm_data["latitude"] = 19.8
+            storm_data["longitude"] = 85.8
+
+    # 2. Load all infrastructure assets
+    infra_collection = load_infrastructure()
+    features = infra_collection.get("features", [])
+
+    # 3. Rank assets for operational action
+    ranked = rank_assets_for_action(storm_data, features, top_n=req.top_n)
+
+    return TriageResponse(
+        cyclone_id=req.cyclone_id,
+        total_assets_evaluated=len(features),
+        top_priority_assets=[TriageAsset(**a) for a in ranked],
+    )
 
 
 @router.get("/rainfall/forecast", response_model=RainfallForecast)
