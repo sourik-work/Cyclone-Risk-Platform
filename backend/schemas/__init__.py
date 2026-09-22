@@ -17,6 +17,9 @@ from .cyclone import (
     RejectionRequest,
     AdvisoryAuditEntry,
     InsuranceEvaluateResponse,
+    RainfallDamageRequest,
+    DamagePathway,
+    RainfallDamageResponse,
 )
 
 __all__ = [
@@ -36,4 +39,7 @@ __all__ = [
     "RejectionRequest",
     "AdvisoryAuditEntry",
     "InsuranceEvaluateResponse",
+    "RainfallDamageRequest",
+    "DamagePathway",
+    "RainfallDamageResponse",
 ]

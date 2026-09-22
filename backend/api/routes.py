@@ -52,7 +52,8 @@ from backend.schemas.cyclone import (
     InsuranceTriggerResult,
     LiveCycloneResponse,
     MultilingualAdvisories,
-    OSMFeature,
+    RainfallDamageRequest,
+    RainfallDamageResponse,
     RainfallForecast,
     RejectionRequest,
     SurgeSimulation,
@@ -736,6 +737,23 @@ def get_rainfall_forecast_endpoint(
     """Returns 24h/48h/72h rainfall forecast and categorical risk level for a coastal district."""
     data = get_rainfall_forecast(district_id=district, cyclone_id=cyclone_id)
     return RainfallForecast.model_validate(data)
+
+
+@router.post("/rainfall/damage-pathway", response_model=RainfallDamageResponse)
+@router.post("/api/rainfall/damage-pathway", response_model=RainfallDamageResponse)
+def rainfall_damage_pathway(
+    req: RainfallDamageRequest,
+    auth: dict = Depends(require_auth),
+) -> RainfallDamageResponse:
+    """Terrain-aware rainfall damage pathway assessing flash flooding vs landslide risk."""
+    from backend.services.rainfall_service import get_rainfall_forecast, _load_districts
+    from backend.services.rainfall_damage_service import compute_damage_pathway
+
+    rainfall = get_rainfall_forecast(req.district_name, req.cyclone_id)
+    districts = _load_districts()
+    district_meta = districts.get(req.district_name.lower(), {})
+    result = compute_damage_pathway(req.district_name, rainfall, district_meta)
+    return RainfallDamageResponse(**result)
 
 
 @router.post("/surge/simulate", response_model=SurgeSimulation)

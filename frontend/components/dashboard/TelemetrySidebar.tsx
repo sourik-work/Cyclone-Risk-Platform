@@ -49,6 +49,7 @@ import { AlertSubscription } from './AlertSubscription';
 import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
 import { ExposureReasoningCard } from './ExposureReasoningCard';
 import { ForecastComparisonCard } from './ForecastComparisonCard';
+import { RainfallDamagePanel } from './RainfallDamagePanel';
 import { getAuthHeader } from '../../lib/api';
 
 interface TelemetrySidebarProps {
@@ -1339,6 +1340,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 2.65 Distinct Terrain-Aware Rainfall Damage Pathway Model (Workstream 15) */}
+      <RainfallDamagePanel
+        districtName={selectedDistrict?.district_name || 'Puri'}
+        cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
+      />
 
       {/* FCM Push Alert Subscription Card */}
       <AlertSubscription currentState={selectedState || 'Odisha'} />

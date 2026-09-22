@@ -314,4 +314,24 @@ export interface HazardSummary {
   overall_risk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | string;
 }
 
+export interface DamagePathway {
+  hazard_type: string;
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | string;
+  trigger_rainfall_mm?: number | null;
+  current_rainfall_mm?: number | null;
+  runoff_potential?: number | null;
+  susceptibility_index?: number | null;
+  slope_deg?: number | null;
+  cumulative_rainfall_72h_mm?: number | null;
+}
+
+export interface RainfallDamageResponse {
+  district: string;
+  terrain_type: 'COASTAL_LOWLAND' | 'HILLY_TERRAIN' | 'INLAND_PLAIN' | string;
+  elevation_m: number;
+  primary_hazard: string;
+  pathways: DamagePathway[];
+  data_sources?: string[];
+}
+
 

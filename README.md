@@ -176,6 +176,19 @@ This is a simplified approximation of the SLOSH shallow-water formulation, optim
 
 ---
 
+### Rainfall Damage Pathway Model
+
+Distinct from the storm surge model, this pathway models **two terrain-specific rainfall hazards**:
+
+| Terrain | Primary Hazard | Formula |
+|---------|---------------|---------|
+| Coastal lowland (<20m elevation) | Flash flooding | Runoff potential = rainfall × soil saturation |
+| Hilly terrain (slope >15°) | Landslide | Susceptibility index = cumulative rainfall × slope |
+
+Both use threshold-based classification (LOW/MEDIUM/HIGH/CRITICAL). This is separate from storm surge because surge is wind + tide-driven, while rainfall damage is infiltration- and terrain-driven.
+
+---
+
 ## Parametric Insurance Liquidity
 
 Four sample parametric insurance contracts across the 4 coastal states:
@@ -287,10 +300,10 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 
 ## Testing & CI/CD
 
-- **119 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, schemas, and integration flows
+- **129 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, terrain-aware rainfall damage pathways, schemas, and integration flows
 - **Frontend build** validated via `npm run build` (Next.js 16 Turbopack, 0 errors)
 - **CI/CD:** GitHub Actions runs tests + build on every push
-- **Coverage:** Core services (`forecast_service`, `insurance_service`, `gemini_advisory`, `imd_fetcher`, `surge_service`, `rainfall_service`) have dedicated test files
+- **Coverage:** Core services (`forecast_service`, `insurance_service`, `gemini_advisory`, `imd_fetcher`, `surge_service`, `rainfall_service`, `rainfall_damage_service`) have dedicated test files
 
 ---
 

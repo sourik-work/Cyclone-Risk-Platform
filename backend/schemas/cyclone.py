@@ -556,4 +556,38 @@ class GeminiForecastResponse(BaseModel):
     error: Optional[str] = None
 
 
+class RainfallDamageRequest(BaseModel):
+    """Request payload for terrain-aware rainfall damage pathway."""
+
+    district_name: str
+    cyclone_id: Optional[str] = None
+
+
+class DamagePathway(BaseModel):
+    """Specific hazard pathway (flash flood or landslide) resulting from rainfall."""
+
+    hazard_type: str
+    risk_level: str
+    trigger_rainfall_mm: Optional[float] = None
+    current_rainfall_mm: Optional[float] = None
+    runoff_potential: Optional[float] = None
+    susceptibility_index: Optional[float] = None
+    slope_deg: Optional[float] = None
+    cumulative_rainfall_72h_mm: Optional[float] = None
+
+
+class RainfallDamageResponse(BaseModel):
+    """Terrain-aware rainfall damage assessment response."""
+
+    district: str
+    terrain_type: str
+    elevation_m: float
+    primary_hazard: str
+    pathways: List[DamagePathway]
+    data_sources: List[str] = Field(
+        default_factory=lambda: ["IMD rainfall forecast", "30m DEM", "GSI slope data"]
+    )
+
+
+
 
