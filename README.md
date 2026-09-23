@@ -302,6 +302,15 @@ The `/api/exposure/reason` endpoint sends the following context to **Gemini 3.7 
 | **OpenStreetMap** | Infrastructure | Roads, hospitals, shelters |
 | **FAO / WHO** | Public health | Food insecurity, nutrition, disease prevalence |
 
+### Sentinel-1 + Sentinel-2 Integration
+
+| Satellite | Purpose | Availability |
+|-----------|---------|--------------|
+| Sentinel-1 SAR | All-weather flood extent (current) | ✅ Live |
+| Sentinel-2 Optical | Pre/post landfall change detection (NDVI/NDWI) | 🟡 Documentation + tiles generated for Fani/Amphan |
+
+**Pre/post change detection** uses vegetation index (NDVI) and water index (NDWI) differences between pre-landfall and post-landfall imagery windows. Red overlay = vegetation loss; blue overlay = water extent gain.
+
 ---
 
 ## Human-in-the-Loop Safety Gate

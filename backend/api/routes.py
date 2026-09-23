@@ -1498,6 +1498,16 @@ async def get_single_asset_status(asset_id: str) -> AssetStatusResponse:
     return AssetStatusResponse(**entry)
 
 
+@router.get("/sentinel2/layers")
+@router.get("/api/sentinel2/layers")
+async def list_sentinel2_layers(cyclone_id: str | None = None):
+    """Returns available Sentinel-2 change detection layers."""
+    from backend.services.sentinel2_service import get_sentinel2_layers, SENTINEL2_LAYERS
+
+    return {"layers": get_sentinel2_layers(cyclone_id) if cyclone_id else list(SENTINEL2_LAYERS.values())}
+
+
+
 
 
 
