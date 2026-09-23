@@ -33,6 +33,24 @@ This platform provides **48-hour anticipatory lead time** by combining:
 - **Infrastructure exposure mapping** (power grids, roads, hospitals, shelters)
 - **Rainfall damage pathway** + **hydrodynamic storm surge model**
 - **Parametric insurance liquidity** trigger engine for anticipatory cash transfer
+- Infrastructure triage ranking (top-N assets ranked by exposure × criticality × cascade risk)
+- Terrain-aware rainfall damage pathways (flash flood for lowland, landslide for hilly)
+- Human-in-the-loop approval gate for advisories and insurance payouts
+- Multi-channel last-mile delivery (radio + SMS + IVR)
+- What-if scenario override for contingency planning
+
+---
+
+## 📍 Current Coverage
+
+- **Geography:** 9 coastal states + 4 Union Territories across India (Bay of Bengal + Arabian Sea)
+- **Districts:** 48
+- **Population served:** 60M+
+- **Languages:** 11
+- **Predictive models:** 2 (LSTM ensemble, 20.6 km agreement at 48h on Fani)
+- **Live satellite feeds:** Sentinel-1 SAR via Google Earth Engine
+- **API endpoints:** 30+
+- **Tests:** 160 passing
 
 ---
 
@@ -90,7 +108,7 @@ This platform provides **48-hour anticipatory lead time** by combining:
 
 ### India-Scale Coverage
 
-**9 coastal states + 4 Union Territories · 50+ districts · 60M+ population at risk**
+**9 coastal states + 4 Union Territories · 48 districts · 60M+ population at risk**
 
 | Coast | States | Districts | Language |
 |-------|--------|-----------|----------|
@@ -130,12 +148,14 @@ When the two models agree within 100 km, we report **HIGH confidence**. When the
 **Validation caveat:** The current ensemble is validated on 2 historical cyclones. Training uses ~8,484 sequences derived from IMD best-track data with synthetic augmentation (perturbed positions, wind scalings). We do not currently disclose the augmentation/real-signal ratio — a production version would publish this and validate against a 20+ storm held-out test set.
 
 ### Multilingual Advisories
-- **6 Indian languages**: English, Hindi, Odia, Bengali, Telugu, Tamil
-- **Gemini 3.7 Flash** generates department-specific action items:
-  - Evacuation (District Administration + ODRAF)
-  - Shelter (Civil Supplies + Panchayati Raj)
-  - Fisherfolk (Fisheries Department + Marine Police)
-  - Power Utility (State DISCOM)
+
+**11 Indian languages:** English, Hindi, Odia, Bengali, Telugu, Tamil, Gujarati, Marathi, Konkani, Kannada, Malayalam
+
+Gemini 3.7 Flash generates department-specific action items:
+- Evacuation (District Administration + ODRAF)
+- Shelter (Civil Supplies + Panchayati Raj)
+- Fisherfolk (Fisheries Department + Marine Police)
+- Power Utility (State DISCOM)
 
 ### Voice Delivery
 - **Gemini 3.1 Flash TTS** synthesizes advisory audio
@@ -169,10 +189,12 @@ The chat pipeline uses both because they serve different roles:
 The alternative — using Gemini function-calling directly with no Dialogflow — would work but would lose the standard GCP conversational contract that enterprise municipal systems expect. We chose the layered approach for interoperability.
 
 ### Infrastructure Exposure
-- **40 substations** + **15 transmission lines** across 4 states
-- **15 arterial road corridors** (NH-16, NH-5, NH-60, Marine Drive)
-- **50 hospitals/shelters** with bed capacity and generator status
-- **"AT RISK"** badges when assets fall within the forecast uncertainty cone
+
+**Core dataset (4 states, 16 districts):** 40 substations + 15 transmission lines · 15 arterial road corridors (NH-16, NH-5, NH-60, Marine Drive) · 50 hospitals/shelters with bed capacity and generator status
+
+**Extended coverage (9 states + 4 UTs):** Additional infrastructure datasets loaded for Gujarat, Maharashtra, Goa, Karnataka, Kerala, and all coastal UTs
+
+**Dynamic exposure:** "AT RISK" badges when assets fall within the forecast uncertainty cone
 
 **Three-tier coastal classification:**
 - **CRITICAL STORM EXPOSURE** — assets within 5km of coast AND inside forecast cone (storm active)
@@ -307,9 +329,11 @@ The `/api/exposure/reason` endpoint sends the following context to **Gemini 3.7 
 | Satellite | Purpose | Availability |
 |-----------|---------|--------------|
 | Sentinel-1 SAR | All-weather flood extent (current) | ✅ Live |
-| Sentinel-2 Optical | Pre/post landfall change detection (NDVI/NDWI) | 🟡 Documentation + tiles generated for Fani/Amphan |
+| Sentinel-2 Optical | Pre/post landfall change detection (NDVI/NDWI) | 🟡 Service + endpoint + generation script ready; tile deployment pending GEE asset export |
 
 **Pre/post change detection** uses vegetation index (NDVI) and water index (NDWI) differences between pre-landfall and post-landfall imagery windows. Red overlay = vegetation loss; blue overlay = water extent gain.
+
+**Current status:** The `/api/sentinel2/layers` endpoint and Earth Engine generation scripts (`scripts/gee_sentinel2_change.py` + `.js`) are complete. Actual tile URLs will be populated once GEE asset export completes in a production environment.
 
 ---
 
@@ -343,10 +367,10 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 
 ## Testing & CI/CD
 
-- **135 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, terrain-aware rainfall damage pathways, infrastructure triage ranking, schemas, and integration flows
+- **160 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, terrain-aware rainfall damage pathways, infrastructure triage ranking, scenario override, asset state, audit log, agency adapters, schemas, and integration flows
 - **Frontend build** validated via `npm run build` (Next.js 16 Turbopack, 0 errors)
 - **CI/CD:** GitHub Actions runs tests + build on every push
-- **Coverage:** Core services (`forecast_service`, `insurance_service`, `gemini_advisory`, `imd_fetcher`, `surge_service`, `rainfall_service`, `rainfall_damage_service`, `triage_service`) have dedicated test files
+- **Coverage:** Core services (forecast_service, insurance_service, gemini_advisory, imd_fetcher, surge_service, rainfall_service, rainfall_damage_service, triage_service, asset_state_service, agency_adapters, scenario_override) have dedicated test files
 
 ---
 
@@ -367,7 +391,8 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 ## APAC Scalability
 
 ### Currently deployed
-- **India:** 4 states, 16 districts, 24M+ population covered
+- **India:** 9 coastal states + 4 Union Territories, 48 districts, 60M+ population covered across both the Bay of Bengal and Arabian Sea coasts
+- 11 advisory languages covering every coastal state
 
 ### Demonstrated expansion
 - **Bangladesh:** 4 districts (Cox's Bazar, Chittagong, Bhola, Khulna) with Sidr 2007 reference track — functionally working cross-country mode
@@ -381,7 +406,7 @@ The platform generalizes to any cyclone basin because each layer is designed as 
 | Satellite imagery | Google Earth Engine Sentinel-1 SAR | Same — GEE is global |
 | Infrastructure | OpenStreetMap + state DISCOM | Same OSM + national grid authority |
 | Vulnerability | Census + NDMA statistics | National census bureau data |
-| Language | 6 Indian languages | Bengali (Bangladesh), Sinhala + Tamil (Sri Lanka), Burmese (Myanmar), Tagalog (Philippines) |
+| Language | 11 Indian languages | Bengali (Bangladesh), Sinhala + Tamil (Sri Lanka), Burmese (Myanmar), Tagalog (Philippines) |
 | Insurance partner | NDRP | CCRIF (Caribbean pattern), national risk pools |
 
 ### Adapter Architecture
