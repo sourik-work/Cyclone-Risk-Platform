@@ -375,6 +375,9 @@ const STATE_MAP_CONFIG: Record<string, { lat: number; lng: number; zoom: number 
   'west bengal': { lat: 22.0, lng: 88.0, zoom: 7.5 },
   'andhra pradesh': { lat: 16.5, lng: 82.0, zoom: 7.0 },
   'tamil nadu': { lat: 12.5, lng: 80.0, zoom: 7.0 },
+  chittagong: { lat: 22.2, lng: 91.8, zoom: 7.5 },
+  khulna: { lat: 22.5, lng: 89.6, zoom: 7.5 },
+  bangladesh: { lat: 22.4, lng: 90.5, zoom: 7.0 },
 };
 
 /**

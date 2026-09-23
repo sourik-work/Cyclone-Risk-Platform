@@ -252,11 +252,11 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
       {showApacModal && (
         <div
           id="apac-scale-modal"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fadeIn"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fadeIn overflow-y-auto"
           onClick={() => setShowApacModal(false)}
         >
           <div
-            className="bg-slate-900 border border-indigo-500/40 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 text-slate-100 relative"
+            className="bg-slate-900 border border-indigo-500/40 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-5 text-slate-100 relative my-8 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -268,14 +268,14 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                 <div>
                   <div className="flex items-center gap-2">
                     <h2 className="text-lg font-bold text-slate-100 font-mono tracking-wide">
-                      APAC REGIONAL EXPANSION — PHASE 2
+                      APAC SCALABILITY &amp; ARCHITECTURAL PORTABILITY
                     </h2>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                      Multi-Basin Architecture
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Live Bangladesh Demo
                     </span>
                   </div>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Demonstrating global multi-hazard scalability beyond India across high-vulnerability Asia-Pacific coastal basins.
+                    Genuine modular portability across Asia-Pacific cyclone basins — from Bay of Bengal to Western Pacific.
                   </p>
                 </div>
               </div>
@@ -289,102 +289,157 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
               </button>
             </div>
 
-            {/* Expansion Target Countries Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-              {/* 1. Bangladesh */}
-              <div className="bg-slate-950/80 border border-slate-800/80 hover:border-emerald-500/40 rounded-xl p-3.5 space-y-2 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">🇧🇩</span>
-                    <span className="font-bold text-slate-200 text-sm font-mono">Bangladesh</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                    Phase 2 Expansion
+            {/* Live Demonstrated Expansion: Bangladesh */}
+            <div className="bg-emerald-950/40 border border-emerald-500/50 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🇧🇩</span>
+                  <span className="font-bold text-emerald-300 text-sm font-mono">
+                    Bangladesh: Live demo available — switch country in sidebar
                   </span>
                 </div>
-                <p className="text-slate-400 leading-relaxed text-[11px]">
-                  <strong>Delta Corridor:</strong> Chittagong, Cox&apos;s Bazar, Khulna, Sundarbans. Extreme storm surge amplification zone.
+                <p className="text-xs text-slate-300">
+                  4 districts (Cox&apos;s Bazar, Chittagong, Bhola, Khulna) with Sidr 2007 reference track — functionally working cross-country mode with full vulnerability grid and multilingual alerting.
                 </p>
-                <div className="text-[10px] font-mono text-slate-500 flex items-center gap-2 pt-1 border-t border-slate-800/60">
-                  <span>BMD Feed Ingest</span>
-                  <span>•</span>
-                  <span>CPP Cyclone Shelters</span>
-                </div>
               </div>
+              <button
+                onClick={() => setShowApacModal(false)}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 whitespace-nowrap transition-colors cursor-pointer shadow-sm"
+              >
+                Try in Sidebar
+              </button>
+            </div>
 
-              {/* 2. Sri Lanka */}
-              <div className="bg-slate-950/80 border border-slate-800/80 hover:border-cyan-500/40 rounded-xl p-3.5 space-y-2 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">🇱🇰</span>
-                    <span className="font-bold text-slate-200 text-sm font-mono">Sri Lanka</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-                    Phase 2 Expansion
-                  </span>
-                </div>
-                <p className="text-slate-400 leading-relaxed text-[11px]">
-                  <strong>Coastal Zone:</strong> Northern &amp; Eastern Provinces (Jaffna, Trincomalee, Batticaloa). High inter-monsoon vulnerability.
-                </p>
-                <div className="text-[10px] font-mono text-slate-500 flex items-center gap-2 pt-1 border-t border-slate-800/60">
-                  <span>DMC Advisory API</span>
-                  <span>•</span>
-                  <span>Tamil &amp; Sinhala Alerting</span>
-                </div>
+            {/* Architectural Portability Swap-in Module Table */}
+            <div className="space-y-2">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Architectural Portability (Swap-In Modules)</span>
+              </h3>
+              <div className="overflow-x-auto border border-slate-800 rounded-xl">
+                <table className="w-full text-left text-xs border-collapse font-sans">
+                  <thead>
+                    <tr className="bg-slate-950/90 border-b border-slate-800 text-[11px] font-mono text-slate-400 uppercase">
+                      <th className="p-2.5 font-semibold">Layer</th>
+                      <th className="p-2.5 font-semibold">India Implementation</th>
+                      <th className="p-2.5 font-semibold">APAC Swap-In Module</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 text-slate-300 text-[11px]">
+                    <tr className="hover:bg-slate-800/30 transition-colors">
+                      <td className="p-2.5 font-semibold text-slate-200">Storm track data</td>
+                      <td className="p-2.5">IMD RSMC New Delhi XML/HTML scrapers</td>
+                      <td className="p-2.5 text-indigo-300 font-medium">JTWC (Pacific), PAGASA (Philippines), BMKG (Indonesia) API adapters</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30 transition-colors">
+                      <td className="p-2.5 font-semibold text-slate-200">Satellite imagery</td>
+                      <td className="p-2.5">Google Earth Engine Sentinel-1 SAR</td>
+                      <td className="p-2.5 text-emerald-300 font-medium">Same — GEE is global</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30 transition-colors">
+                      <td className="p-2.5 font-semibold text-slate-200">Infrastructure</td>
+                      <td className="p-2.5">OpenStreetMap + state DISCOM</td>
+                      <td className="p-2.5 text-cyan-300 font-medium">Same OSM + national grid authority</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30 transition-colors">
+                      <td className="p-2.5 font-semibold text-slate-200">Vulnerability</td>
+                      <td className="p-2.5">Census + NDMA statistics</td>
+                      <td className="p-2.5 text-amber-300 font-medium">National census bureau data</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30 transition-colors">
+                      <td className="p-2.5 font-semibold text-slate-200">Language</td>
+                      <td className="p-2.5">6 Indian languages</td>
+                      <td className="p-2.5 text-purple-300 font-medium">Bengali (Bangladesh), Sinhala + Tamil (Sri Lanka), Burmese (Myanmar), Tagalog (Philippines)</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30 transition-colors">
+                      <td className="p-2.5 font-semibold text-slate-200">Insurance partner</td>
+                      <td className="p-2.5">NDRP</td>
+                      <td className="p-2.5 text-teal-300 font-medium">CCRIF (Caribbean pattern), national risk pools</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
+            </div>
 
-              {/* 3. Myanmar */}
-              <div className="bg-slate-950/80 border border-slate-800/80 hover:border-amber-500/40 rounded-xl p-3.5 space-y-2 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">🇲🇲</span>
-                    <span className="font-bold text-slate-200 text-sm font-mono">Myanmar</span>
+            {/* Planned Country Adapters (Phase 2) */}
+            <div className="space-y-2">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center justify-between">
+                <span>Planned Country Adapters (Phase 2)</span>
+                <span className="text-[10px] text-slate-500 font-normal">~200 LOC per track adapter</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                {/* 1. Sri Lanka */}
+                <div className="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                      <span>🇱🇰</span> Sri Lanka
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">
+                      ~200 LOC adapter
+                    </span>
                   </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                    Phase 2 Expansion
-                  </span>
+                  <p className="text-[11px] text-slate-400">
+                    JTWC + Met Dept adapters, Tamil + Sinhala TTS alerting.
+                  </p>
                 </div>
-                <p className="text-slate-400 leading-relaxed text-[11px]">
-                  <strong>Delta &amp; Coast:</strong> Rakhine State &amp; Ayeyarwady Delta (Sittwe, Pathein). Nargis/Mocha exposure corridor.
-                </p>
-                <div className="text-[10px] font-mono text-slate-500 flex items-center gap-2 pt-1 border-t border-slate-800/60">
-                  <span>DMH Early Warning</span>
-                  <span>•</span>
-                  <span>GEE SAR Flood Mapping</span>
-                </div>
-              </div>
 
-              {/* 4. Philippines */}
-              <div className="bg-slate-950/80 border border-slate-800/80 hover:border-purple-500/40 rounded-xl p-3.5 space-y-2 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">🇵🇭</span>
-                    <span className="font-bold text-slate-200 text-sm font-mono">Philippines</span>
+                {/* 2. Myanmar */}
+                <div className="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                      <span>🇲🇲</span> Myanmar
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">
+                      ~200 LOC adapter
+                    </span>
                   </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-500/15 text-purple-300 border border-purple-500/30">
-                    Phase 2 Expansion
-                  </span>
+                  <p className="text-[11px] text-slate-400">
+                    JTWC + DMH adapters, Burmese TTS alerting.
+                  </p>
                 </div>
-                <p className="text-slate-400 leading-relaxed text-[11px]">
-                  <strong>Typhoon Belt:</strong> Eastern Visayas &amp; Luzon (Tacloban, Bicol). Western Pacific multi-typhoon basin integration.
-                </p>
-                <div className="text-[10px] font-mono text-slate-500 flex items-center gap-2 pt-1 border-t border-slate-800/60">
-                  <span>PAGASA Radar Sync</span>
-                  <span>•</span>
-                  <span>JTWC Dual-Basin TrackLSTM</span>
+
+                {/* 3. Philippines */}
+                <div className="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                      <span>🇵🇭</span> Philippines
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                      ~200 LOC adapter
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    PAGASA + JTWC adapters, Tagalog + Cebuano TTS alerting.
+                  </p>
+                </div>
+
+                {/* 4. Indonesia */}
+                <div className="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                      <span>🇮🇩</span> Indonesia
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300">
+                      ~200 LOC adapter
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    BMKG adapter, Bahasa Indonesia + Javanese TTS alerting.
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Architecture Highlights Footer */}
-            <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-slate-300">
-              <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-indigo-400" />
-                <span>Standardized Common Alerting Protocol (CAP v1.2) &amp; WMO RSMC Integration</span>
-              </div>
+            {/* Architecture Summary Callout */}
+            <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] font-mono text-slate-400 leading-relaxed">
+              Each new country requires: <strong>(1)</strong> a track data adapter (~200 LOC), <strong>(2)</strong> a vulnerability GeoJSON (~4 districts to demonstrate), <strong>(3)</strong> additional TTS language models. The core prediction, exposure, advisory, and insurance pipelines work unchanged.
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end pt-2 border-t border-slate-800">
               <button
                 onClick={() => setShowApacModal(false)}
-                className="px-4 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-bold transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-colors cursor-pointer"
               >
                 Close Preview
               </button>

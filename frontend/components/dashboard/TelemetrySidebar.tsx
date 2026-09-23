@@ -48,6 +48,7 @@ import {
   Smartphone,
   PhoneCall,
   ShieldCheck,
+  Globe2,
 } from 'lucide-react';
 import { AlertSubscription } from './AlertSubscription';
 import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
@@ -75,6 +76,9 @@ interface TelemetrySidebarProps {
   hasActiveCyclone?: boolean;
   liveData?: any;
   selectedStormId?: string;
+  selectedCountry?: string;
+  onSelectCountry?: (country: string) => void;
+  countries?: Array<{ id: string; name: string; states: string[] }>;
 }
 
 const formatCount = (val: number): string => {
@@ -257,7 +261,17 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   hasActiveCyclone,
   liveData,
   selectedStormId,
+  selectedCountry = 'india',
+  onSelectCountry,
+  countries,
 }) => {
+  const currentCountries = countries || [
+    { id: 'india', name: 'India', states: ['Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'] },
+    { id: 'bangladesh', name: 'Bangladesh', states: ['Chittagong', 'Khulna'] },
+  ];
+  const activeCountry = selectedCountry || 'india';
+  const availableStates = currentCountries.find((c) => c.id === activeCountry)?.states || COASTAL_STATES;
+
   const currentPoint: TrackPoint = track.track_points[activePointIndex] || track.track_points[0];
   const [localAdvisoryOverride, setLocalAdvisoryOverride] = useState<AnticipatoryAdvisory | null>(null);
   const [isApprovalActionLoading, setIsApprovalActionLoading] = useState<boolean>(false);
@@ -1030,12 +1044,46 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </span>
         </div>
 
-        {/* State Selector: 4 Coastal States Dropdown */}
+        {/* Country Selector: India vs Bangladesh */}
+        <div className="space-y-1.5 pb-2 border-b border-white/[0.06]">
+          <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Globe2 className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Operational Country:</span>
+            </span>
+            <span className="text-indigo-400 font-bold font-mono">
+              {activeCountry === 'bangladesh' ? 'Bangladesh (Live Demo)' : 'India (Default)'}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            {currentCountries.map((c) => {
+              const isSelected = activeCountry === c.id;
+              return (
+                <button
+                  key={c.id}
+                  id={`btn-country-${c.id}`}
+                  onClick={() => onSelectCountry && onSelectCountry(c.id)}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-center truncate cursor-pointer flex items-center justify-center gap-1.5 ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-500/20 scale-[1.02] border border-indigo-400/50'
+                      : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                  }`}
+                  title={`Switch to ${c.name}`}
+                >
+                  <span>{c.id === 'bangladesh' ? '🇧🇩' : '🇮🇳'}</span>
+                  <span>{c.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* State Selector: Coastal States/Divisions Dropdown */}
         <div className="space-y-1.5">
           <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between">
             <label htmlFor="state-selector-dropdown" className="flex items-center gap-1.5 cursor-pointer">
               <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Select Coastal State:</span>
+              <span>{activeCountry === 'bangladesh' ? 'Select Coastal Division:' : 'Select Coastal State:'}</span>
             </label>
             <span className="text-cyan-400 font-bold font-mono">{activeState}</span>
           </div>
@@ -1047,7 +1095,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
               onChange={(e) => handleStateClick(e.target.value)}
               className="w-full bg-surface-2 border border-white/[0.08] text-text-primary font-medium text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-accent-cyan transition-all cursor-pointer shadow-inner"
             >
-              {COASTAL_STATES.map((state) => (
+              {availableStates.map((state) => (
                 <option key={state} value={state} className="bg-slate-900 text-slate-100 py-1">
                   {state}
                 </option>
@@ -1056,7 +1104,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
           {/* Quick-switch state buttons */}
           <div className="grid grid-cols-2 gap-1.5 pt-1">
-            {COASTAL_STATES.map((state) => {
+            {availableStates.map((state) => {
               const isSelected = activeState.toLowerCase() === state.toLowerCase();
               return (
                 <button

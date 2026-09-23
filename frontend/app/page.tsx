@@ -22,10 +22,17 @@ import {
   SEED_FANI_TRACK,
   SEED_ODISHA_VULNERABILITY,
   SEED_ALL_COASTAL_VULNERABILITY,
+  SEED_SIDR_TRACK,
+  SEED_BANGLADESH_VULNERABILITY,
 } from '../lib/seedData';
 import { SEED_INFRASTRUCTURE_DATA } from '../lib/infrastructureSeed';
 import { fetchWithCache, getCachedData } from '../lib/cache';
 import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
+
+export const COUNTRIES = [
+  { id: 'india', name: 'India', states: ['Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'] },
+  { id: 'bangladesh', name: 'Bangladesh', states: ['Chittagong', 'Khulna'] },
+];
 import { collection, onSnapshot, query, limit } from 'firebase/firestore';
 import { firestore } from '../lib/firebase';
 import { getAuthHeader } from '../lib/api';
@@ -262,6 +269,16 @@ export default function Home() {
     }
   };
 
+  // Operational Country selection: 'india' (default) vs 'bangladesh'
+  const [selectedCountry, setSelectedCountry] = useState<string>('india');
+
+  // Determine active vulnerability dataset based on selected country
+  const activeVulnerability = useMemo(() => {
+    return selectedCountry === 'bangladesh'
+      ? SEED_BANGLADESH_VULNERABILITY
+      : SEED_ALL_COASTAL_VULNERABILITY;
+  }, [selectedCountry]);
+
   // Determine active track depending on current mode
   const activeTrack = useMemo(() => {
     if (mode === 'live') {
@@ -271,6 +288,7 @@ export default function Home() {
       return STANDBY_MONITORING_TRACK;
     }
     // Historical Mode
+    if (selectedStormId === 'sidr') return SEED_SIDR_TRACK;
     return selectedStormId === 'amphan' ? SEED_AMPHAN_TRACK : SEED_FANI_TRACK;
   }, [mode, selectedStormId, hasActiveCyclone, liveData]);
 
@@ -297,14 +315,55 @@ export default function Home() {
     setAdvisory(null);
   }, [mode, selectedStormId, activeTrack]);
 
+  // Coastal state selector: 'Odisha' (default), 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu' (India) / 'Chittagong', 'Khulna' (Bangladesh)
+  const [selectedState, setSelectedState] = useState<string>('Odisha');
+
+  // Default selected district: Kendrapara or Puri (India) / Cox's Bazar (Bangladesh)
+  const [selectedDistrict, setSelectedDistrict] = useState<DistrictProperties | null>(
+    SEED_ALL_COASTAL_VULNERABILITY.features[0]?.properties || null
+  );
+
+  // Handle switching active country
+  const handleSelectCountry = (countryId: string) => {
+    setSelectedCountry(countryId);
+    const countryObj = COUNTRIES.find((c) => c.id === countryId);
+    const defaultState = countryObj?.states[0] || (countryId === 'bangladesh' ? 'Chittagong' : 'Odisha');
+    setSelectedState(defaultState);
+    const vulnData = countryId === 'bangladesh' ? SEED_BANGLADESH_VULNERABILITY : SEED_ALL_COASTAL_VULNERABILITY;
+    const match =
+      vulnData.features.find((f) => f.properties.state_name.toLowerCase() === defaultState.toLowerCase()) ||
+      vulnData.features[0];
+    if (match) {
+      setSelectedDistrict(match.properties);
+    }
+    if (countryId === 'bangladesh') {
+      setSelectedStormId('sidr');
+      setLayerToggles((prev) => ({ ...prev, showEarthEngine: false }));
+    } else {
+      if (selectedStormId === 'sidr') {
+        setSelectedStormId('fani');
+        setLayerToggles((prev) => ({ ...prev, showEarthEngine: true }));
+      }
+    }
+  };
+
   // Handle Historical storm selection
   const handleSelectStorm = (stormId: string) => {
     setSelectedStormId(stormId);
-    const track = stormId === 'amphan' ? SEED_AMPHAN_TRACK : SEED_FANI_TRACK;
+    let track = SEED_FANI_TRACK;
+    if (stormId === 'amphan') track = SEED_AMPHAN_TRACK;
+    else if (stormId === 'sidr') track = SEED_SIDR_TRACK;
+
     const totalPoints = track.track_points.length;
     setActivePointIndex(Math.min(7, Math.max(0, totalPoints - 1)));
     setAdvisory(null);
-    if (stormId === 'amphan') {
+    if (stormId === 'sidr') {
+      setSelectedCountry('bangladesh');
+      setSelectedState('Chittagong');
+      const match = SEED_BANGLADESH_VULNERABILITY.features[0];
+      if (match) setSelectedDistrict(match.properties);
+      setLayerToggles((prev) => ({ ...prev, showEarthEngine: false }));
+    } else if (stormId === 'amphan') {
       // Hide Earth Engine overlay by default when viewing Amphan (tile pending)
       setLayerToggles((prev) => ({ ...prev, showEarthEngine: false }));
     } else {
@@ -313,18 +372,11 @@ export default function Home() {
     }
   };
 
-  // Coastal state selector: 'Odisha' (default), 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'
-  const [selectedState, setSelectedState] = useState<string>('Odisha');
-
-  // Default selected district: Kendrapara or Puri
-  const [selectedDistrict, setSelectedDistrict] = useState<DistrictProperties | null>(
-    SEED_ALL_COASTAL_VULNERABILITY.features[0]?.properties || null
-  );
-
   // Handle switching active coastal state
   const handleSelectState = (newState: string) => {
     setSelectedState(newState);
-    const match = SEED_ALL_COASTAL_VULNERABILITY.features.find(
+    const vulnData = selectedCountry === 'bangladesh' ? SEED_BANGLADESH_VULNERABILITY : SEED_ALL_COASTAL_VULNERABILITY;
+    const match = vulnData.features.find(
       (f) => f.properties.state_name.toLowerCase() === newState.toLowerCase()
     );
     if (match) {
@@ -408,6 +460,8 @@ export default function Home() {
     const targetCycloneId =
       mode === 'live'
         ? 'IMD-LIVE-ACTIVE'
+        : selectedStormId === 'sidr'
+        ? 'BOB-04-2007'
         : selectedStormId === 'amphan'
         ? 'BOB-01-2020'
         : 'BOB-02-2019';
@@ -596,7 +650,7 @@ export default function Home() {
               <CycloneMap
                 track={activeTrack}
                 activePointIndex={activePointIndex}
-                vulnerabilityData={SEED_ALL_COASTAL_VULNERABILITY}
+                vulnerabilityData={activeVulnerability}
                 selectedDistrict={selectedDistrict}
                 onSelectDistrict={setSelectedDistrict}
                 layerToggles={layerToggles}
@@ -639,9 +693,12 @@ export default function Home() {
             currentLanguage={currentLanguage}
             advisory={advisory}
             isLoadingAdvisory={isLoadingAdvisory}
+            selectedCountry={selectedCountry}
+            onSelectCountry={handleSelectCountry}
+            countries={COUNTRIES}
             selectedState={selectedState}
             onSelectState={handleSelectState}
-            allDistricts={SEED_ALL_COASTAL_VULNERABILITY.features.map((f) => f.properties)}
+            allDistricts={activeVulnerability.features.map((f) => f.properties)}
             onSelectDistrict={setSelectedDistrict}
             onLanguageChange={setCurrentLanguage}
             infrastructureData={infrastructureData}

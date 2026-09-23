@@ -62,6 +62,7 @@ export interface DistrictProperties {
   vulnerability_score?: number;
   inundation_risk?: number;
   evac_shelters?: number;
+  country?: string;
 }
 
 export interface DistrictFeature {

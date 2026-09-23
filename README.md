@@ -339,6 +339,36 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 
 ---
 
+## APAC Scalability
+
+### Currently deployed
+- **India:** 4 states, 16 districts, 24M+ population covered
+
+### Demonstrated expansion
+- **Bangladesh:** 4 districts (Cox's Bazar, Chittagong, Bhola, Khulna) with Sidr 2007 reference track — functionally working cross-country mode
+
+### Architectural portability
+The platform generalizes to any cyclone basin because each layer is designed as a swap-in module:
+
+| Layer | India implementation | APAC swap |
+|-------|---------------------|-----------|
+| Storm track data | IMD RSMC New Delhi XML/HTML scrapers | JTWC (Pacific), PAGASA (Philippines), BMKG (Indonesia) API adapters |
+| Satellite imagery | Google Earth Engine Sentinel-1 SAR | Same — GEE is global |
+| Infrastructure | OpenStreetMap + state DISCOM | Same OSM + national grid authority |
+| Vulnerability | Census + NDMA statistics | National census bureau data |
+| Language | 6 Indian languages | Bengali (Bangladesh), Sinhala + Tamil (Sri Lanka), Burmese (Myanmar), Tagalog (Philippines) |
+| Insurance partner | NDRP | CCRIF (Caribbean pattern), national risk pools |
+
+### Planned country adapters (Phase 2)
+- **Sri Lanka:** JTWC + Met Dept adapters, Tamil + Sinhala TTS
+- **Myanmar:** JTWC + DMH adapters, Burmese TTS
+- **Philippines:** PAGASA + JTWC adapters, Tagalog + Cebuano TTS
+- **Indonesia:** BMKG adapter, Bahasa Indonesia + Javanese TTS
+
+Each new country requires: (1) a track data adapter (~200 LOC), (2) a vulnerability GeoJSON (~4 districts to demonstrate), (3) additional TTS language models. The core prediction, exposure, advisory, and insurance pipelines work unchanged.
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites

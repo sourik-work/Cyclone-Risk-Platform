@@ -53,6 +53,12 @@ def test_api_get_vulnerability():
     tn = get_coastal_vulnerability(state="Tamil Nadu")
     assert len(tn.features) == 3
 
+    # Test country filtering (Bangladesh)
+    bd = get_coastal_vulnerability(country="bangladesh")
+    assert len(bd.features) == 4
+    bd_names = {f.properties.district_name for f in bd.features}
+    assert bd_names == {"Cox's Bazar", "Chittagong", "Bhola", "Khulna"}
+
 
 def test_api_generate_and_latest_advisory():
     req = GenerateAdvisoryRequest(

@@ -54,6 +54,7 @@ def clear_cache() -> None:
 def load_infrastructure(
     asset_type: Optional[str] = None,
     state: Optional[str] = None,
+    country: str = "india",
 ) -> Dict[str, Any]:
     """Loads and filters infrastructure features with in-memory caching.
 
@@ -63,6 +64,7 @@ def load_infrastructure(
                     'CYCLONE_SHELTER').
         state: Optional state name filter (e.g. 'Odisha', 'West Bengal',
                'Andhra Pradesh', 'Tamil Nadu').
+        country: Optional country name ('india' or 'bangladesh'). Defaults to 'india'.
 
     Returns:
         GeoJSON FeatureCollection dict with filtered features.
@@ -73,7 +75,14 @@ def load_infrastructure(
 
     filtered = _CACHED_FEATURES
 
-    # 1. State Filter (case-insensitive)
+    # 1. Country Filter (case-insensitive)
+    if country and country.strip().lower() == "bangladesh":
+        filtered = [
+            f for f in filtered
+            if (f.get("properties", {}).get("country") or "").lower() == "bangladesh"
+        ]
+
+    # 2. State Filter (case-insensitive)
     if state and state.strip() and state.strip().lower() != "all":
         state_query = state.strip().lower()
         filtered = [
@@ -81,7 +90,7 @@ def load_infrastructure(
             if _matches_state(f.get("properties", {}), state_query)
         ]
 
-    # 2. Asset Type Filter (case-insensitive)
+    # 3. Asset Type Filter (case-insensitive)
     if asset_type and asset_type.strip() and asset_type.strip().lower() != "all":
         type_query = asset_type.strip().upper()
         filtered = [

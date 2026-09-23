@@ -82,6 +82,7 @@ from backend.services.forecast_service import get_model_metrics, predict_track
 from backend.services.gemini_advisory import GeminiAdvisoryService, analyze_damage_photo
 from backend.services.imd_fetcher import IMDFetcherService
 from backend.services.infrastructure_service import load_infrastructure
+from backend.services.vulnerability_service import load_vulnerability
 from backend.services.osm_fetcher import (
     fetch_hospitals,
     fetch_roads,
@@ -273,51 +274,20 @@ def get_cyclone_track(cyclone_id: str) -> CycloneTrack:
 
 
 @router.get("/vulnerability", response_model=VulnerabilityFeatureCollection)
+@router.get("/api/vulnerability", response_model=VulnerabilityFeatureCollection)
 def get_coastal_vulnerability(
-    state: Optional[str] = Query(default=None, description="Optional coastal state filter (e.g. 'Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu')")
+    state: Optional[str] = Query(default=None, description="Optional coastal state/division filter"),
+    country: Optional[str] = Query(default="india", description="Optional country filter ('india' or 'bangladesh')"),
 ) -> VulnerabilityFeatureCollection:
-    """Returns coastal district vulnerability GeoJSON FeatureCollection across India-scale coverage."""
-    vulnerability_dir = DATA_DIR / "vulnerability"
-    if not vulnerability_dir.exists():
-        raise HTTPException(status_code=404, detail="Vulnerability directory not found")
+    """Returns coastal district vulnerability GeoJSON FeatureCollection across India and Bangladesh."""
+    state_filter = state if isinstance(state, str) else getattr(state, "default", None)
+    country_filter = country if isinstance(country, str) else getattr(country, "default", "india")
 
-    geojson_files = sorted(list(vulnerability_dir.glob("*.geojson")))
-    if not geojson_files:
-        raise HTTPException(status_code=404, detail="No vulnerability GeoJSON files found")
+    data = load_vulnerability(country=country_filter or "india", state=state_filter)
+    if state_filter and state_filter.lower() != "all" and not data.get("features"):
+        raise HTTPException(status_code=404, detail=f"No vulnerability data found for state '{state_filter}'")
 
-    all_features = []
-    for file_path in geojson_files:
-        with open(file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            features = data.get("features", [])
-            all_features.extend(features)
-
-    # Handle direct Python function invocation in tests without FastAPI unwrap
-    state_filter = None
-    if isinstance(state, str):
-        state_filter = state
-    elif state is not None and hasattr(state, "default") and isinstance(state.default, str):
-        state_filter = state.default
-
-    if state_filter and state_filter.lower() != "all":
-        target = state_filter.lower()
-        filtered = [
-            f for f in all_features
-            if target in f.get("properties", {}).get("state_name", "").lower()
-        ]
-        if not filtered:
-            raise HTTPException(status_code=404, detail=f"No vulnerability data found for state '{state_filter}'")
-        return VulnerabilityFeatureCollection.model_validate({
-            "type": "FeatureCollection",
-            "name": f"{state_filter.lower().replace(' ', '_')}_coastal_vulnerability",
-            "features": filtered,
-        })
-
-    return VulnerabilityFeatureCollection.model_validate({
-        "type": "FeatureCollection",
-        "name": "india_coastal_districts_vulnerability",
-        "features": all_features,
-    })
+    return VulnerabilityFeatureCollection.model_validate(data)
 
 
 @router.post("/advisories/generate", response_model=AnticipatoryAdvisory)
@@ -724,14 +694,17 @@ async def gemini_forecast(
 
 
 @router.get("/infrastructure")
+@router.get("/api/infrastructure")
 def get_infrastructure(
     state: Optional[str] = Query(None, description="Filter by coastal state name (e.g. Odisha, West Bengal)"),
     type: Optional[str] = Query(None, description="Filter by asset/facility type (e.g. SUBSTATION, HOSPITAL, CYCLONE_SHELTER, ARTERIAL_ROAD)"),
+    country: Optional[str] = Query(default="india", description="Filter by country ('india' or 'bangladesh')"),
 ) -> Dict[str, Any]:
     """Retrieves critical infrastructure assets (power grid, arterial roads, hospitals/shelters)."""
     state_param = state if isinstance(state, str) else getattr(state, "default", None)
     type_param = type if isinstance(type, str) else getattr(type, "default", None)
-    return load_infrastructure(asset_type=type_param, state=state_param)
+    country_param = country if isinstance(country, str) else getattr(country, "default", "india")
+    return load_infrastructure(asset_type=type_param, state=state_param, country=country_param or "india")
 
 
 @router.post("/triage/rank", response_model=TriageResponse)

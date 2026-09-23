@@ -355,6 +355,168 @@ export const SEED_AMPHAN_TRACK: CycloneTrack = {
   ]
 };
 
+export const SEED_SIDR_TRACK: CycloneTrack = {
+  id: "BOB-04-2007",
+  name: "Sidr",
+  season_year: 2007,
+  basin: "Bay of Bengal",
+  current_status: "Very Severe Cyclonic Storm",
+  genesis_time: "2007-11-11T06:00:00Z",
+  dissipation_time: "2007-11-16T12:00:00Z",
+  track_points: [
+    {
+      timestamp: "2007-11-12T00:00:00Z",
+      latitude: 10.2,
+      longitude: 92.5,
+      wind_speed_knots: 30,
+      wind_speed_kmph: 55,
+      gust_speed_kmph: 75,
+      central_pressure_hpa: 1000,
+      category: "Deep Depression",
+      is_forecast: false,
+      forecast_lead_hours: 0,
+      cone_radius_km: 0,
+      heading_degrees: 330,
+      forward_speed_kmph: 12
+    },
+    {
+      timestamp: "2007-11-12T18:00:00Z",
+      latitude: 11.5,
+      longitude: 91.8,
+      wind_speed_knots: 40,
+      wind_speed_kmph: 75,
+      gust_speed_kmph: 95,
+      central_pressure_hpa: 994,
+      category: "Cyclonic Storm",
+      is_forecast: false,
+      forecast_lead_hours: 0,
+      cone_radius_km: 0,
+      heading_degrees: 335,
+      forward_speed_kmph: 14
+    },
+    {
+      timestamp: "2007-11-13T12:00:00Z",
+      latitude: 13.4,
+      longitude: 90.7,
+      wind_speed_knots: 65,
+      wind_speed_kmph: 120,
+      gust_speed_kmph: 150,
+      central_pressure_hpa: 980,
+      category: "Severe Cyclonic Storm",
+      is_forecast: false,
+      forecast_lead_hours: 0,
+      cone_radius_km: 0,
+      heading_degrees: 340,
+      forward_speed_kmph: 16
+    },
+    {
+      timestamp: "2007-11-14T06:00:00Z",
+      latitude: 15.6,
+      longitude: 89.8,
+      wind_speed_knots: 95,
+      wind_speed_kmph: 175,
+      gust_speed_kmph: 210,
+      central_pressure_hpa: 960,
+      category: "Very Severe Cyclonic Storm",
+      is_forecast: false,
+      forecast_lead_hours: 0,
+      cone_radius_km: 0,
+      heading_degrees: 345,
+      forward_speed_kmph: 18
+    },
+    {
+      timestamp: "2007-11-14T18:00:00Z",
+      latitude: 17.8,
+      longitude: 89.2,
+      wind_speed_knots: 115,
+      wind_speed_kmph: 215,
+      gust_speed_kmph: 250,
+      central_pressure_hpa: 944,
+      category: "Extremely Severe Cyclonic Storm",
+      is_forecast: false,
+      forecast_lead_hours: 0,
+      cone_radius_km: 0,
+      heading_degrees: 350,
+      forward_speed_kmph: 22
+    },
+    {
+      timestamp: "2007-11-15T06:00:00Z",
+      latitude: 20.1,
+      longitude: 89.1,
+      wind_speed_knots: 140,
+      wind_speed_kmph: 260,
+      gust_speed_kmph: 295,
+      central_pressure_hpa: 928,
+      category: "Super Cyclonic Storm",
+      is_forecast: false,
+      forecast_lead_hours: 0,
+      cone_radius_km: 0,
+      heading_degrees: 355,
+      forward_speed_kmph: 25
+    },
+    {
+      timestamp: "2007-11-15T12:00:00Z",
+      latitude: 21.8,
+      longitude: 89.5,
+      wind_speed_knots: 125,
+      wind_speed_kmph: 230,
+      gust_speed_kmph: 270,
+      central_pressure_hpa: 940,
+      category: "Extremely Severe Cyclonic Storm",
+      is_forecast: true,
+      forecast_lead_hours: 6,
+      cone_radius_km: 25,
+      heading_degrees: 10,
+      forward_speed_kmph: 28
+    },
+    {
+      timestamp: "2007-11-15T18:00:00Z",
+      latitude: 22.8,
+      longitude: 90.1,
+      wind_speed_knots: 90,
+      wind_speed_kmph: 165,
+      gust_speed_kmph: 195,
+      central_pressure_hpa: 965,
+      category: "Very Severe Cyclonic Storm",
+      is_forecast: true,
+      forecast_lead_hours: 12,
+      cone_radius_km: 45,
+      heading_degrees: 25,
+      forward_speed_kmph: 30
+    },
+    {
+      timestamp: "2007-11-16T00:00:00Z",
+      latitude: 24.2,
+      longitude: 91.2,
+      wind_speed_knots: 55,
+      wind_speed_kmph: 100,
+      gust_speed_kmph: 125,
+      central_pressure_hpa: 985,
+      category: "Severe Cyclonic Storm",
+      is_forecast: true,
+      forecast_lead_hours: 18,
+      cone_radius_km: 70,
+      heading_degrees: 35,
+      forward_speed_kmph: 32
+    },
+    {
+      timestamp: "2007-11-16T06:00:00Z",
+      latitude: 25.5,
+      longitude: 92.4,
+      wind_speed_knots: 35,
+      wind_speed_kmph: 65,
+      gust_speed_kmph: 85,
+      central_pressure_hpa: 996,
+      category: "Cyclonic Storm",
+      is_forecast: true,
+      forecast_lead_hours: 24,
+      cone_radius_km: 95,
+      heading_degrees: 40,
+      forward_speed_kmph: 34
+    }
+  ]
+};
+
 export const SEED_ODISHA_VULNERABILITY: VulnerabilityFeatureCollection = {
   type: "FeatureCollection",
   name: "odisha_coastal_districts_vulnerability",
@@ -985,6 +1147,171 @@ export const SEED_ALL_COASTAL_VULNERABILITY: VulnerabilityFeatureCollection = {
     ...SEED_WEST_BENGAL_VULNERABILITY.features,
     ...SEED_ANDHRA_PRADESH_VULNERABILITY.features,
     ...SEED_TAMIL_NADU_VULNERABILITY.features,
+  ]
+};
+
+export const SEED_BANGLADESH_VULNERABILITY: VulnerabilityFeatureCollection = {
+  type: "FeatureCollection",
+  name: "bangladesh_coastal_districts_vulnerability",
+  features: [
+    {
+      type: "Feature",
+      properties: {
+        district_id: "BD-COX",
+        district_name: "Cox's Bazar",
+        state_name: "Chittagong",
+        country: "Bangladesh",
+        total_population: 2890000,
+        vulnerable_population: 1445000,
+        coastal_length_km: 120.5,
+        average_elevation_m: 3.2,
+        cyclone_risk_score: 0.92,
+        storm_surge_risk_m: 5.8,
+        shelter_capacity: 420000,
+        shelter_count: 580,
+        hospital_count: 42,
+        primary_language: "Bengali",
+        secondary_language: "English",
+        population: 2890000,
+        kutcha_population: 1445000,
+        coastline_km: 120.5,
+        elevation_m: 3.2,
+        vulnerability_score: 0.92,
+        inundation_risk: 5.8,
+        evac_shelters: 580
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [91.95, 21.35],
+            [92.15, 21.20],
+            [92.35, 21.40],
+            [92.20, 21.75],
+            [92.00, 21.65],
+            [91.95, 21.35]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "BD-CHG",
+        district_name: "Chittagong",
+        state_name: "Chittagong",
+        country: "Bangladesh",
+        total_population: 9160000,
+        vulnerable_population: 4580000,
+        coastal_length_km: 85.0,
+        average_elevation_m: 4.8,
+        cyclone_risk_score: 0.88,
+        storm_surge_risk_m: 5.2,
+        shelter_capacity: 1250000,
+        shelter_count: 820,
+        hospital_count: 110,
+        primary_language: "Bengali",
+        secondary_language: "English",
+        population: 9160000,
+        kutcha_population: 4580000,
+        coastline_km: 85.0,
+        elevation_m: 4.8,
+        vulnerability_score: 0.88,
+        inundation_risk: 5.2,
+        evac_shelters: 820
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [91.75, 22.15],
+            [92.05, 22.10],
+            [92.15, 22.50],
+            [91.85, 22.65],
+            [91.65, 22.45],
+            [91.75, 22.15]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "BD-BHO",
+        district_name: "Bhola",
+        state_name: "Khulna",
+        country: "Bangladesh",
+        total_population: 1930000,
+        vulnerable_population: 1020000,
+        coastal_length_km: 145.0,
+        average_elevation_m: 2.1,
+        cyclone_risk_score: 0.91,
+        storm_surge_risk_m: 6.2,
+        shelter_capacity: 310000,
+        shelter_count: 360,
+        hospital_count: 28,
+        primary_language: "Bengali",
+        secondary_language: "English",
+        population: 1930000,
+        kutcha_population: 1020000,
+        coastline_km: 145.0,
+        elevation_m: 2.1,
+        vulnerability_score: 0.91,
+        inundation_risk: 6.2,
+        evac_shelters: 360
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [90.55, 22.05],
+            [90.85, 22.10],
+            [90.80, 22.75],
+            [90.50, 22.65],
+            [90.55, 22.05]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        district_id: "BD-KHU",
+        district_name: "Khulna",
+        state_name: "Khulna",
+        country: "Bangladesh",
+        total_population: 2610000,
+        vulnerable_population: 1305000,
+        coastal_length_km: 95.0,
+        average_elevation_m: 3.5,
+        cyclone_risk_score: 0.85,
+        storm_surge_risk_m: 5.0,
+        shelter_capacity: 390000,
+        shelter_count: 420,
+        hospital_count: 52,
+        primary_language: "Bengali",
+        secondary_language: "English",
+        population: 2610000,
+        kutcha_population: 1305000,
+        coastline_km: 95.0,
+        elevation_m: 3.5,
+        vulnerability_score: 0.85,
+        inundation_risk: 5.0,
+        evac_shelters: 420
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [89.30, 22.20],
+            [89.70, 22.25],
+            [89.75, 22.85],
+            [89.35, 22.80],
+            [89.30, 22.20]
+          ]
+        ]
+      }
+    }
   ]
 };
 
