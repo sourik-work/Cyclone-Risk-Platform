@@ -636,6 +636,30 @@ class TriageResponse(BaseModel):
     top_priority_assets: List[TriageAsset]
 
 
+class AssetStatusUpdate(BaseModel):
+    """Payload to update an infrastructure asset's runtime operational status."""
+
+    asset_id: str
+    status: str  # OPERATIONAL | OFFLINE | DAMAGED | FULL | EVACUATING
+    reason: Optional[str] = None
+    updated_by: Optional[str] = None
+    updated_at: Optional[str] = None
+    metrics: Optional[Dict[str, Any]] = None  # e.g., {"beds_available": 45, "generator": "offline"}
+
+
+class AssetStatusResponse(BaseModel):
+    """Response containing current asset operational status and historical audits."""
+
+    asset_id: str
+    current_status: str
+    status: Optional[str] = None
+    reason: Optional[str] = None
+    updated_by: Optional[str] = None
+    updated_at: Optional[str] = None
+    metrics: Optional[Dict[str, Any]] = None
+    history: List[Dict[str, Any]] = []
+
+
 
 
 

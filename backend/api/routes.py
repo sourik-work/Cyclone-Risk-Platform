@@ -65,6 +65,8 @@ from backend.schemas.cyclone import (
     TriageAsset,
     TriageRequest,
     TriageResponse,
+    AssetStatusUpdate,
+    AssetStatusResponse,
     VulnerabilityFeatureCollection,
 )
 from backend.services.bigquery_service import (
@@ -1433,6 +1435,55 @@ async def reason_exposure(
         recommended_actions=result.get("recommended_actions", []),
         confidence=result.get("confidence", "LOW"),
     )
+
+
+@router.post("/assets/{asset_id}/status", response_model=AssetStatusResponse)
+@router.post("/api/assets/{asset_id}/status", response_model=AssetStatusResponse)
+async def update_asset(
+    asset_id: str,
+    payload: AssetStatusUpdate,
+    auth: dict = Depends(require_auth),
+) -> AssetStatusResponse:
+    """Update an asset's live status (auth required)."""
+    from backend.services.asset_state_service import update_asset_status
+
+    actor = auth.get("email") or auth.get("uid") or payload.updated_by or "authorized_operator"
+    entry = update_asset_status(
+        asset_id=asset_id,
+        status=payload.status,
+        reason=payload.reason,
+        updated_by=actor,
+        metrics=payload.metrics,
+    )
+    return AssetStatusResponse(**entry)
+
+
+@router.get("/assets/status")
+@router.get("/api/assets/status")
+async def list_asset_statuses() -> Dict[str, Any]:
+    """Returns all tracked asset statuses."""
+    from backend.services.asset_state_service import get_all_asset_statuses
+
+    return {"assets": get_all_asset_statuses()}
+
+
+@router.get("/assets/{asset_id}/status", response_model=AssetStatusResponse)
+@router.get("/api/assets/{asset_id}/status", response_model=AssetStatusResponse)
+async def get_single_asset_status(asset_id: str) -> AssetStatusResponse:
+    """Returns a single asset's runtime status."""
+    from backend.services.asset_state_service import get_asset_status
+
+    entry = get_asset_status(asset_id)
+    if not entry:
+        return AssetStatusResponse(
+            asset_id=asset_id,
+            current_status="OPERATIONAL",
+            status="OPERATIONAL",
+            reason=None,
+            history=[],
+        )
+    return AssetStatusResponse(**entry)
+
 
 
 

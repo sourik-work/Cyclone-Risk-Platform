@@ -181,6 +181,15 @@ The alternative — using Gemini function-calling directly with no Dialogflow �
 
 This distinguishes geographic coastal vulnerability from storm-specific exposure — a critical distinction for pre-landfall decision-making.
 
+### Runtime Asset State
+
+Infrastructure assets accept live status updates during storm events:
+
+- **Status values:** OPERATIONAL · OFFLINE · DAMAGED · FULL · EVACUATING
+- **Persistence:** Firestore `asset_status` collection with history log
+- **Operators can:** Mark shelters offline, log damaged substations, update bed availability
+- **Audit:** Every status change logged with actor, timestamp, and reason
+
 ---
 
 ## Storm Surge Model

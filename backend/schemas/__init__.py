@@ -25,6 +25,8 @@ from .cyclone import (
     TriageAsset,
     TriageRequest,
     TriageResponse,
+    AssetStatusUpdate,
+    AssetStatusResponse,
 )
 
 __all__ = [
@@ -52,4 +54,6 @@ __all__ = [
     "TriageAsset",
     "TriageRequest",
     "TriageResponse",
+    "AssetStatusUpdate",
+    "AssetStatusResponse",
 ]
