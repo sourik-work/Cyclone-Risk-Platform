@@ -45,6 +45,9 @@ import {
   CheckCircle2,
   XCircle,
   Info,
+  Smartphone,
+  PhoneCall,
+  ShieldCheck,
 } from 'lucide-react';
 import { AlertSubscription } from './AlertSubscription';
 import { InsuranceTriggerPanel } from './InsuranceTriggerPanel';
@@ -363,6 +366,108 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' }>>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
+
+  // Multi-channel last-mile delivery state (Workstream 20)
+  const [selectedChannels, setSelectedChannels] = useState<string[]>(['radio', 'sms', 'ivr']);
+  const [dispatchedChannels, setDispatchedChannels] = useState<string[]>([]);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  const DELIVERY_CHANNELS = useMemo(() => [
+    {
+      id: 'radio',
+      name: 'Channel 1 — Community Radio',
+      shortName: 'Community Radio',
+      icon: Radio,
+      details: 'All India Radio + 847 community loudspeakers',
+      reachPct: 92,
+      reachLabel: '92% of coastal area',
+      subscribers: 847,
+      subscriberLabel: '847 loudspeakers',
+      languages: 'Local dialect (Odia/Bengali/Telugu/Tamil)',
+      bestFor: 'Rural villages, elderly',
+      tooltip: 'Broadcasts via AIR transmitters + 847 solar-powered community sirens and public address systems in low-lying coastal hamlets.',
+    },
+    {
+      id: 'sms',
+      name: 'Channel 2 — SMS Alert',
+      shortName: 'SMS Alert',
+      icon: Smartphone,
+      details: 'Cell broadcast to registered fisherfolk + kutcha households',
+      reachPct: 78,
+      reachLabel: '78% (smartphone + feature phone coverage)',
+      subscribers: 412000,
+      subscriberLabel: '412,000 phones',
+      languages: '160-char localized text advisory in regional scripts',
+      bestFor: 'Registered fisherfolk, kutcha households',
+      tooltip: 'Cellular cell-broadcast and SMS gateway pushing 160-char emergency action alerts to registered mobile numbers.',
+    },
+    {
+      id: 'ivr',
+      name: 'Channel 3 — IVR Voice Call',
+      shortName: 'IVR Voice Call',
+      icon: PhoneCall,
+      details: 'Automated voice call to village sarpanch + first responders',
+      reachPct: 95,
+      reachLabel: '95% (works on any phone)',
+      subscribers: 8400,
+      subscriberLabel: '8,400 village heads + ODRAF/NDRF',
+      languages: 'Pre-recorded audio in local language',
+      bestFor: 'Any phone, pre-recorded local language',
+      tooltip: 'Automated outbound dialing system that rings village heads with an urgent synthesized voice advisory requiring keypress acknowledgment.',
+    },
+  ], []);
+
+  const toggleChannel = useCallback((id: string) => {
+    setSelectedChannels((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+  }, []);
+
+  const isAdvisoryApproved =
+    currentAdvisory?.approval_state === 'APPROVED' ||
+    currentAdvisory?.approval_state === 'DISPATCHED';
+
+  const deDuplicatedReach = useMemo(() => {
+    if (selectedChannels.length === 0) return { pct: 0, endpoints: 0 };
+    let failRate = 1.0;
+    let endpoints = 0;
+    if (selectedChannels.includes('radio')) {
+      failRate *= 1 - 0.92;
+      endpoints += 847;
+    }
+    if (selectedChannels.includes('sms')) {
+      failRate *= 1 - 0.78;
+      endpoints += 412000;
+    }
+    if (selectedChannels.includes('ivr')) {
+      failRate *= 1 - 0.95;
+      endpoints += 8400;
+    }
+    const pct = Math.min(98.6, Math.round((1 - failRate) * 1000) / 10);
+    return { pct, endpoints };
+  }, [selectedChannels]);
+
+  const getChannelStatus = useCallback(
+    (channelId: string) => {
+      if (!isAdvisoryApproved) {
+        return {
+          label: 'PENDING APPROVAL',
+          color: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+        };
+      }
+      if (dispatchedChannels.includes(channelId)) {
+        return {
+          label: 'COOLDOWN',
+          color: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+        };
+      }
+      return {
+        label: 'READY',
+        color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+      };
+    },
+    [isAdvisoryApproved, dispatchedChannels]
+  );
 
   useEffect(() => {
     setVoiceSource(null);
@@ -1583,15 +1688,15 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             </div>
           ) : null}
 
-          {/* Broadcast to Community Radios Button */}
+          {/* Broadcast to Community Radios / Last-Mile Multi-Channel Dispatch Button */}
           <button
             id="btn-broadcast-radios"
             onClick={() => setShowBroadcastModal(true)}
             className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-slate-950/90 hover:bg-amber-950/40 border border-amber-500/60 hover:border-amber-400 text-[#f59e0b] shadow-[0_0_12px_rgba(245,158,11,0.2)] transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
-            title="Simulate regional loudspeaker dispatch to community radio stations"
+            title="Dispatch anticipatory advisory via multi-channel last-mile delivery (Radio, SMS, IVR)"
           >
             <Radio className="w-3.5 h-3.5 text-[#f59e0b] animate-pulse" />
-            <span>Broadcast to Community Radios</span>
+            <span>Last-Mile Advisory Dispatch (Radio · SMS · IVR)</span>
           </button>
         </div>
 
@@ -1794,15 +1899,15 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       <AuditLogPanel />
     </aside>
 
-    {/* Broadcast to Community Radio Network Modal */}
+    {/* Multi-Channel Last-Mile Advisory Dispatch Modal (Workstream 20) */}
     {showBroadcastModal && (
       <div
         id="broadcast-community-modal"
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fadeIn"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn"
         onClick={() => setShowBroadcastModal(false)}
       >
         <div
-          className="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-slate-100 relative shadow-[0_0_30px_rgba(245,158,11,0.15)] select-text"
+          className="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 text-slate-100 relative shadow-[0_0_35px_rgba(245,158,11,0.18)] select-text"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Modal Header */}
@@ -1812,11 +1917,14 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                 <Radio className="w-5 h-5 animate-pulse" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-slate-100 font-mono tracking-wide">
-                  SIMULATED BROADCAST — Community Radio Network
+                <h2 className="text-base font-bold text-slate-100 font-mono tracking-wide flex items-center gap-2">
+                  <span>LAST-MILE ADVISORY DISPATCH</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                    3 Channels
+                  </span>
                 </h2>
                 <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                  Anticipatory Public Warning & Loudspeaker Dispatch
+                  Multi-Channel Coastal Early Warning · Radio + SMS Cell Broadcast + IVR Automated Calls
                 </p>
               </div>
             </div>
@@ -1828,58 +1936,194 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             </button>
           </div>
 
-          {/* Broadcast Details Grid */}
-          <div className="space-y-2.5 text-xs font-mono bg-slate-950/70 p-4 rounded-xl border border-slate-800">
+          {/* Channel Selector Cards */}
+          <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+            {DELIVERY_CHANNELS.map((ch) => {
+              const isSelected = selectedChannels.includes(ch.id);
+              const status = getChannelStatus(ch.id);
+              const IconComp = ch.icon;
+
+              return (
+                <div
+                  key={ch.id}
+                  onClick={() => toggleChannel(ch.id)}
+                  className={`p-3.5 rounded-xl border transition-all cursor-pointer select-none ${
+                    isSelected
+                      ? 'bg-slate-950/85 border-amber-500/50 shadow-md ring-1 ring-amber-500/20'
+                      : 'bg-slate-950/40 border-slate-800 opacity-60 hover:opacity-85'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleChannel(ch.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="mt-1 w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500 cursor-pointer accent-amber-500 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <IconComp className="w-4 h-4 text-amber-400 shrink-0" />
+                          <span className="text-xs font-mono font-bold text-slate-100">
+                            {ch.name}
+                          </span>
+                          <div className="relative inline-block">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveTooltip(activeTooltip === ch.id ? null : ch.id);
+                              }}
+                              className="text-slate-400 hover:text-amber-300 transition-colors p-0.5 cursor-pointer"
+                              title={ch.tooltip}
+                            >
+                              <Info className="w-3.5 h-3.5" />
+                            </button>
+                            {activeTooltip === ch.id && (
+                              <div
+                                onClick={(e) => e.stopPropagation()}
+                                className="absolute left-0 bottom-full mb-1 z-30 w-64 p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-[11px] text-slate-200 shadow-2xl font-sans"
+                              >
+                                {ch.tooltip}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <p className="text-[11px] text-slate-300 font-mono mt-1 leading-snug">
+                          {ch.details}
+                        </p>
+
+                        <div className="flex items-center gap-3 text-[11px] font-mono mt-2 flex-wrap">
+                          <span className="text-emerald-400 font-semibold">
+                            Reach: {ch.reachLabel}
+                          </span>
+                          <span className="text-slate-600">·</span>
+                          <span className="text-cyan-300">
+                            Subscribers: {ch.subscriberLabel}
+                          </span>
+                          <span className="text-slate-600">·</span>
+                          <span className="text-slate-400 text-[10px]">
+                            {ch.languages}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold border shrink-0 uppercase tracking-wider ${status.color}`}
+                    >
+                      {status.label}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Aggregated Target & De-duplicated Reach Metrics */}
+          <div className="space-y-1.5 text-xs font-mono bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
             <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-              <span className="text-slate-400">District:</span>
+              <span className="text-slate-400">Target District:</span>
               <span className="text-cyan-300 font-bold">{selectedDistrict?.district_name || 'All Coastal Districts'}</span>
             </div>
             <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-              <span className="text-slate-400">Network:</span>
-              <span className="text-slate-200">All India Radio + 847 community loudspeakers</span>
+              <span className="text-slate-400">Total De-duplicated Reach:</span>
+              <span className="text-emerald-400 font-bold">
+                {deDuplicatedReach.pct}% ({deDuplicatedReach.endpoints.toLocaleString()} endpoints)
+              </span>
             </div>
-            <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-              <span className="text-slate-400">Coverage:</span>
-              <span className="text-emerald-400 font-semibold">92% of affected coastal area</span>
-            </div>
-            <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-              <span className="text-slate-400">Schedule:</span>
-              <span className="text-amber-300">Every 30 minutes for 6 hours</span>
-            </div>
-            <div className="flex justify-between pb-0.5">
-              <span className="text-slate-400">Languages:</span>
-              <span className="text-slate-200">Odia, Bengali, Telugu, Tamil, Hindi, English</span>
+            <div className="flex justify-between pb-0.5 text-[11px]">
+              <span className="text-slate-400">Selected Channels:</span>
+              <span className="text-amber-300 font-semibold">
+                {selectedChannels.length > 0 ? selectedChannels.map((c) => c.toUpperCase()).join(' + ') : 'None selected'}
+              </span>
             </div>
           </div>
 
-          {/* Target Audience */}
-          <div className="space-y-1.5 text-xs">
-            <span className="text-slate-400 font-mono text-[11px] uppercase tracking-wider block">Target Audience:</span>
-            <ul className="list-disc list-inside space-y-1 text-slate-300 text-xs font-sans pl-1">
-              <li>Fisherfolk in coastal villages</li>
-              <li>Kutcha households in low-lying zones</li>
-              <li>Populations without smartphone access</li>
-            </ul>
-          </div>
+          {/* Operational Approval Gate State */}
+          {!isAdvisoryApproved ? (
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-mono flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-amber-300">
+                  Awaiting officer approval — Dispatch will be logged to audit trail
+                </p>
+                <p className="text-[11px] text-amber-200/70 mt-0.5 leading-relaxed">
+                  Operational safety protocols require authorized officer approval before multi-channel dissemination to coastal populations.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 text-xs font-mono flex items-start gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-emerald-300">
+                  Officer Sign-off Verified — Ready to Dispatch
+                </p>
+                <p className="text-[11px] text-emerald-200/70 mt-0.5 leading-relaxed">
+                  Advisory approved. Multi-channel dispatch will be timestamped and permanently logged to audit trail.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
-            <button
-              id="btn-confirm-broadcast"
-              onClick={() => {
-                setShowBroadcastModal(false);
-                showToast('Broadcast scheduled · 847 loudspeakers · next dispatch in 30 min', 'success');
-              }}
-              className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md hover:shadow-emerald-500/25 cursor-pointer"
-            >
-              Confirm Broadcast
-            </button>
-            <button
-              onClick={() => setShowBroadcastModal(false)}
-              className="px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer"
-            >
-              Cancel
-            </button>
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-800">
+            {!isAdvisoryApproved ? (
+              <button
+                id="btn-modal-quick-approve"
+                type="button"
+                onClick={approveAdvisory}
+                disabled={isApprovalActionLoading}
+                className="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50 shadow"
+                title="Sign off on this advisory as authorized officer"
+              >
+                {isApprovalActionLoading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                )}
+                <span>Sign-off as Officer</span>
+              </button>
+            ) : (
+              <div className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Authorized Sign-off</span>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowBroadcastModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                id="btn-confirm-broadcast"
+                disabled={!isAdvisoryApproved || selectedChannels.length === 0}
+                onClick={() => {
+                  setDispatchedChannels((prev) => Array.from(new Set([...prev, ...selectedChannels])));
+                  setShowBroadcastModal(false);
+                  showToast(
+                    `Dispatch initiated · ${selectedChannels.length} channels (${selectedChannels.join(', ').toUpperCase()}) · ${deDuplicatedReach.pct}% coastal coverage · Logged to audit trail`,
+                    'success'
+                  );
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md hover:shadow-emerald-500/25 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-emerald-500 disabled:hover:shadow-none"
+                title={
+                  !isAdvisoryApproved
+                    ? 'Advisory must be approved by authorized officer before dispatch'
+                    : selectedChannels.length === 0
+                    ? 'Select at least one delivery channel'
+                    : 'Dispatch across selected channels'
+                }
+              >
+                Confirm Dispatch
+              </button>
+            </div>
           </div>
         </div>
       </div>
