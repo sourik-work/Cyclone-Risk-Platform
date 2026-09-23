@@ -117,6 +117,144 @@ def test_validate_tamil_nadu_vulnerability_geojson():
         assert feat.properties.primary_language == "Tamil"
 
 
+def test_validate_gujarat_vulnerability_geojson():
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    geojson_path = root_dir / "data" / "vulnerability" / "gujarat_coastal_districts.geojson"
+    assert geojson_path.exists(), f"Missing geojson file at {geojson_path}"
+
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    collection = VulnerabilityFeatureCollection.model_validate(data)
+    assert len(collection.features) == 7
+    district_names = {f.properties.district_name for f in collection.features}
+    expected_districts = {"Kutch", "Jamnagar", "Porbandar", "Junagadh", "Gir Somnath", "Bhavnagar", "Surat"}
+    assert district_names == expected_districts
+
+    for feat in collection.features:
+        assert 0.70 <= feat.properties.cyclone_risk_score <= 0.85
+        assert feat.properties.shelter_capacity > 0
+        assert feat.properties.primary_language == "Gujarati"
+
+
+def test_validate_maharashtra_vulnerability_geojson():
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    geojson_path = root_dir / "data" / "vulnerability" / "maharashtra_coastal_districts.geojson"
+    assert geojson_path.exists(), f"Missing geojson file at {geojson_path}"
+
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    collection = VulnerabilityFeatureCollection.model_validate(data)
+    assert len(collection.features) == 7
+    district_names = {f.properties.district_name for f in collection.features}
+    expected_districts = {"Mumbai City", "Mumbai Suburban", "Thane", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg"}
+    assert district_names == expected_districts
+
+    for feat in collection.features:
+        assert 0.75 <= feat.properties.cyclone_risk_score <= 0.90
+        assert feat.properties.shelter_capacity > 0
+        assert feat.properties.primary_language == "Marathi"
+
+
+def test_validate_goa_vulnerability_geojson():
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    geojson_path = root_dir / "data" / "vulnerability" / "goa_coastal_districts.geojson"
+    assert geojson_path.exists(), f"Missing geojson file at {geojson_path}"
+
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    collection = VulnerabilityFeatureCollection.model_validate(data)
+    assert len(collection.features) == 2
+    district_names = {f.properties.district_name for f in collection.features}
+    expected_districts = {"North Goa", "South Goa"}
+    assert district_names == expected_districts
+
+    for feat in collection.features:
+        assert 0.65 <= feat.properties.cyclone_risk_score <= 0.75
+        assert feat.properties.shelter_capacity > 0
+        assert feat.properties.primary_language == "Konkani"
+
+
+def test_validate_karnataka_vulnerability_geojson():
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    geojson_path = root_dir / "data" / "vulnerability" / "karnataka_coastal_districts.geojson"
+    assert geojson_path.exists(), f"Missing geojson file at {geojson_path}"
+
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    collection = VulnerabilityFeatureCollection.model_validate(data)
+    assert len(collection.features) == 3
+    district_names = {f.properties.district_name for f in collection.features}
+    expected_districts = {"Dakshina Kannada", "Udupi", "Uttara Kannada"}
+    assert district_names == expected_districts
+
+    for feat in collection.features:
+        assert 0.70 <= feat.properties.cyclone_risk_score <= 0.80
+        assert feat.properties.shelter_capacity > 0
+        assert feat.properties.primary_language == "Kannada"
+
+
+def test_validate_kerala_vulnerability_geojson():
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    geojson_path = root_dir / "data" / "vulnerability" / "kerala_coastal_districts.geojson"
+    assert geojson_path.exists(), f"Missing geojson file at {geojson_path}"
+
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    collection = VulnerabilityFeatureCollection.model_validate(data)
+    assert len(collection.features) == 9
+    district_names = {f.properties.district_name for f in collection.features}
+    expected_districts = {
+        "Kasaragod", "Kannur", "Kozhikode", "Malappuram", "Thrissur",
+        "Ernakulam", "Alappuzha", "Kollam", "Thiruvananthapuram"
+    }
+    assert district_names == expected_districts
+
+    for feat in collection.features:
+        assert 0.70 <= feat.properties.cyclone_risk_score <= 0.85
+        assert feat.properties.shelter_capacity > 0
+        assert feat.properties.primary_language == "Malayalam"
+
+
+def test_validate_union_territories_vulnerability_geojson():
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    geojson_path = root_dir / "data" / "vulnerability" / "union_territories_coastal.geojson"
+    assert geojson_path.exists(), f"Missing geojson file at {geojson_path}"
+
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    collection = VulnerabilityFeatureCollection.model_validate(data)
+    assert len(collection.features) == 4
+    district_names = {f.properties.district_name for f in collection.features}
+    expected_districts = {"Puducherry", "Lakshadweep", "Andaman & Nicobar Islands", "Daman & Diu"}
+    assert district_names == expected_districts
+
+
+def test_total_new_districts_count():
+    """Verify that the 5 new coastal states total 28 districts (7 + 7 + 2 + 3 + 9 = 28)."""
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    new_state_files = [
+        "gujarat_coastal_districts.geojson",
+        "maharashtra_coastal_districts.geojson",
+        "goa_coastal_districts.geojson",
+        "karnataka_coastal_districts.geojson",
+        "kerala_coastal_districts.geojson",
+    ]
+    counts = []
+    for fname in new_state_files:
+        with open(root_dir / "data" / "vulnerability" / fname, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            counts.append(len(data.get("features", [])))
+
+    assert counts == [7, 7, 2, 3, 9]
+    assert sum(counts) == 28
+
+
 if __name__ == "__main__":
     test_validate_fani_track()
     test_validate_amphan_track()
@@ -124,4 +262,11 @@ if __name__ == "__main__":
     test_validate_west_bengal_vulnerability_geojson()
     test_validate_andhra_pradesh_vulnerability_geojson()
     test_validate_tamil_nadu_vulnerability_geojson()
+    test_validate_gujarat_vulnerability_geojson()
+    test_validate_maharashtra_vulnerability_geojson()
+    test_validate_goa_vulnerability_geojson()
+    test_validate_karnataka_vulnerability_geojson()
+    test_validate_kerala_vulnerability_geojson()
+    test_validate_union_territories_vulnerability_geojson()
+    test_total_new_districts_count()
     print("All schema validation tests passed successfully!")

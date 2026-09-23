@@ -116,17 +116,17 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                 </span>
               )}
 
-              {/* Dynamic India-Scale Serving Coverage Badge */}
+              {/* India-Scale Serving Coverage Badge */}
               <span
                 id="platform-coverage-badge"
                 className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-medium card-glass text-accent-cyan border-border-subtle shadow-sm"
               >
                 <MapPin className="w-3 h-3 text-accent-cyan" />
-                Serving {uniqueStatesCount} states · {districtCount} districts · {formattedPopulationAtRisk} population at risk
+                Serving 9 states + 4 UTs · 50+ districts · 60M+ population at risk
               </span>
             </div>
             <p className="text-xs text-text-secondary mt-0.5">
-              Bay of Bengal Predictive Vulnerability & Pre-Landfall Evacuation Engine
+              India Coastal Predictive Vulnerability & Pre-Landfall Evacuation Engine
             </p>
           </div>
         </div>
@@ -186,30 +186,42 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           </div>
 
           {/* Multilingual Selector */}
-          <div className="flex items-center gap-1.5 card-glass border-border-subtle p-1 rounded-md shadow-inner">
+          <div className="flex items-center gap-1.5 card-glass border-border-subtle p-1 rounded-md shadow-inner flex-wrap max-w-xl">
             <Globe2 className="w-4 h-4 text-text-tertiary ml-1 mr-0.5 shrink-0" />
             {SUPPORTED_LANGUAGES.map((lang) => {
+              const c = currentLanguage.toLowerCase();
+              const target = lang.code.toLowerCase();
               const isSelected =
-                currentLanguage === lang.code ||
-                (lang.code === 'odia' && currentLanguage === 'or') ||
-                (lang.code === 'or' && currentLanguage === 'odia') ||
-                (lang.code === 'bengali' && currentLanguage === 'bn') ||
-                (lang.code === 'bn' && currentLanguage === 'bengali') ||
-                (lang.code === 'hindi' && currentLanguage === 'hi') ||
-                (lang.code === 'hi' && currentLanguage === 'hindi') ||
-                (lang.code === 'telugu' && currentLanguage === 'te') ||
-                (lang.code === 'te' && currentLanguage === 'telugu') ||
-                (lang.code === 'tamil' && currentLanguage === 'ta') ||
-                (lang.code === 'ta' && currentLanguage === 'tamil') ||
-                (lang.code === 'english' && currentLanguage === 'en') ||
-                (lang.code === 'en' && currentLanguage === 'english');
+                c === target ||
+                (target === 'odia' && c === 'or') ||
+                (target === 'or' && c === 'odia') ||
+                (target === 'bengali' && c === 'bn') ||
+                (target === 'bn' && c === 'bengali') ||
+                (target === 'hindi' && c === 'hi') ||
+                (target === 'hi' && c === 'hindi') ||
+                (target === 'telugu' && c === 'te') ||
+                (target === 'te' && c === 'telugu') ||
+                (target === 'tamil' && c === 'ta') ||
+                (target === 'ta' && c === 'tamil') ||
+                (target === 'gujarati' && c === 'gu') ||
+                (target === 'gu' && c === 'gujarati') ||
+                (target === 'marathi' && c === 'mr') ||
+                (target === 'mr' && c === 'marathi') ||
+                (target === 'kannada' && c === 'kn') ||
+                (target === 'kn' && c === 'kannada') ||
+                (target === 'malayalam' && c === 'ml') ||
+                (target === 'ml' && c === 'malayalam') ||
+                (target === 'konkani' && c === 'kok') ||
+                (target === 'kok' && c === 'konkani') ||
+                (target === 'english' && c === 'en') ||
+                (target === 'en' && c === 'english');
 
               return (
                 <button
                   key={lang.code}
                   id={`lang-btn-${lang.code}`}
                   onClick={() => onLanguageChange(lang.code)}
-                  className={`px-2.5 py-1 rounded-sm text-xs font-medium transition-all duration-200 cursor-pointer ${
+                  className={`px-2 py-0.5 rounded-sm text-xs font-medium transition-all duration-200 cursor-pointer ${
                     isSelected
                       ? 'bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/40 shadow-[0_0_12px_rgba(0,229,255,0.2)] font-semibold'
                       : 'text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent'

@@ -52,8 +52,19 @@ export interface DistrictProperties {
   storm_surge_risk_m: number;
   shelter_capacity: number;
   shelter_count: number;
-  hospital_count: number;
-  primary_language: 'Odia' | 'Bengali' | 'Telugu' | 'Tamil' | 'Hindi';
+  hospital_count?: number;
+  primary_language:
+    | 'Odia'
+    | 'Bengali'
+    | 'Telugu'
+    | 'Tamil'
+    | 'Hindi'
+    | 'Gujarati'
+    | 'Marathi'
+    | 'Kannada'
+    | 'Malayalam'
+    | 'Konkani'
+    | string;
   secondary_language?: string;
   population?: number;
   kutcha_population?: number;
@@ -77,6 +88,7 @@ export interface DistrictFeature {
 export interface VulnerabilityFeatureCollection {
   type: 'FeatureCollection';
   name?: string;
+  crs?: any;
   features: DistrictFeature[];
 }
 
@@ -173,12 +185,22 @@ export type SupportedLanguage =
   | 'telugu'
   | 'tamil'
   | 'hindi'
+  | 'gujarati'
+  | 'marathi'
+  | 'kannada'
+  | 'malayalam'
+  | 'konkani'
   | 'en'
   | 'or'
   | 'bn'
   | 'te'
   | 'ta'
-  | 'hi';
+  | 'hi'
+  | 'gu'
+  | 'mr'
+  | 'kn'
+  | 'ml'
+  | 'kok';
 
 export interface LanguageMeta {
   code: SupportedLanguage;
@@ -193,6 +215,11 @@ export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
   { code: 'hindi', name: 'Hindi', nativeName: 'हिन्दी' },
   { code: 'telugu', name: 'Telugu', nativeName: 'తెలుగు' },
   { code: 'tamil', name: 'Tamil', nativeName: 'தமிழ்' },
+  { code: 'gujarati', name: 'Gujarati', nativeName: 'ગુજરાતી' },
+  { code: 'marathi', name: 'Marathi', nativeName: 'मराठी' },
+  { code: 'kannada', name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
+  { code: 'malayalam', name: 'Malayalam', nativeName: 'മലയാളം' },
+  { code: 'konkani', name: 'Konkani', nativeName: 'कोंकणी' },
 ];
 
 export interface MultilingualAdvisories {
@@ -202,6 +229,11 @@ export interface MultilingualAdvisories {
   telugu: string;
   tamil: string;
   hindi: string;
+  gujarati?: string;
+  marathi?: string;
+  kannada?: string;
+  malayalam?: string;
+  konkani?: string;
 }
 
 export interface ActionItem {
@@ -257,6 +289,21 @@ export const getAdvisoryTextForLanguage = (
       case 'hi':
       case 'hindi':
         return 'hindi';
+      case 'gu':
+      case 'gujarati':
+        return 'gujarati';
+      case 'mr':
+      case 'marathi':
+        return 'marathi';
+      case 'kn':
+      case 'kannada':
+        return 'kannada';
+      case 'ml':
+      case 'malayalam':
+        return 'malayalam';
+      case 'kok':
+      case 'konkani':
+        return 'konkani';
       case 'en':
       case 'english':
       default:

@@ -86,7 +86,14 @@ const formatCount = (val: number): string => {
   return new Intl.NumberFormat('en-US').format(val);
 };
 
-const COASTAL_STATES = ['Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'];
+const EASTERN_COASTAL_STATES = ['Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'];
+const WESTERN_COASTAL_STATES = ['Gujarat', 'Maharashtra', 'Goa', 'Karnataka', 'Kerala'];
+const UNION_TERRITORIES_LIST = ['Union Territories'];
+const COASTAL_STATES = [
+  ...EASTERN_COASTAL_STATES,
+  ...WESTERN_COASTAL_STATES,
+  ...UNION_TERRITORIES_LIST,
+];
 
 function pcmToWav(
   pcmBytes: Uint8Array,
@@ -267,7 +274,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   countries,
 }) => {
   const currentCountries = countries || [
-    { id: 'india', name: 'India', states: ['Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'] },
+    { id: 'india', name: 'India', states: COASTAL_STATES },
     { id: 'bangladesh', name: 'Bangladesh', states: ['Chittagong', 'Khulna'] },
   ];
   const activeCountry = selectedCountry || 'india';
@@ -521,19 +528,44 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       ? allDistricts
       : SEED_ALL_COASTAL_VULNERABILITY.features.map((f) => f.properties);
 
+  // Check if Union Territories is selected
+  const isUTSelected =
+    activeState.toLowerCase() === 'union territories' ||
+    activeState.toLowerCase() === 'ut' ||
+    activeState.toLowerCase() === 'union_territories';
+
   // Filter districts by active state
-  const stateDistricts = districts.filter(
-    (d) => d.state_name.toLowerCase() === activeState.toLowerCase()
-  );
+  const stateDistricts = districts.filter((d) => {
+    if (isUTSelected) {
+      return (
+        d.state_name.toLowerCase().includes('union') ||
+        d.state_name.toLowerCase() === 'ut' ||
+        d.district_id?.startsWith('UT-')
+      );
+    }
+    return d.state_name.toLowerCase() === activeState.toLowerCase();
+  });
 
   const handleStateClick = (state: string) => {
     if (onSelectState) {
       onSelectState(state);
     }
-    // Auto-select first district in that state if current selection belongs to a different state
-    const targetDistricts = districts.filter(
-      (d) => d.state_name.toLowerCase() === state.toLowerCase()
-    );
+    const isTargetUT =
+      state.toLowerCase() === 'union territories' ||
+      state.toLowerCase() === 'ut' ||
+      state.toLowerCase() === 'union_territories';
+
+    const targetDistricts = districts.filter((d) => {
+      if (isTargetUT) {
+        return (
+          d.state_name.toLowerCase().includes('union') ||
+          d.state_name.toLowerCase() === 'ut' ||
+          d.district_id?.startsWith('UT-')
+        );
+      }
+      return d.state_name.toLowerCase() === state.toLowerCase();
+    });
+
     if (targetDistricts.length > 0 && onSelectDistrict) {
       onSelectDistrict(targetDistricts[0]);
     }
@@ -1103,27 +1135,104 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
               ))}
             </select>
           </div>
-          {/* Quick-switch state buttons */}
-          <div className="grid grid-cols-2 gap-1.5 pt-1">
-            {availableStates.map((state) => {
-              const isSelected = activeState.toLowerCase() === state.toLowerCase();
-              return (
+          {/* Quick-switch state buttons grouped by coast */}
+          {activeCountry === 'india' ? (
+            <div className="space-y-2 pt-1">
+              {/* Eastern Coast Row */}
+              <div>
+                <div className="text-[9px] font-mono text-cyan-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                  <span>Eastern Coast (Bay of Bengal)</span>
+                  <span className="text-[9px] text-slate-500">4 States</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {EASTERN_COASTAL_STATES.map((state) => {
+                    const isSelected = activeState.toLowerCase() === state.toLowerCase();
+                    return (
+                      <button
+                        key={state}
+                        id={`btn-state-${state.toLowerCase().replace(/\s+/g, '-')}`}
+                        onClick={() => handleStateClick(state)}
+                        className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-all text-center truncate cursor-pointer ${
+                          isSelected
+                            ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20 scale-[1.02]'
+                            : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                        }`}
+                        title={`Switch to ${state} coastal districts`}
+                      >
+                        {state}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Western Coast Row */}
+              <div>
+                <div className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                  <span>Western Coast (Arabian Sea)</span>
+                  <span className="text-[9px] text-slate-500">5 States</span>
+                </div>
+                <div className="grid grid-cols-3 gap-1">
+                  {WESTERN_COASTAL_STATES.map((state) => {
+                    const isSelected = activeState.toLowerCase() === state.toLowerCase();
+                    return (
+                      <button
+                        key={state}
+                        id={`btn-state-${state.toLowerCase().replace(/\s+/g, '-')}`}
+                        onClick={() => handleStateClick(state)}
+                        className={`px-1.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all text-center truncate cursor-pointer ${
+                          isSelected
+                            ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20 scale-[1.02]'
+                            : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                        }`}
+                        title={`Switch to ${state} coastal districts`}
+                      >
+                        {state}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Union Territories Row */}
+              <div>
                 <button
-                  key={state}
-                  id={`btn-state-${state.toLowerCase().replace(/\s+/g, '-')}`}
-                  onClick={() => handleStateClick(state)}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-center truncate cursor-pointer ${
-                    isSelected
-                      ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20 scale-[1.02]'
-                      : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                  id="btn-state-union-territories"
+                  onClick={() => handleStateClick('Union Territories')}
+                  className={`w-full px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+                    isUTSelected
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20 scale-[1.02]'
+                      : 'text-amber-300 hover:text-white bg-slate-950/80 hover:bg-amber-950/40 border border-amber-500/30'
                   }`}
-                  title={`Switch to ${state} coastal districts`}
+                  title="Switch to 4 Coastal & Island Union Territories"
                 >
-                  {state}
+                  <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Union Territories (4 UTs)</span>
                 </button>
-              );
-            })}
-          </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-1.5 pt-1">
+              {availableStates.map((state) => {
+                const isSelected = activeState.toLowerCase() === state.toLowerCase();
+                return (
+                  <button
+                    key={state}
+                    id={`btn-state-${state.toLowerCase().replace(/\s+/g, '-')}`}
+                    onClick={() => handleStateClick(state)}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-center truncate cursor-pointer ${
+                      isSelected
+                        ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20 scale-[1.02]'
+                        : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                    }`}
+                    title={`Switch to ${state} coastal districts`}
+                  >
+                    {state}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Filtered District Selector List */}

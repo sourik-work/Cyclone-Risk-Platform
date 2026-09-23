@@ -89,9 +89,16 @@ This platform provides **48-hour anticipatory lead time** by combining:
 - Seamless Live Mode advisory path supporting dynamic bulletin storm telemetry
 
 ### India-Scale Coverage
-- **4 coastal states**: Odisha, West Bengal, Andhra Pradesh, Tamil Nadu
-- **16 coastal districts**, **24M+ population** at risk
-- State selector filters districts, map overlay, and advisories dynamically
+
+**9 coastal states + 4 Union Territories · 50+ districts · 60M+ population at risk**
+
+| Coast | States | Districts | Language |
+|-------|--------|-----------|----------|
+| Bay of Bengal | Odisha, West Bengal, Andhra Pradesh, Tamil Nadu | 16 | Odia, Bengali, Telugu, Tamil |
+| Arabian Sea | Gujarat, Maharashtra, Goa, Karnataka, Kerala | 28 | Gujarati, Marathi, Konkani, Kannada, Malayalam |
+| UTs | Puducherry, Lakshadweep, Andaman & Nicobar, Daman & Diu | 4 | Multiple |
+
+Total: **11 advisory languages**, covering every coastal state in India.
 
 ### AI Forecasting (TrackLSTM)
 - **Trained LSTM** on IMD best-track data

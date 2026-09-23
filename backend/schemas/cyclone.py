@@ -164,6 +164,11 @@ class MultilingualAdvisories(BaseModel):
     tamil: str
     hindi: str
     english: str
+    gujarati: Optional[str] = None
+    marathi: Optional[str] = None
+    kannada: Optional[str] = None
+    malayalam: Optional[str] = None
+    konkani: Optional[str] = None
 
 
 class ActionCategory(str, Enum):

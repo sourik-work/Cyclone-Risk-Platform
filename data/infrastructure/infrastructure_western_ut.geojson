@@ -1,0 +1,543 @@
+{
+  "type": "FeatureCollection",
+  "name": "infrastructure_western_ut",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [69.75, 23.25] },
+      "properties": {
+        "asset_id": "GJ-SUB-001",
+        "name": "Bhuj 220kV Grid Substation",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Gujarat",
+        "district": "Kutch",
+        "voltage_kv": 220,
+        "capacity_mva": 320,
+        "operator": "GETCO",
+        "latitude": 23.25,
+        "longitude": 69.75,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [70.22, 23.01] },
+      "properties": {
+        "asset_id": "GJ-SUB-002",
+        "name": "Kandla Port 132kV Substation",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Gujarat",
+        "district": "Kutch",
+        "voltage_kv": 132,
+        "capacity_mva": 160,
+        "operator": "GETCO",
+        "latitude": 23.01,
+        "longitude": 70.22,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [70.07, 22.47] },
+      "properties": {
+        "facility_id": "GJ-HOSP-001",
+        "name": "GG Government Hospital, Jamnagar",
+        "asset_type": "HOSPITAL",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Gujarat",
+        "district": "Jamnagar",
+        "latitude": 22.47,
+        "longitude": 70.07,
+        "bed_capacity": 750,
+        "has_generator": true,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [69.61, 21.64] },
+      "properties": {
+        "facility_id": "GJ-SHEL-001",
+        "name": "Porbandar Coastal Cyclone Shelter 1",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Gujarat",
+        "district": "Porbandar",
+        "latitude": 21.64,
+        "longitude": 69.61,
+        "shelter_capacity": 1500,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [70.45, 20.90] },
+      "properties": {
+        "facility_id": "GJ-SHEL-002",
+        "name": "Veraval Port Cyclone Shelter",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Gujarat",
+        "district": "Gir Somnath",
+        "latitude": 20.90,
+        "longitude": 70.45,
+        "shelter_capacity": 2000,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.15, 21.76] },
+      "properties": {
+        "facility_id": "GJ-HOSP-002",
+        "name": "Sir Takhtasinhji Hospital, Bhavnagar",
+        "asset_type": "HOSPITAL",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Gujarat",
+        "district": "Bhavnagar",
+        "latitude": 21.76,
+        "longitude": 72.15,
+        "bed_capacity": 600,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.83, 21.17] },
+      "properties": {
+        "asset_id": "GJ-SUB-003",
+        "name": "Surat 400kV GIS Substation",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Gujarat",
+        "district": "Surat",
+        "voltage_kv": 400,
+        "capacity_mva": 630,
+        "operator": "GETCO",
+        "latitude": 21.17,
+        "longitude": 72.83,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.84, 18.94] },
+      "properties": {
+        "facility_id": "MH-HOSP-001",
+        "name": "KEM Hospital Mumbai",
+        "asset_type": "HOSPITAL",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Maharashtra",
+        "district": "Mumbai City",
+        "latitude": 18.94,
+        "longitude": 72.84,
+        "bed_capacity": 1800,
+        "has_generator": true,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.86, 19.07] },
+      "properties": {
+        "asset_id": "MH-SUB-001",
+        "name": "BKC 220kV GIS Substation",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Maharashtra",
+        "district": "Mumbai Suburban",
+        "voltage_kv": 220,
+        "capacity_mva": 500,
+        "operator": "MSETCL",
+        "latitude": 19.07,
+        "longitude": 72.86,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.97, 19.21] },
+      "properties": {
+        "asset_id": "MH-SUB-002",
+        "name": "Thane Kalwa 400kV Grid",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Maharashtra",
+        "district": "Thane",
+        "voltage_kv": 400,
+        "capacity_mva": 1000,
+        "operator": "MSETCL",
+        "latitude": 19.21,
+        "longitude": 72.97,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.76, 19.69] },
+      "properties": {
+        "facility_id": "MH-SHEL-001",
+        "name": "Palghar Coastal Multipurpose Shelter",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Maharashtra",
+        "district": "Palghar",
+        "latitude": 19.69,
+        "longitude": 72.76,
+        "shelter_capacity": 1200,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [73.01, 18.75] },
+      "properties": {
+        "facility_id": "MH-HOSP-002",
+        "name": "Alibaug District Hospital",
+        "asset_type": "HOSPITAL",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Maharashtra",
+        "district": "Raigad",
+        "latitude": 18.75,
+        "longitude": 73.01,
+        "bed_capacity": 300,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [73.30, 16.99] },
+      "properties": {
+        "facility_id": "MH-SHEL-002",
+        "name": "Ratnagiri Fisheries Harbour Shelter",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Maharashtra",
+        "district": "Ratnagiri",
+        "latitude": 16.99,
+        "longitude": 73.30,
+        "shelter_capacity": 1000,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [73.56, 16.03] },
+      "properties": {
+        "asset_id": "MH-SUB-003",
+        "name": "Malvan 110kV Substation",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Maharashtra",
+        "district": "Sindhudurg",
+        "voltage_kv": 110,
+        "capacity_mva": 100,
+        "operator": "MSETCL",
+        "latitude": 16.03,
+        "longitude": 73.56,
+        "criticality": "MEDIUM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [73.83, 15.49] },
+      "properties": {
+        "asset_id": "GA-SUB-001",
+        "name": "Kadamba 220kV Substation",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Goa",
+        "district": "North Goa",
+        "voltage_kv": 220,
+        "capacity_mva": 200,
+        "operator": "Goa Electricity Dept",
+        "latitude": 15.49,
+        "longitude": 73.83,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [73.86, 15.46] },
+      "properties": {
+        "facility_id": "GA-HOSP-001",
+        "name": "Goa Medical College, Bambolim",
+        "asset_type": "HOSPITAL",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Goa",
+        "district": "North Goa",
+        "latitude": 15.46,
+        "longitude": 73.86,
+        "bed_capacity": 1200,
+        "has_generator": true,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [73.98, 15.28] },
+      "properties": {
+        "facility_id": "GA-HOSP-002",
+        "name": "South Goa District Hospital, Margao",
+        "asset_type": "HOSPITAL",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Goa",
+        "district": "South Goa",
+        "latitude": 15.28,
+        "longitude": 73.98,
+        "bed_capacity": 550,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [73.81, 15.39] },
+      "properties": {
+        "facility_id": "GA-SHEL-001",
+        "name": "Mormugao Port Cyclone Shelter",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Goa",
+        "district": "South Goa",
+        "latitude": 15.39,
+        "longitude": 73.81,
+        "shelter_capacity": 800,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [74.85, 12.87] },
+      "properties": {
+        "asset_id": "KA-SUB-001",
+        "name": "Kavoor 220kV Substation Mangaluru",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Karnataka",
+        "district": "Dakshina Kannada",
+        "voltage_kv": 220,
+        "capacity_mva": 300,
+        "operator": "KPTCL",
+        "latitude": 12.87,
+        "longitude": 74.85,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [74.84, 12.86] },
+      "properties": {
+        "facility_id": "KA-HOSP-001",
+        "name": "Wenlock District Hospital, Mangaluru",
+        "asset_type": "HOSPITAL",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Karnataka",
+        "district": "Dakshina Kannada",
+        "latitude": 12.86,
+        "longitude": 74.84,
+        "bed_capacity": 700,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [74.75, 13.34] },
+      "properties": {
+        "facility_id": "KA-HOSP-002",
+        "name": "District Hospital Udupi",
+        "asset_type": "HOSPITAL",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Karnataka",
+        "district": "Udupi",
+        "latitude": 13.34,
+        "longitude": 74.75,
+        "bed_capacity": 400,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [74.13, 14.81] },
+      "properties": {
+        "facility_id": "KA-SHEL-001",
+        "name": "Karwar Multipurpose Cyclone Shelter",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Karnataka",
+        "district": "Uttara Kannada",
+        "latitude": 14.81,
+        "longitude": 74.13,
+        "shelter_capacity": 1200,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [76.27, 9.98] },
+      "properties": {
+        "asset_id": "KL-SUB-001",
+        "name": "Kalamassery 400kV Substation",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Kerala",
+        "district": "Ernakulam",
+        "voltage_kv": 400,
+        "capacity_mva": 630,
+        "operator": "KSEB",
+        "latitude": 9.98,
+        "longitude": 76.27,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [76.28, 9.97] },
+      "properties": {
+        "facility_id": "KL-HOSP-001",
+        "name": "Ernakulam General Hospital",
+        "asset_type": "HOSPITAL",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Kerala",
+        "district": "Ernakulam",
+        "latitude": 9.97,
+        "longitude": 76.28,
+        "bed_capacity": 780,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [76.95, 8.52] },
+      "properties": {
+        "facility_id": "KL-HOSP-002",
+        "name": "Government Medical College, Thiruvananthapuram",
+        "asset_type": "HOSPITAL",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Kerala",
+        "district": "Thiruvananthapuram",
+        "latitude": 8.52,
+        "longitude": 76.95,
+        "bed_capacity": 1950,
+        "has_generator": true,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [76.33, 9.49] },
+      "properties": {
+        "facility_id": "KL-SHEL-001",
+        "name": "Alappuzha Kuttanad Flood & Cyclone Shelter",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Kerala",
+        "district": "Alappuzha",
+        "latitude": 9.49,
+        "longitude": 76.33,
+        "shelter_capacity": 1800,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [75.78, 11.25] },
+      "properties": {
+        "facility_id": "KL-SHEL-002",
+        "name": "Kozhikode Beach Cyclone Shelter",
+        "asset_type": "SHELTER",
+        "facility_type": "CYCLONE_SHELTER",
+        "state": "Kerala",
+        "district": "Kozhikode",
+        "latitude": 11.25,
+        "longitude": 75.78,
+        "shelter_capacity": 1400,
+        "has_generator": true,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [79.83, 11.94] },
+      "properties": {
+        "facility_id": "UT-HOSP-001",
+        "name": "JIPMER Puducherry",
+        "asset_type": "HOSPITAL",
+        "facility_type": "MEDICAL_COLLEGE",
+        "state": "Union Territories",
+        "district": "Puducherry",
+        "latitude": 11.94,
+        "longitude": 79.83,
+        "bed_capacity": 2100,
+        "has_generator": true,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.64, 10.57] },
+      "properties": {
+        "asset_id": "UT-SUB-001",
+        "name": "Kavaratti Island Solar-Diesel Microgrid",
+        "asset_type": "SUBSTATION",
+        "facility_type": null,
+        "state": "Union Territories",
+        "district": "Lakshadweep",
+        "voltage_kv": 11,
+        "capacity_mva": 10,
+        "operator": "Lakshadweep Electricity Dept",
+        "latitude": 10.57,
+        "longitude": 72.64,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [92.74, 11.66] },
+      "properties": {
+        "facility_id": "UT-HOSP-002",
+        "name": "GB Pant Hospital, Port Blair",
+        "asset_type": "HOSPITAL",
+        "facility_type": "DISTRICT_HOSPITAL",
+        "state": "Union Territories",
+        "district": "Andaman & Nicobar Islands",
+        "latitude": 11.66,
+        "longitude": 92.74,
+        "bed_capacity": 450,
+        "has_generator": true,
+        "criticality": "CRITICAL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.84, 20.42] },
+      "properties": {
+        "facility_id": "UT-HOSP-003",
+        "name": "Diu Community Health Centre",
+        "asset_type": "HOSPITAL",
+        "facility_type": "PHC",
+        "state": "Union Territories",
+        "district": "Daman & Diu",
+        "latitude": 20.42,
+        "longitude": 72.84,
+        "bed_capacity": 100,
+        "has_generator": true,
+        "criticality": "MEDIUM"
+      }
+    }
+  ]
+}

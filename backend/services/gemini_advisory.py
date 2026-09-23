@@ -39,12 +39,12 @@ logger = logging.getLogger(__name__)
 class GeminiAdvisoryService:
     """PascalCase service class managing Gemini 3.7 Flash anticipatory advisory generation."""
 
-    SYSTEM_INSTRUCTIONS = """You are the Lead Anticipatory Action Scientist for the Bay of Bengal Cyclone Warning Division.
+    SYSTEM_INSTRUCTIONS = """You are the Lead Anticipatory Action Scientist for the Indian Ocean & Bay of Bengal Cyclone Warning Division.
 Your role is to analyze cyclone forecast coordinates, intensity metrics, and coastal vulnerability data (population in kutcha housing, storm surge heights, shelter capacity) to produce pre-landfall humanitarian action triggers.
 
 Rules:
 1. Always output strict valid JSON conforming to the requested schema.
-2. Provide advisories in 6 languages: English, Odia (ଓଡ଼ିଆ), Bengali (বাংলা), Telugu (తెలుగు), Tamil (தமிழ்), and Hindi (हिन्दी).
+2. Provide advisories in 11 languages: English, Odia (ଓଡ଼ିଆ), Bengali (বাংলা), Telugu (తెలుగు), Tamil (தமிழ்), Hindi (हिन्दी), Gujarati (ગુજરાતી), Marathi (मराठी), Kannada (ಕನ್ನಡ), Malayalam (മലയാളം), and Konkani (कोंकणी).
 3. Specify concrete anticipatory action categories: EVACUATION, SHELTER, FISHERFOLK, AGRICULTURE, POWER_UTILITY, HEALTHCARE.
 4. Highlight shelter deficits where vulnerable populations exceed shelter capacity.
 5. Provide clear lead-time windows (T-24h, T-12h).
@@ -102,7 +102,12 @@ Rules:
                     "bengali": "string",
                     "telugu": "string",
                     "tamil": "string",
-                    "hindi": "string"
+                    "hindi": "string",
+                    "gujarati": "string",
+                    "marathi": "string",
+                    "kannada": "string",
+                    "malayalam": "string",
+                    "konkani": "string"
                 },
                 "recommended_actions": [
                     {
@@ -289,6 +294,11 @@ Rules:
                 telugu=multilingual_data.get("telugu", ""),
                 tamil=multilingual_data.get("tamil", ""),
                 hindi=multilingual_data.get("hindi", ""),
+                gujarati=multilingual_data.get("gujarati", ""),
+                marathi=multilingual_data.get("marathi", ""),
+                kannada=multilingual_data.get("kannada", ""),
+                malayalam=multilingual_data.get("malayalam", ""),
+                konkani=multilingual_data.get("konkani", ""),
             )
 
             actions = []
@@ -361,6 +371,11 @@ Rules:
                 hindi=f"भीषण चक्रवात {wind_kmph} किमी/घंटे की गति से तट की ओर बढ़ रहा है। {max_surge} मीटर तक समुद्री लहरें उठने की आशंका। अगले {int(lead_time_hours)} घंटों के भीतर कच्चे आवासों को खाली कर सुरक्षित आश्रयों में पहुंचें।",
                 telugu=f"తీవ్ర తుఫాను గంటకు {wind_kmph} కిమీ వేగంతో తీరం వైపు దూసుకొస్తోంది. {max_surge} మీటర్ల ఎత్తున అలలు ఎగసిపడే ప్రమాదం. వచ్చే {int(lead_time_hours)} గంటల్లో తీరప్రాంత ప్రజలను సురక్షిత ప్రాంతాలకు తరలించండి.",
                 tamil=f"புயல் மணிக்கு {wind_kmph} கி.மீ வேகத்தில் கடற்கரையை நோக்கி நகர்கிறது. {max_surge} மீட்டர் வரை கடல் அலைகள் எழும் அபாயம். {int(lead_time_hours)} மணி நேரத்திற்குள் வெளியேற்ற பணிகளை முடிக்கவும்.",
+                gujarati=f"અત્યંત ગંભીર વાવાઝોડું {wind_kmph} કિમી/કલાકની ઝડપે ગુજરાત કિનારા તરફ આગળ વધી રહ્યું છે. નીચાણવાળા વિસ્તારોમાં {max_surge} મીટર મોજા ઉછળવાની શક્યતા છે. {int(lead_time_hours)} કલાકમાં સુરક્ષિત સ્થળે સ્થળાંતર કરો.",
+                marathi=f"तीव्र चक्रीवादळ {wind_kmph} किमी/तास वेगाने किनारपट्टीकडे सरकत आहे. सखल भागात {max_surge} मीटर लाटा उसळण्याची शक्यता. पुढील {int(lead_time_hours)} तासांत सुरक्षित स्थळी स्थलांतर पूर्ण करा.",
+                kannada=f"ತೀವ್ರ ಚಂಡಮಾರುತ ಗಂಟೆಗೆ {wind_kmph} ಕಿಮೀ ವೇಗದಲ್ಲಿ ಕರಾವಳಿಯತ್ತ ಧಾವಿಸುತ್ತಿದೆ. ತಗ್ಗು ಪ್ರದೇಶಗಳಲ್ಲಿ {max_surge} ಮೀಟರ್ ಎತ್ತರದ ಅಲೆಗಳ ಆತಂಕ. ಮುಂದಿನ {int(lead_time_hours)} ಗಂಟೆಗಳಲ್ಲಿ ಸುರಕ್ಷಿತ ಸ್ಥಳಗಳಿಗೆ ತೆರಳಿ.",
+                malayalam=f"അതിതീവ്ര ചുഴലിക്കാറ്റ് മണിക്കൂറിൽ {wind_kmph} കി.മീ വേഗത്തിൽ തീരത്തേക്ക് നീങ്ങുന്നു. താഴ്ന്ന പ്രദേശങ്ങളിൽ {max_surge} മീറ്റർ ഉയർന്ന തിരമാലകൾക്ക് സാധ്യത. {int(lead_time_hours)} മണിക്കൂറിനുള്ളിൽ സുരക്ഷിത സ്ഥാനങ്ങളിലേക്ക് മാറുക.",
+                konkani=f"तीव्र वादळ {wind_kmph} किमी/वर वेगान दर्यादेगेर येत आसा. सकयल वाठारांत {max_surge} मीटर ल्हारां येवपाची शक्यता आसा. फुडल्या {int(lead_time_hours)} वरांत सुरक्षीत जाग्यार वचात.",
             ),
             recommended_actions=[
                 ActionItem(

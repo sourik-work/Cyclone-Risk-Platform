@@ -27,6 +27,7 @@ def _load_all_from_disk() -> List[Dict[str, Any]]:
         DATA_DIR / "power_grid_4states.geojson",
         DATA_DIR / "arterial_roads_4states.geojson",
         DATA_DIR / "hospitals_shelters_4states.geojson",
+        DATA_DIR / "infrastructure_western_ut.geojson",
     ]
 
     for file_path in files:

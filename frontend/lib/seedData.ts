@@ -1139,6 +1139,1784 @@ export const SEED_TAMIL_NADU_VULNERABILITY: VulnerabilityFeatureCollection = {
   ]
 };
 
+export const SEED_GUJARAT_VULNERABILITY: VulnerabilityFeatureCollection = {
+  "type": "FeatureCollection",
+  "name": "gujarat_coastal_districts_vulnerability",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GJ-KUT",
+        "district_name": "Kutch",
+        "state_name": "Gujarat",
+        "total_population": 2100000,
+        "population": 2100000,
+        "vulnerable_population": 800000,
+        "kutcha_population": 800000,
+        "coastal_length_km": 405.0,
+        "coastline_km": 405.0,
+        "average_elevation_m": 4.2,
+        "elevation_m": 4.2,
+        "cyclone_risk_score": 0.72,
+        "vulnerability_score": 0.72,
+        "storm_surge_risk_m": 3.8,
+        "inundation_risk": 0.32,
+        "shelter_capacity": 16000,
+        "shelter_count": 32,
+        "evac_shelters": 32,
+        "hospital_count": 45,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.6,
+              22.8
+            ],
+            [
+              69.8,
+              22.85
+            ],
+            [
+              70.6,
+              23.4
+            ],
+            [
+              70.2,
+              24.1
+            ],
+            [
+              68.8,
+              23.9
+            ],
+            [
+              68.6,
+              22.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GJ-JAM",
+        "district_name": "Jamnagar",
+        "state_name": "Gujarat",
+        "total_population": 2200000,
+        "population": 2200000,
+        "vulnerable_population": 770000,
+        "kutcha_population": 770000,
+        "coastal_length_km": 155.0,
+        "coastline_km": 155.0,
+        "average_elevation_m": 5.1,
+        "elevation_m": 5.1,
+        "cyclone_risk_score": 0.78,
+        "vulnerability_score": 0.78,
+        "storm_surge_risk_m": 4.2,
+        "inundation_risk": 0.35,
+        "shelter_capacity": 18000,
+        "shelter_count": 36,
+        "evac_shelters": 36,
+        "hospital_count": 52,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              69.4,
+              22.2
+            ],
+            [
+              70.4,
+              22.3
+            ],
+            [
+              70.6,
+              22.8
+            ],
+            [
+              69.8,
+              22.75
+            ],
+            [
+              69.4,
+              22.2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GJ-POR",
+        "district_name": "Porbandar",
+        "state_name": "Gujarat",
+        "total_population": 600000,
+        "population": 600000,
+        "vulnerable_population": 240000,
+        "kutcha_population": 240000,
+        "coastal_length_km": 105.0,
+        "coastline_km": 105.0,
+        "average_elevation_m": 3.8,
+        "elevation_m": 3.8,
+        "cyclone_risk_score": 0.75,
+        "vulnerability_score": 0.75,
+        "storm_surge_risk_m": 4.0,
+        "inundation_risk": 0.34,
+        "shelter_capacity": 7200,
+        "shelter_count": 15,
+        "evac_shelters": 15,
+        "hospital_count": 28,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              69.45,
+              21.45
+            ],
+            [
+              70.05,
+              21.5
+            ],
+            [
+              70.1,
+              21.9
+            ],
+            [
+              69.55,
+              21.85
+            ],
+            [
+              69.45,
+              21.45
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GJ-JUN",
+        "district_name": "Junagadh",
+        "state_name": "Gujarat",
+        "total_population": 2700000,
+        "population": 2700000,
+        "vulnerable_population": 1130000,
+        "kutcha_population": 1130000,
+        "coastal_length_km": 85.0,
+        "coastline_km": 85.0,
+        "average_elevation_m": 6.5,
+        "elevation_m": 6.5,
+        "cyclone_risk_score": 0.74,
+        "vulnerability_score": 0.74,
+        "storm_surge_risk_m": 3.9,
+        "inundation_risk": 0.3,
+        "shelter_capacity": 22000,
+        "shelter_count": 44,
+        "evac_shelters": 44,
+        "hospital_count": 58,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.05,
+              21.0
+            ],
+            [
+              70.75,
+              21.15
+            ],
+            [
+              70.8,
+              21.65
+            ],
+            [
+              70.15,
+              21.55
+            ],
+            [
+              70.05,
+              21.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GJ-GIR",
+        "district_name": "Gir Somnath",
+        "state_name": "Gujarat",
+        "total_population": 1200000,
+        "population": 1200000,
+        "vulnerable_population": 540000,
+        "kutcha_population": 540000,
+        "coastal_length_km": 120.0,
+        "coastline_km": 120.0,
+        "average_elevation_m": 4.5,
+        "elevation_m": 4.5,
+        "cyclone_risk_score": 0.77,
+        "vulnerability_score": 0.77,
+        "storm_surge_risk_m": 4.3,
+        "inundation_risk": 0.36,
+        "shelter_capacity": 12000,
+        "shelter_count": 24,
+        "evac_shelters": 24,
+        "hospital_count": 36,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.4,
+              20.7
+            ],
+            [
+              71.15,
+              20.8
+            ],
+            [
+              71.2,
+              21.2
+            ],
+            [
+              70.5,
+              21.1
+            ],
+            [
+              70.4,
+              20.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GJ-BHA",
+        "district_name": "Bhavnagar",
+        "state_name": "Gujarat",
+        "total_population": 2900000,
+        "population": 2900000,
+        "vulnerable_population": 1160000,
+        "kutcha_population": 1160000,
+        "coastal_length_km": 152.0,
+        "coastline_km": 152.0,
+        "average_elevation_m": 5.0,
+        "elevation_m": 5.0,
+        "cyclone_risk_score": 0.76,
+        "vulnerability_score": 0.76,
+        "storm_surge_risk_m": 4.5,
+        "inundation_risk": 0.38,
+        "shelter_capacity": 24000,
+        "shelter_count": 48,
+        "evac_shelters": 48,
+        "hospital_count": 62,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.8,
+              21.4
+            ],
+            [
+              72.35,
+              21.5
+            ],
+            [
+              72.4,
+              22.0
+            ],
+            [
+              71.85,
+              21.95
+            ],
+            [
+              71.8,
+              21.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GJ-SUR",
+        "district_name": "Surat",
+        "state_name": "Gujarat",
+        "total_population": 6100000,
+        "population": 6100000,
+        "vulnerable_population": 1830000,
+        "kutcha_population": 1830000,
+        "coastal_length_km": 83.0,
+        "coastline_km": 83.0,
+        "average_elevation_m": 4.0,
+        "elevation_m": 4.0,
+        "cyclone_risk_score": 0.82,
+        "vulnerability_score": 0.82,
+        "storm_surge_risk_m": 5.0,
+        "inundation_risk": 0.42,
+        "shelter_capacity": 48000,
+        "shelter_count": 96,
+        "evac_shelters": 96,
+        "hospital_count": 120,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.5,
+              21.05
+            ],
+            [
+              72.95,
+              21.1
+            ],
+            [
+              73.0,
+              21.5
+            ],
+            [
+              72.55,
+              21.45
+            ],
+            [
+              72.5,
+              21.05
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_MAHARASHTRA_VULNERABILITY: VulnerabilityFeatureCollection = {
+  "type": "FeatureCollection",
+  "name": "maharashtra_coastal_districts_vulnerability",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "MH-MUM",
+        "district_name": "Mumbai City",
+        "state_name": "Maharashtra",
+        "total_population": 3100000,
+        "population": 3100000,
+        "vulnerable_population": 465000,
+        "kutcha_population": 465000,
+        "coastal_length_km": 40.0,
+        "coastline_km": 40.0,
+        "average_elevation_m": 8.0,
+        "elevation_m": 8.0,
+        "cyclone_risk_score": 0.88,
+        "vulnerability_score": 0.88,
+        "storm_surge_risk_m": 4.8,
+        "inundation_risk": 0.45,
+        "shelter_capacity": 35000,
+        "shelter_count": 70,
+        "evac_shelters": 70,
+        "hospital_count": 140,
+        "primary_language": "Marathi",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.8,
+              18.9
+            ],
+            [
+              72.88,
+              18.92
+            ],
+            [
+              72.86,
+              19.02
+            ],
+            [
+              72.81,
+              19.0
+            ],
+            [
+              72.8,
+              18.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "MH-MSU",
+        "district_name": "Mumbai Suburban",
+        "state_name": "Maharashtra",
+        "total_population": 9400000,
+        "population": 9400000,
+        "vulnerable_population": 1128000,
+        "kutcha_population": 1128000,
+        "coastal_length_km": 74.0,
+        "coastline_km": 74.0,
+        "average_elevation_m": 10.0,
+        "elevation_m": 10.0,
+        "cyclone_risk_score": 0.85,
+        "vulnerability_score": 0.85,
+        "storm_surge_risk_m": 4.5,
+        "inundation_risk": 0.4,
+        "shelter_capacity": 85000,
+        "shelter_count": 170,
+        "evac_shelters": 170,
+        "hospital_count": 210,
+        "primary_language": "Marathi",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.78,
+              19.02
+            ],
+            [
+              72.95,
+              19.05
+            ],
+            [
+              72.92,
+              19.28
+            ],
+            [
+              72.8,
+              19.25
+            ],
+            [
+              72.78,
+              19.02
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "MH-THA",
+        "district_name": "Thane",
+        "state_name": "Maharashtra",
+        "total_population": 11100000,
+        "population": 11100000,
+        "vulnerable_population": 2775000,
+        "kutcha_population": 2775000,
+        "coastal_length_km": 50.0,
+        "coastline_km": 50.0,
+        "average_elevation_m": 12.0,
+        "elevation_m": 12.0,
+        "cyclone_risk_score": 0.79,
+        "vulnerability_score": 0.79,
+        "storm_surge_risk_m": 4.2,
+        "inundation_risk": 0.35,
+        "shelter_capacity": 92000,
+        "shelter_count": 184,
+        "evac_shelters": 184,
+        "hospital_count": 190,
+        "primary_language": "Marathi",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.9,
+              19.15
+            ],
+            [
+              73.2,
+              19.2
+            ],
+            [
+              73.15,
+              19.45
+            ],
+            [
+              72.92,
+              19.4
+            ],
+            [
+              72.9,
+              19.15
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "MH-PAL",
+        "district_name": "Palghar",
+        "state_name": "Maharashtra",
+        "total_population": 3000000,
+        "population": 3000000,
+        "vulnerable_population": 1440000,
+        "kutcha_population": 1440000,
+        "coastal_length_km": 112.0,
+        "coastline_km": 112.0,
+        "average_elevation_m": 5.5,
+        "elevation_m": 5.5,
+        "cyclone_risk_score": 0.81,
+        "vulnerability_score": 0.81,
+        "storm_surge_risk_m": 4.6,
+        "inundation_risk": 0.38,
+        "shelter_capacity": 28000,
+        "shelter_count": 56,
+        "evac_shelters": 56,
+        "hospital_count": 65,
+        "primary_language": "Marathi",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.65,
+              19.45
+            ],
+            [
+              73.0,
+              19.5
+            ],
+            [
+              72.95,
+              20.1
+            ],
+            [
+              72.7,
+              20.05
+            ],
+            [
+              72.65,
+              19.45
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "MH-RAI",
+        "district_name": "Raigad",
+        "state_name": "Maharashtra",
+        "total_population": 2600000,
+        "population": 2600000,
+        "vulnerable_population": 1300000,
+        "kutcha_population": 1300000,
+        "coastal_length_km": 240.0,
+        "coastline_km": 240.0,
+        "average_elevation_m": 6.0,
+        "elevation_m": 6.0,
+        "cyclone_risk_score": 0.8,
+        "vulnerability_score": 0.8,
+        "storm_surge_risk_m": 4.4,
+        "inundation_risk": 0.37,
+        "shelter_capacity": 25000,
+        "shelter_count": 50,
+        "evac_shelters": 50,
+        "hospital_count": 58,
+        "primary_language": "Marathi",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.85,
+              18.0
+            ],
+            [
+              73.3,
+              18.1
+            ],
+            [
+              73.25,
+              18.9
+            ],
+            [
+              72.88,
+              18.85
+            ],
+            [
+              72.85,
+              18.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "MH-RAT",
+        "district_name": "Ratnagiri",
+        "state_name": "Maharashtra",
+        "total_population": 1600000,
+        "population": 1600000,
+        "vulnerable_population": 880000,
+        "kutcha_population": 880000,
+        "coastal_length_km": 167.0,
+        "coastline_km": 167.0,
+        "average_elevation_m": 7.0,
+        "elevation_m": 7.0,
+        "cyclone_risk_score": 0.78,
+        "vulnerability_score": 0.78,
+        "storm_surge_risk_m": 4.0,
+        "inundation_risk": 0.33,
+        "shelter_capacity": 16000,
+        "shelter_count": 32,
+        "evac_shelters": 32,
+        "hospital_count": 48,
+        "primary_language": "Marathi",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.15,
+              16.8
+            ],
+            [
+              73.6,
+              16.9
+            ],
+            [
+              73.55,
+              17.9
+            ],
+            [
+              73.2,
+              17.85
+            ],
+            [
+              73.15,
+              16.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "MH-SIN",
+        "district_name": "Sindhudurg",
+        "state_name": "Maharashtra",
+        "total_population": 850000,
+        "population": 850000,
+        "vulnerable_population": 442000,
+        "kutcha_population": 442000,
+        "coastal_length_km": 121.0,
+        "coastline_km": 121.0,
+        "average_elevation_m": 8.5,
+        "elevation_m": 8.5,
+        "cyclone_risk_score": 0.76,
+        "vulnerability_score": 0.76,
+        "storm_surge_risk_m": 3.8,
+        "inundation_risk": 0.3,
+        "shelter_capacity": 9000,
+        "shelter_count": 18,
+        "evac_shelters": 18,
+        "hospital_count": 34,
+        "primary_language": "Marathi",
+        "secondary_language": "Konkani"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.4,
+              15.75
+            ],
+            [
+              73.85,
+              15.85
+            ],
+            [
+              73.8,
+              16.75
+            ],
+            [
+              73.45,
+              16.7
+            ],
+            [
+              73.4,
+              15.75
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_GOA_VULNERABILITY: VulnerabilityFeatureCollection = {
+  "type": "FeatureCollection",
+  "name": "goa_coastal_districts_vulnerability",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GA-NGO",
+        "district_name": "North Goa",
+        "state_name": "Goa",
+        "total_population": 820000,
+        "population": 820000,
+        "vulnerable_population": 180400,
+        "kutcha_population": 180400,
+        "coastal_length_km": 55.0,
+        "coastline_km": 55.0,
+        "average_elevation_m": 10.0,
+        "elevation_m": 10.0,
+        "cyclone_risk_score": 0.7,
+        "vulnerability_score": 0.7,
+        "storm_surge_risk_m": 3.5,
+        "inundation_risk": 0.25,
+        "shelter_capacity": 8000,
+        "shelter_count": 16,
+        "evac_shelters": 16,
+        "hospital_count": 32,
+        "primary_language": "Konkani",
+        "secondary_language": "Marathi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.65,
+              15.45
+            ],
+            [
+              74.05,
+              15.48
+            ],
+            [
+              74.0,
+              15.8
+            ],
+            [
+              73.7,
+              15.78
+            ],
+            [
+              73.65,
+              15.45
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "GA-SGO",
+        "district_name": "South Goa",
+        "state_name": "Goa",
+        "total_population": 640000,
+        "population": 640000,
+        "vulnerable_population": 153600,
+        "kutcha_population": 153600,
+        "coastal_length_km": 50.0,
+        "coastline_km": 50.0,
+        "average_elevation_m": 12.0,
+        "elevation_m": 12.0,
+        "cyclone_risk_score": 0.68,
+        "vulnerability_score": 0.68,
+        "storm_surge_risk_m": 3.2,
+        "inundation_risk": 0.22,
+        "shelter_capacity": 6500,
+        "shelter_count": 13,
+        "evac_shelters": 13,
+        "hospital_count": 28,
+        "primary_language": "Konkani",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8,
+              14.9
+            ],
+            [
+              74.15,
+              14.95
+            ],
+            [
+              74.1,
+              15.45
+            ],
+            [
+              73.85,
+              15.42
+            ],
+            [
+              73.8,
+              14.9
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_KARNATAKA_VULNERABILITY: VulnerabilityFeatureCollection = {
+  "type": "FeatureCollection",
+  "name": "karnataka_coastal_districts_vulnerability",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KA-DKA",
+        "district_name": "Dakshina Kannada",
+        "state_name": "Karnataka",
+        "total_population": 2100000,
+        "population": 2100000,
+        "vulnerable_population": 630000,
+        "kutcha_population": 630000,
+        "coastal_length_km": 42.0,
+        "coastline_km": 42.0,
+        "average_elevation_m": 14.0,
+        "elevation_m": 14.0,
+        "cyclone_risk_score": 0.73,
+        "vulnerability_score": 0.73,
+        "storm_surge_risk_m": 3.6,
+        "inundation_risk": 0.28,
+        "shelter_capacity": 22000,
+        "shelter_count": 44,
+        "evac_shelters": 44,
+        "hospital_count": 75,
+        "primary_language": "Kannada",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.8,
+              12.6
+            ],
+            [
+              75.35,
+              12.65
+            ],
+            [
+              75.3,
+              13.15
+            ],
+            [
+              74.85,
+              13.1
+            ],
+            [
+              74.8,
+              12.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KA-UDU",
+        "district_name": "Udupi",
+        "state_name": "Karnataka",
+        "total_population": 1200000,
+        "population": 1200000,
+        "vulnerable_population": 384000,
+        "kutcha_population": 384000,
+        "coastal_length_km": 98.0,
+        "coastline_km": 98.0,
+        "average_elevation_m": 12.0,
+        "elevation_m": 12.0,
+        "cyclone_risk_score": 0.71,
+        "vulnerability_score": 0.71,
+        "storm_surge_risk_m": 3.5,
+        "inundation_risk": 0.26,
+        "shelter_capacity": 14000,
+        "shelter_count": 28,
+        "evac_shelters": 28,
+        "hospital_count": 45,
+        "primary_language": "Kannada",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.65,
+              13.15
+            ],
+            [
+              75.1,
+              13.2
+            ],
+            [
+              75.05,
+              13.9
+            ],
+            [
+              74.7,
+              13.85
+            ],
+            [
+              74.65,
+              13.15
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KA-UKA",
+        "district_name": "Uttara Kannada",
+        "state_name": "Karnataka",
+        "total_population": 1400000,
+        "population": 1400000,
+        "vulnerable_population": 588000,
+        "kutcha_population": 588000,
+        "coastal_length_km": 160.0,
+        "coastline_km": 160.0,
+        "average_elevation_m": 8.0,
+        "elevation_m": 8.0,
+        "cyclone_risk_score": 0.75,
+        "vulnerability_score": 0.75,
+        "storm_surge_risk_m": 3.9,
+        "inundation_risk": 0.3,
+        "shelter_capacity": 16000,
+        "shelter_count": 32,
+        "evac_shelters": 32,
+        "hospital_count": 50,
+        "primary_language": "Kannada",
+        "secondary_language": "Konkani"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1,
+              13.9
+            ],
+            [
+              74.85,
+              13.95
+            ],
+            [
+              74.8,
+              15.0
+            ],
+            [
+              74.15,
+              14.95
+            ],
+            [
+              74.1,
+              13.9
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_KERALA_VULNERABILITY: VulnerabilityFeatureCollection = {
+  "type": "FeatureCollection",
+  "name": "kerala_coastal_districts_vulnerability",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-KAS",
+        "district_name": "Kasaragod",
+        "state_name": "Kerala",
+        "total_population": 1300000,
+        "population": 1300000,
+        "vulnerable_population": 325000,
+        "kutcha_population": 325000,
+        "coastal_length_km": 70.0,
+        "coastline_km": 70.0,
+        "average_elevation_m": 8.0,
+        "elevation_m": 8.0,
+        "cyclone_risk_score": 0.74,
+        "vulnerability_score": 0.74,
+        "storm_surge_risk_m": 3.5,
+        "inundation_risk": 0.27,
+        "shelter_capacity": 14000,
+        "shelter_count": 28,
+        "evac_shelters": 28,
+        "hospital_count": 42,
+        "primary_language": "Malayalam",
+        "secondary_language": "Kannada"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9,
+              12.1
+            ],
+            [
+              75.3,
+              12.15
+            ],
+            [
+              75.25,
+              12.8
+            ],
+            [
+              74.95,
+              12.75
+            ],
+            [
+              74.9,
+              12.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-KAN",
+        "district_name": "Kannur",
+        "state_name": "Kerala",
+        "total_population": 2500000,
+        "population": 2500000,
+        "vulnerable_population": 700000,
+        "kutcha_population": 700000,
+        "coastal_length_km": 82.0,
+        "coastline_km": 82.0,
+        "average_elevation_m": 9.0,
+        "elevation_m": 9.0,
+        "cyclone_risk_score": 0.75,
+        "vulnerability_score": 0.75,
+        "storm_surge_risk_m": 3.6,
+        "inundation_risk": 0.28,
+        "shelter_capacity": 26000,
+        "shelter_count": 52,
+        "evac_shelters": 52,
+        "hospital_count": 68,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.25,
+              11.7
+            ],
+            [
+              75.7,
+              11.75
+            ],
+            [
+              75.65,
+              12.2
+            ],
+            [
+              75.3,
+              12.15
+            ],
+            [
+              75.25,
+              11.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-KOZ",
+        "district_name": "Kozhikode",
+        "state_name": "Kerala",
+        "total_population": 3100000,
+        "population": 3100000,
+        "vulnerable_population": 930000,
+        "kutcha_population": 930000,
+        "coastal_length_km": 71.0,
+        "coastline_km": 71.0,
+        "average_elevation_m": 6.5,
+        "elevation_m": 6.5,
+        "cyclone_risk_score": 0.78,
+        "vulnerability_score": 0.78,
+        "storm_surge_risk_m": 4.0,
+        "inundation_risk": 0.32,
+        "shelter_capacity": 32000,
+        "shelter_count": 64,
+        "evac_shelters": 64,
+        "hospital_count": 85,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.65,
+              11.2
+            ],
+            [
+              76.1,
+              11.25
+            ],
+            [
+              76.05,
+              11.75
+            ],
+            [
+              75.7,
+              11.7
+            ],
+            [
+              75.65,
+              11.2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-MAL",
+        "district_name": "Malappuram",
+        "state_name": "Kerala",
+        "total_population": 4100000,
+        "population": 4100000,
+        "vulnerable_population": 1312000,
+        "kutcha_population": 1312000,
+        "coastal_length_km": 70.0,
+        "coastline_km": 70.0,
+        "average_elevation_m": 7.0,
+        "elevation_m": 7.0,
+        "cyclone_risk_score": 0.76,
+        "vulnerability_score": 0.76,
+        "storm_surge_risk_m": 3.8,
+        "inundation_risk": 0.3,
+        "shelter_capacity": 38000,
+        "shelter_count": 76,
+        "evac_shelters": 76,
+        "hospital_count": 90,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.8,
+              10.7
+            ],
+            [
+              76.35,
+              10.75
+            ],
+            [
+              76.3,
+              11.25
+            ],
+            [
+              75.85,
+              11.2
+            ],
+            [
+              75.8,
+              10.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-THR",
+        "district_name": "Thrissur",
+        "state_name": "Kerala",
+        "total_population": 3100000,
+        "population": 3100000,
+        "vulnerable_population": 868000,
+        "kutcha_population": 868000,
+        "coastal_length_km": 54.0,
+        "coastline_km": 54.0,
+        "average_elevation_m": 5.5,
+        "elevation_m": 5.5,
+        "cyclone_risk_score": 0.79,
+        "vulnerability_score": 0.79,
+        "storm_surge_risk_m": 4.1,
+        "inundation_risk": 0.33,
+        "shelter_capacity": 30000,
+        "shelter_count": 60,
+        "evac_shelters": 60,
+        "hospital_count": 82,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.95,
+              10.2
+            ],
+            [
+              76.45,
+              10.25
+            ],
+            [
+              76.4,
+              10.75
+            ],
+            [
+              76.0,
+              10.7
+            ],
+            [
+              75.95,
+              10.2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-ERN",
+        "district_name": "Ernakulam",
+        "state_name": "Kerala",
+        "total_population": 3300000,
+        "population": 3300000,
+        "vulnerable_population": 726000,
+        "kutcha_population": 726000,
+        "coastal_length_km": 46.0,
+        "coastline_km": 46.0,
+        "average_elevation_m": 3.5,
+        "elevation_m": 3.5,
+        "cyclone_risk_score": 0.82,
+        "vulnerability_score": 0.82,
+        "storm_surge_risk_m": 4.8,
+        "inundation_risk": 0.4,
+        "shelter_capacity": 36000,
+        "shelter_count": 72,
+        "evac_shelters": 72,
+        "hospital_count": 110,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.15,
+              9.8
+            ],
+            [
+              76.6,
+              9.85
+            ],
+            [
+              76.55,
+              10.25
+            ],
+            [
+              76.2,
+              10.2
+            ],
+            [
+              76.15,
+              9.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-ALA",
+        "district_name": "Alappuzha",
+        "state_name": "Kerala",
+        "total_population": 2100000,
+        "population": 2100000,
+        "vulnerable_population": 735000,
+        "kutcha_population": 735000,
+        "coastal_length_km": 82.0,
+        "coastline_km": 82.0,
+        "average_elevation_m": 1.8,
+        "elevation_m": 1.8,
+        "cyclone_risk_score": 0.84,
+        "vulnerability_score": 0.84,
+        "storm_surge_risk_m": 5.2,
+        "inundation_risk": 0.48,
+        "shelter_capacity": 28000,
+        "shelter_count": 56,
+        "evac_shelters": 56,
+        "hospital_count": 65,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.25,
+              9.15
+            ],
+            [
+              76.65,
+              9.2
+            ],
+            [
+              76.6,
+              9.85
+            ],
+            [
+              76.3,
+              9.8
+            ],
+            [
+              76.25,
+              9.15
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-KOL",
+        "district_name": "Kollam",
+        "state_name": "Kerala",
+        "total_population": 2600000,
+        "population": 2600000,
+        "vulnerable_population": 780000,
+        "kutcha_population": 780000,
+        "coastal_length_km": 37.0,
+        "coastline_km": 37.0,
+        "average_elevation_m": 4.5,
+        "elevation_m": 4.5,
+        "cyclone_risk_score": 0.81,
+        "vulnerability_score": 0.81,
+        "storm_surge_risk_m": 4.3,
+        "inundation_risk": 0.36,
+        "shelter_capacity": 27000,
+        "shelter_count": 54,
+        "evac_shelters": 54,
+        "hospital_count": 72,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.5,
+              8.8
+            ],
+            [
+              77.0,
+              8.85
+            ],
+            [
+              76.95,
+              9.25
+            ],
+            [
+              76.55,
+              9.2
+            ],
+            [
+              76.5,
+              8.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "KL-TVM",
+        "district_name": "Thiruvananthapuram",
+        "state_name": "Kerala",
+        "total_population": 3300000,
+        "population": 3300000,
+        "vulnerable_population": 825000,
+        "kutcha_population": 825000,
+        "coastal_length_km": 78.0,
+        "coastline_km": 78.0,
+        "average_elevation_m": 6.0,
+        "elevation_m": 6.0,
+        "cyclone_risk_score": 0.8,
+        "vulnerability_score": 0.8,
+        "storm_surge_risk_m": 4.2,
+        "inundation_risk": 0.34,
+        "shelter_capacity": 34000,
+        "shelter_count": 68,
+        "evac_shelters": 68,
+        "hospital_count": 98,
+        "primary_language": "Malayalam",
+        "secondary_language": "Tamil"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.8,
+              8.25
+            ],
+            [
+              77.25,
+              8.3
+            ],
+            [
+              77.2,
+              8.85
+            ],
+            [
+              76.85,
+              8.8
+            ],
+            [
+              76.8,
+              8.25
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const SEED_UT_VULNERABILITY: VulnerabilityFeatureCollection = {
+  "type": "FeatureCollection",
+  "name": "union_territories_coastal_vulnerability",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "UT-PUD",
+        "district_name": "Puducherry",
+        "state_name": "Union Territories",
+        "total_population": 950000,
+        "population": 950000,
+        "vulnerable_population": 237500,
+        "kutcha_population": 237500,
+        "coastal_length_km": 45.0,
+        "coastline_km": 45.0,
+        "average_elevation_m": 3.5,
+        "elevation_m": 3.5,
+        "cyclone_risk_score": 0.72,
+        "vulnerability_score": 0.72,
+        "storm_surge_risk_m": 3.8,
+        "inundation_risk": 0.28,
+        "shelter_capacity": 11000,
+        "shelter_count": 22,
+        "evac_shelters": 22,
+        "hospital_count": 36,
+        "primary_language": "Tamil",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.75,
+              11.85
+            ],
+            [
+              80.0,
+              11.88
+            ],
+            [
+              79.95,
+              12.05
+            ],
+            [
+              79.78,
+              12.02
+            ],
+            [
+              79.75,
+              11.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "UT-LAK",
+        "district_name": "Lakshadweep",
+        "state_name": "Union Territories",
+        "total_population": 65000,
+        "population": 65000,
+        "vulnerable_population": 26000,
+        "kutcha_population": 26000,
+        "coastal_length_km": 132.0,
+        "coastline_km": 132.0,
+        "average_elevation_m": 1.5,
+        "elevation_m": 1.5,
+        "cyclone_risk_score": 0.85,
+        "vulnerability_score": 0.85,
+        "storm_surge_risk_m": 5.0,
+        "inundation_risk": 0.45,
+        "shelter_capacity": 3500,
+        "shelter_count": 8,
+        "evac_shelters": 8,
+        "hospital_count": 12,
+        "primary_language": "Malayalam",
+        "secondary_language": "English"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.1,
+              10.0
+            ],
+            [
+              73.8,
+              10.05
+            ],
+            [
+              73.75,
+              11.8
+            ],
+            [
+              72.15,
+              11.75
+            ],
+            [
+              72.1,
+              10.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "UT-ANI",
+        "district_name": "Andaman & Nicobar Islands",
+        "state_name": "Union Territories",
+        "total_population": 380000,
+        "population": 380000,
+        "vulnerable_population": 152000,
+        "kutcha_population": 152000,
+        "coastal_length_km": 1962.0,
+        "coastline_km": 1962.0,
+        "average_elevation_m": 5.0,
+        "elevation_m": 5.0,
+        "cyclone_risk_score": 0.88,
+        "vulnerability_score": 0.88,
+        "storm_surge_risk_m": 5.2,
+        "inundation_risk": 0.48,
+        "shelter_capacity": 15000,
+        "shelter_count": 30,
+        "evac_shelters": 30,
+        "hospital_count": 28,
+        "primary_language": "Hindi",
+        "secondary_language": "Bengali"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              92.5,
+              11.0
+            ],
+            [
+              93.5,
+              11.05
+            ],
+            [
+              93.45,
+              13.0
+            ],
+            [
+              92.55,
+              12.95
+            ],
+            [
+              92.5,
+              11.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district_id": "UT-DND",
+        "district_name": "Daman & Diu",
+        "state_name": "Union Territories",
+        "total_population": 240000,
+        "population": 240000,
+        "vulnerable_population": 72000,
+        "kutcha_population": 72000,
+        "coastal_length_km": 42.0,
+        "coastline_km": 42.0,
+        "average_elevation_m": 4.0,
+        "elevation_m": 4.0,
+        "cyclone_risk_score": 0.75,
+        "vulnerability_score": 0.75,
+        "storm_surge_risk_m": 4.0,
+        "inundation_risk": 0.3,
+        "shelter_capacity": 4800,
+        "shelter_count": 10,
+        "evac_shelters": 10,
+        "hospital_count": 16,
+        "primary_language": "Gujarati",
+        "secondary_language": "Hindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.8,
+              20.35
+            ],
+            [
+              72.95,
+              20.38
+            ],
+            [
+              72.92,
+              20.5
+            ],
+            [
+              72.82,
+              20.48
+            ],
+            [
+              72.8,
+              20.35
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
 export const SEED_ALL_COASTAL_VULNERABILITY: VulnerabilityFeatureCollection = {
   type: "FeatureCollection",
   name: "india_coastal_districts_vulnerability",
@@ -1147,8 +2925,16 @@ export const SEED_ALL_COASTAL_VULNERABILITY: VulnerabilityFeatureCollection = {
     ...SEED_WEST_BENGAL_VULNERABILITY.features,
     ...SEED_ANDHRA_PRADESH_VULNERABILITY.features,
     ...SEED_TAMIL_NADU_VULNERABILITY.features,
+    ...SEED_GUJARAT_VULNERABILITY.features,
+    ...SEED_MAHARASHTRA_VULNERABILITY.features,
+    ...SEED_GOA_VULNERABILITY.features,
+    ...SEED_KARNATAKA_VULNERABILITY.features,
+    ...SEED_KERALA_VULNERABILITY.features,
+    ...SEED_UT_VULNERABILITY.features,
   ]
 };
+
+export const SEED_ALL_VULNERABILITY = SEED_ALL_COASTAL_VULNERABILITY;
 
 export const SEED_BANGLADESH_VULNERABILITY: VulnerabilityFeatureCollection = {
   type: "FeatureCollection",

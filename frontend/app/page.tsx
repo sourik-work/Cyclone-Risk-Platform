@@ -30,7 +30,22 @@ import { fetchWithCache, getCachedData } from '../lib/cache';
 import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
 
 export const COUNTRIES = [
-  { id: 'india', name: 'India', states: ['Odisha', 'West Bengal', 'Andhra Pradesh', 'Tamil Nadu'] },
+  {
+    id: 'india',
+    name: 'India',
+    states: [
+      'Odisha',
+      'West Bengal',
+      'Andhra Pradesh',
+      'Tamil Nadu',
+      'Gujarat',
+      'Maharashtra',
+      'Goa',
+      'Karnataka',
+      'Kerala',
+      'Union Territories',
+    ],
+  },
   { id: 'bangladesh', name: 'Bangladesh', states: ['Chittagong', 'Khulna'] },
 ];
 import { collection, onSnapshot, query, limit } from 'firebase/firestore';
@@ -377,7 +392,10 @@ export default function Home() {
     setSelectedState(newState);
     const vulnData = selectedCountry === 'bangladesh' ? SEED_BANGLADESH_VULNERABILITY : SEED_ALL_COASTAL_VULNERABILITY;
     const match = vulnData.features.find(
-      (f) => f.properties.state_name.toLowerCase() === newState.toLowerCase()
+      (f) =>
+        f.properties.state_name.toLowerCase() === newState.toLowerCase() ||
+        (newState.toLowerCase() === 'union territories' &&
+          (f.properties.state_name.toLowerCase().includes('union') || f.properties.district_id?.startsWith('UT-')))
     );
     if (match) {
       setSelectedDistrict(match.properties);

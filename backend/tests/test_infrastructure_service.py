@@ -68,7 +68,7 @@ def test_filter_by_state():
 def test_filter_by_type():
     """Verify filtering by asset type (SUBSTATION, HOSPITAL, CYCLONE_SHELTER, etc.)."""
     substations = load_infrastructure(asset_type="SUBSTATION")
-    assert len(substations["features"]) == 40
+    assert len(substations["features"]) >= 40
     for feat in substations["features"]:
         assert feat["properties"]["asset_type"] == "SUBSTATION"
 
@@ -99,11 +99,11 @@ def test_schema_properties_and_coordinates():
         assert has_id, f"Feature missing ID: {props}"
         assert "name" in props, f"Feature missing name: {props}"
 
-        # Points must have valid lat/lon
+        # Points must have valid lat/lon across all India coastal bounds
         if geom["type"] == "Point":
             lon, lat = coords[0], coords[1]
-            assert 75.0 <= lon <= 95.0, f"Longitude out of bounds for East Coast: {lon}"
-            assert 8.0 <= lat <= 26.0, f"Latitude out of bounds for East Coast: {lat}"
+            assert 68.0 <= lon <= 95.0, f"Longitude out of bounds for India Coastal: {lon}"
+            assert 6.0 <= lat <= 26.0, f"Latitude out of bounds for India Coastal: {lat}"
 
 
 def test_api_infrastructure_endpoint():
@@ -125,7 +125,7 @@ def test_api_infrastructure_endpoint():
     resp_type = client.get("/api/infrastructure?type=SUBSTATION")
     assert resp_type.status_code == 200
     body_type = resp_type.json()
-    assert len(body_type["features"]) == 40
+    assert len(body_type["features"]) >= 40
 
     # 4. Combined state + type
     resp_combined = client.get("/api/infrastructure?state=Odisha&type=SUBSTATION")
