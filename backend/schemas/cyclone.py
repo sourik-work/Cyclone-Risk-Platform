@@ -42,6 +42,20 @@ class AdvisoryAuditEntry(BaseModel):
     notes_or_reason: Optional[str] = None
 
 
+class AuditEvent(BaseModel):
+    event_type: str
+    timestamp: Optional[str] = None
+    actor: Optional[str] = None
+    resource_id: Optional[str] = None
+    reason: Optional[str] = None
+    headline: Optional[str] = None
+
+
+class AuditLogResponse(BaseModel):
+    events: List[AuditEvent]
+    total: int
+
+
 class TrackCategory(str, Enum):
     """IMD tropical cyclone intensity classification."""
 

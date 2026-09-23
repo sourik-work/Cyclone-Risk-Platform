@@ -25,6 +25,8 @@ from backend.schemas.cyclone import (
     AnticipatoryAdvisory,
     ApprovalRequest,
     ApprovalState,
+    AuditEvent,
+    AuditLogResponse,
     AuthVerifyRequest,
     AuthVerifyResponse,
     BhuvanLayer,
@@ -1253,6 +1255,48 @@ def reject_insurance_payout(
 def get_insurance_audit(evaluation_id: Optional[str] = None) -> List[Dict[str, Any]]:
     """Returns parametric insurance approval audit trail."""
     return _INSURANCE_AUDIT_TRAIL
+
+
+@router.get("/audit/recent", response_model=AuditLogResponse)
+@router.get("/api/audit/recent", response_model=AuditLogResponse)
+async def get_recent_audit(limit: int = 20, auth: dict = Depends(require_auth)):
+    """
+    Returns recent audit events across advisories + insurance triggers.
+    Reads from Firestore collections: advisory_audit, insurance_audit.
+    """
+    events = []
+    try:
+        from backend.services.firebase_service import get_firestore_client
+        db = get_firestore_client()
+    except Exception as e:
+        logger.warning(f"Firestore client initialization failed: {e}")
+        return {"events": [], "total": 0}
+
+    try:
+        for doc in db.collection("advisory_audit").order_by(
+            "timestamp", direction="DESCENDING"
+        ).limit(limit).stream():
+            data = doc.to_dict()
+            if data:
+                data["event_type"] = data.get("event_type", "ADVISORY_EVENT")
+                events.append(data)
+    except Exception as e:
+        print(f"Warning: advisory_audit read failed: {e}")
+
+    try:
+        for doc in db.collection("insurance_audit").order_by(
+            "timestamp", direction="DESCENDING"
+        ).limit(limit).stream():
+            data = doc.to_dict()
+            if data:
+                data["event_type"] = data.get("event_type", "INSURANCE_EVENT")
+                events.append(data)
+    except Exception as e:
+        print(f"Warning: insurance_audit read failed: {e}")
+
+    events.sort(key=lambda x: str(x.get("timestamp") or ""), reverse=True)
+    events = events[:limit]
+    return {"events": events, "total": len(events)}
 
 
 @router.post("/dialogflow/webhook")

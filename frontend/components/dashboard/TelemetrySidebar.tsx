@@ -52,6 +52,7 @@ import { ExposureReasoningCard } from './ExposureReasoningCard';
 import { ForecastComparisonCard } from './ForecastComparisonCard';
 import { RainfallDamagePanel } from './RainfallDamagePanel';
 import { TriageRankingCard } from './TriageRankingCard';
+import { AuditLogPanel } from './AuditLogPanel';
 import { getAuthHeader } from '../../lib/api';
 
 interface TelemetrySidebarProps {
@@ -1788,6 +1789,9 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         activePointIndex={activePointIndex}
         currentTimeIndex={activePointIndex}
       />
+
+      {/* 6. Human-in-the-Loop & System Audit Log (Workstream 19) */}
+      <AuditLogPanel />
     </aside>
 
     {/* Broadcast to Community Radio Network Modal */}
