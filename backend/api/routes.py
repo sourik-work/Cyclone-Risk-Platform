@@ -544,6 +544,16 @@ def get_live_cyclone(refresh: bool = Query(default=False, description="Force re-
     return _IMD_FETCHER.get_live_cyclone_status(force_refresh=refresh)
 
 
+@router.get("/agencies/status")
+@router.get("/api/agencies/status")
+def get_agency_status() -> Dict[str, Any]:
+    """Returns integration status for all configured met agency adapters."""
+    from backend.services.agency_adapters import AGENCY_ADAPTERS
+    return {
+        "agencies": [adapter.get_status() for adapter in AGENCY_ADAPTERS.values()]
+    }
+
+
 @router.post("/forecast/track", response_model=ForecastTrackResponse)
 def forecast_cyclone_track(
     req: ForecastTrackRequest,

@@ -57,6 +57,7 @@ import { ForecastComparisonCard } from './ForecastComparisonCard';
 import { RainfallDamagePanel } from './RainfallDamagePanel';
 import { TriageRankingCard } from './TriageRankingCard';
 import { AuditLogPanel } from './AuditLogPanel';
+import { APACAgencyStatusPanel } from './APACAgencyStatusPanel';
 import { getAuthHeader } from '../../lib/api';
 
 interface TelemetrySidebarProps {
@@ -1945,6 +1946,9 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
       {/* 6. Human-in-the-Loop & System Audit Log (Workstream 19) */}
       <AuditLogPanel />
+
+      {/* 7. APAC Meteorological Agency Adapters (Workstream 22) */}
+      <APACAgencyStatusPanel />
     </aside>
 
     {/* Multi-Channel Last-Mile Advisory Dispatch Modal (Workstream 20) */}

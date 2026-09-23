@@ -359,13 +359,19 @@ The platform generalizes to any cyclone basin because each layer is designed as 
 | Language | 6 Indian languages | Bengali (Bangladesh), Sinhala + Tamil (Sri Lanka), Burmese (Myanmar), Tagalog (Philippines) |
 | Insurance partner | NDRP | CCRIF (Caribbean pattern), national risk pools |
 
-### Planned country adapters (Phase 2)
-- **Sri Lanka:** JTWC + Met Dept adapters, Tamil + Sinhala TTS
-- **Myanmar:** JTWC + DMH adapters, Burmese TTS
-- **Philippines:** PAGASA + JTWC adapters, Tagalog + Cebuano TTS
-- **Indonesia:** BMKG adapter, Bahasa Indonesia + Javanese TTS
+### Adapter Architecture
 
-Each new country requires: (1) a track data adapter (~200 LOC), (2) a vulnerability GeoJSON (~4 districts to demonstrate), (3) additional TTS language models. The core prediction, exposure, advisory, and insurance pipelines work unchanged.
+All 5 major APAC meteorological agencies are normalized to a single interface (`MetAgencyAdapter`). Each adapter file contains the exact production data path documented in its `documented_path` field:
+
+| Agency | Region | Integration | Production Path |
+|--------|--------|-------------|-----------------|
+| IMD (India) | Bay of Bengal | ✅ Live | RSMC New Delhi XML/HTML |
+| JTWC | Western Pacific | 🟡 Stub | TC warning TXT + shapefiles |
+| PAGASA | Philippines | 🟡 Stub | Tropical cyclone bulletin HTML |
+| BMKG | Indonesia | 🟡 Stub | Cyclone bulletin JSON API |
+| DMH | Myanmar | 🟡 Stub | Bulletin PDF/HTML |
+
+Adding a new agency requires only: (1) a new `*_adapter.py` file implementing the interface, (2) registering it in `AGENCY_ADAPTERS`. Core pipeline unchanged.
 
 ---
 
