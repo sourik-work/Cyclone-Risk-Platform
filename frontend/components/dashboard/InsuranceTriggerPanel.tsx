@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { ShieldCheck, Coins, CheckCircle2, XCircle, Clock, RefreshCw, Zap, Loader2 } from 'lucide-react';
 import { fetchWithCache } from '../../lib/cache';
 import { getAuthHeader } from '../../lib/api';
+import { ScenarioOverride } from '../map/types';
 
 export interface InsuranceTriggerResult {
   contract_id: string;
@@ -46,6 +47,7 @@ export interface InsuranceTriggerPanelProps {
   cycloneName?: string | null;
   cycloneCategory?: string | null; // e.g., "DEPRESSION", "SEVERE CYCLONIC STORM"
   currentState?: string;
+  scenario?: ScenarioOverride | null;
 }
 
 const FALLBACK_EVALUATION: InsuranceEvaluateResponse = {
@@ -116,6 +118,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
   cycloneName,
   cycloneCategory,
   currentState,
+  scenario,
 }) => {
   const [data, setData] = useState<InsuranceEvaluateResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -137,7 +140,10 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
           'Content-Type': 'application/json',
           ...authHeader,
         },
-        body: JSON.stringify({ cyclone_id: targetId }),
+        body: JSON.stringify({
+          cyclone_id: targetId,
+          scenario: scenario?.enabled ? scenario : undefined,
+        }),
       });
 
       if (!res.ok) {
@@ -157,7 +163,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [cycloneId, mode, hasActiveCyclone]);
+  }, [cycloneId, mode, hasActiveCyclone, scenario]);
 
   const [isActionInProgress, setIsActionInProgress] = useState<boolean>(false);
 

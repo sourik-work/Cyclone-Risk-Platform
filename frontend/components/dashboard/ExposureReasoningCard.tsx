@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Brain, Sparkles, Loader2, AlertCircle, CheckCircle2, ShieldAlert, RefreshCw } from 'lucide-react';
 import { getAuthHeader } from '../../lib/api';
+import { ScenarioOverride } from '../map/types';
 
 interface CriticalAsset {
   name: string;
@@ -21,11 +22,13 @@ interface ExposureReasoningData {
 interface ExposureReasoningCardProps {
   districtName: string;
   cycloneId: string;
+  scenario?: ScenarioOverride | null;
 }
 
 export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
   districtName,
   cycloneId,
+  scenario,
 }) => {
   const [data, setData] = useState<ExposureReasoningData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,6 +57,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
         body: JSON.stringify({
           district_name: districtName,
           cyclone_id: cycloneId,
+          scenario: scenario?.enabled ? scenario : undefined,
         }),
         signal: controller.signal,
       });
@@ -77,7 +81,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
       clearTimeout(timeoutId);
       setIsLoading(false);
     }
-  }, [districtName, cycloneId]);
+  }, [districtName, cycloneId, scenario]);
 
   useEffect(() => {
     fetchExposureReasoning();

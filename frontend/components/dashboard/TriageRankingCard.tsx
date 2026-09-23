@@ -19,12 +19,13 @@ import {
   MessageSquare,
   Check,
 } from 'lucide-react';
-import { TriageAsset, TriageResponse } from '../map/types';
+import { TriageAsset, TriageResponse, ScenarioOverride } from '../map/types';
 import { getAuthHeader } from '../../lib/api';
 
 interface TriageRankingCardProps {
   cycloneId: string;
   stormName?: string | null;
+  scenario?: ScenarioOverride | null;
 }
 
 type AssetStatus = 'OPERATIONAL' | 'OFFLINE' | 'DAMAGED' | 'FULL' | 'EVACUATING';
@@ -32,6 +33,7 @@ type AssetStatus = 'OPERATIONAL' | 'OFFLINE' | 'DAMAGED' | 'FULL' | 'EVACUATING'
 export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
   cycloneId,
   stormName,
+  scenario,
 }) => {
   const [triageAssets, setTriageAssets] = useState<TriageAsset[]>([]);
   const [totalCount, setTotalCount] = useState<number>(105);
@@ -89,6 +91,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
           body: JSON.stringify({
             cyclone_id: cycloneId,
             top_n: 5,
+            scenario: scenario?.enabled ? scenario : undefined,
           }),
         });
 
@@ -222,7 +225,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [cycloneId, backendUrl]);
+  }, [cycloneId, backendUrl, scenario]);
 
   // Handle status update
   const handleUpdateStatus = async (

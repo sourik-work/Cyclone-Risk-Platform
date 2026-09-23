@@ -14,6 +14,7 @@ import {
   InfrastructureFeatureCollection,
   LiveCycloneResponse,
   MapLayerToggles,
+  ScenarioOverride,
   SupportedLanguage,
 } from '../components/map/types';
 import {
@@ -159,6 +160,9 @@ export default function Home() {
   // Historical selection
   const [selectedStormId, setSelectedStormId] = useState<string>('fani');
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>('english');
+
+  // Workstream 25: What-if Scenario Override State
+  const [scenario, setScenario] = useState<ScenarioOverride | null>(null);
 
   // Advisories state
   const [advisory, setAdvisory] = useState<AnticipatoryAdvisory | null>(null);
@@ -435,6 +439,7 @@ export default function Home() {
             point_index: pointIndex,
             target_districts: districtName ? [districtName] : undefined,
             lead_time_hours: 18.0,
+            scenario: scenario?.enabled ? scenario : undefined,
           }),
           signal: timeoutController.signal,
         });
@@ -465,7 +470,7 @@ export default function Home() {
         }
       }
     },
-    []
+    [scenario]
   );
 
   // Consolidate into ONE useEffect: debounced advisory fetch with AbortController
@@ -500,7 +505,7 @@ export default function Home() {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [selectedStormId, activePointIndex, currentLanguage, selectedDistrict?.district_name, mode, hasActiveCyclone, activeTrack, fetchAdvisory]);
+  }, [selectedStormId, activePointIndex, currentLanguage, selectedDistrict?.district_name, mode, hasActiveCyclone, activeTrack, scenario, fetchAdvisory]);
 
   const [layerToggles, setLayerToggles] = useState<MapLayerToggles>({
     showTrack: true,
@@ -677,6 +682,7 @@ export default function Home() {
                 onToggleLayer={handleToggleLayer}
                 selectedState={selectedState}
                 infrastructureData={infrastructureData}
+                scenario={scenario}
               />
             </div>
 
@@ -724,6 +730,8 @@ export default function Home() {
             hasActiveCyclone={mode === 'live' && !!liveData?.active_cyclone}
             liveData={liveData}
             selectedStormId={selectedStormId}
+            scenario={scenario}
+            onApplyScenario={setScenario}
           />
         </div>
       </div>

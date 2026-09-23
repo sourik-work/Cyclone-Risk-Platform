@@ -389,6 +389,19 @@ All 5 major APAC meteorological agencies are normalized to a single interface (`
 
 Adding a new agency requires only: (1) a new `*_adapter.py` file implementing the interface, (2) registering it in `AGENCY_ADAPTERS`. Core pipeline unchanged.
 
+### What-If Scenario Override
+
+Users can toggle a scenario override panel to test hypothetical storm parameters without modifying the historical track:
+
+- **Wind multiplier:** 0.5× to 1.5×
+- **Pressure offset:** -30 to +30 hPa
+- **Track shift:** ±1.0° latitude/longitude
+- **Forward speed:** 0.5× to 2.0×
+
+When enabled, all downstream models update live — forecast, surge simulation, rainfall pathway, insurance triggers, infrastructure triage, and Gemini exposure reasoning. This is standard "what-if" analysis used by disaster management authorities to test contingency plans.
+
+A visual indicator on the map and header makes it clear that displayed data is hypothetical.
+
 ---
 
 ## 🚀 Quick Start

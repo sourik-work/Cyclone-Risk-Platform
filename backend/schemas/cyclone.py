@@ -243,6 +243,73 @@ class LiveCycloneResponse(BaseModel):
     message: str = Field(description="Human-readable status or warning summary")
 
 
+class ScenarioOverride(BaseModel):
+    """What-if scenario parameter overrides to simulate hypothetical storm conditions."""
+
+    cyclone_id: str = "fani"
+    wind_multiplier: float = 1.0  # 0.5 to 1.5
+    pressure_offset_hpa: float = 0.0  # -30 to +30
+    track_shift_lat: float = 0.0  # -1.0 to +1.0 degrees
+    track_shift_lon: float = 0.0  # -1.0 to +1.0 degrees
+    forward_speed_multiplier: float = 1.0  # 0.5 to 2.0
+    enabled: bool = False
+
+
+def apply_scenario_override(track: CycloneTrack, override: Optional[ScenarioOverride]) -> CycloneTrack:
+    """Apply what-if scenario parameter overrides to a CycloneTrack instance."""
+    if not override or not override.enabled:
+        return track
+
+    modified_points = []
+    for pt in track.track_points:
+        # Wind multiplier
+        new_wind_knots = (
+            round(pt.wind_speed_knots * override.wind_multiplier, 1)
+            if pt.wind_speed_knots is not None
+            else 0.0
+        )
+        new_wind_kmph = round(
+            (pt.wind_speed_kmph if pt.wind_speed_kmph is not None else pt.wind_speed_knots * 1.852)
+            * override.wind_multiplier,
+            1,
+        )
+        new_gust_kmph = (
+            round(pt.gust_speed_kmph * override.wind_multiplier, 1)
+            if pt.gust_speed_kmph is not None
+            else None
+        )
+
+        # Pressure offset
+        new_pressure = round(float(pt.central_pressure_hpa) + override.pressure_offset_hpa, 1)
+        new_pressure = max(800.0, min(1050.0, new_pressure))
+
+        # Track shift
+        new_lat = round(pt.latitude + override.track_shift_lat, 4)
+        new_lon = round(pt.longitude + override.track_shift_lon, 4)
+
+        # Forward speed
+        new_forward_speed = (
+            round(pt.forward_speed_kmph * override.forward_speed_multiplier, 1)
+            if pt.forward_speed_kmph is not None
+            else None
+        )
+
+        modified_pt = pt.model_copy(
+            update={
+                "wind_speed_knots": new_wind_knots,
+                "wind_speed_kmph": new_wind_kmph,
+                "gust_speed_kmph": new_gust_kmph,
+                "central_pressure_hpa": new_pressure,
+                "latitude": new_lat,
+                "longitude": new_lon,
+                "forward_speed_kmph": new_forward_speed,
+            }
+        )
+        modified_points.append(modified_pt)
+
+    return track.model_copy(update={"track_points": modified_points})
+
+
 class ForecastTrackRequest(BaseModel):
     """Payload to request LSTM track forecast for a specific cyclone."""
 
@@ -250,6 +317,10 @@ class ForecastTrackRequest(BaseModel):
     recent_point_indices: Optional[List[int]] = Field(
         default=None,
         description="4 point indices from historical/live track used as input sequence (default: [0, 1, 2, 3])"
+    )
+    scenario: Optional[ScenarioOverride] = Field(
+        default=None,
+        description="Optional what-if scenario parameter overrides"
     )
 
 
@@ -310,6 +381,7 @@ class SurgeSimulationRequest(BaseModel):
 
     cyclone_id: str = Field(default="BOB-02-2019", description="Cyclone ID (e.g. 'BOB-02-2019', 'fani')")
     district_id: str = Field(default="Puri", description="District ID or Name (e.g. 'OD-PUR', 'Puri')")
+    scenario: Optional[ScenarioOverride] = Field(default=None, description="Optional what-if scenario parameter overrides")
 
 
 class SurgeSimulation(BaseModel):
@@ -486,6 +558,7 @@ class InsuranceEvaluateRequest(BaseModel):
     """Payload to trigger parametric insurance evaluation."""
 
     cyclone_id: str = "BOB-02-2019"
+    scenario: Optional[ScenarioOverride] = None
 
 
 class UncertaintyAssessment(BaseModel):
@@ -532,6 +605,7 @@ class ExposureReasoningRequest(BaseModel):
 
     district_name: str
     cyclone_id: str
+    scenario: Optional[ScenarioOverride] = None
 
 
 class ExposureReasoningResponse(BaseModel):
@@ -551,6 +625,7 @@ class GeminiForecastRequest(BaseModel):
     cyclone_id: str
     recent_point_count: int = 4  # how many recent points to send to Gemini
     end_index: Optional[int] = None  # which point is the "current" observation
+    scenario: Optional[ScenarioOverride] = None
 
 
 class GeminiForecastPoint(BaseModel):
@@ -580,6 +655,7 @@ class RainfallDamageRequest(BaseModel):
 
     district_name: str
     cyclone_id: Optional[str] = None
+    scenario: Optional[ScenarioOverride] = None
 
 
 class DamagePathway(BaseModel):
@@ -626,6 +702,7 @@ class TriageRequest(BaseModel):
 
     cyclone_id: str
     top_n: int = 10
+    scenario: Optional[ScenarioOverride] = None
 
 
 class TriageResponse(BaseModel):

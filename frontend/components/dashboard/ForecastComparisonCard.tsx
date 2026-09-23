@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Brain, Cpu, Sparkles, Loader2, CheckCircle2, AlertTriangle, Info, RefreshCw } from 'lucide-react';
-import { CycloneTrack } from '../map/types';
+import { CycloneTrack, ScenarioOverride } from '../map/types';
 import { getAuthHeader } from '../../lib/api';
 
 interface LstmForecastPoint {
@@ -51,6 +51,7 @@ interface ForecastComparisonCardProps {
   track?: CycloneTrack | null;
   currentTimeIndex?: number;
   activePointIndex?: number;
+  scenario?: ScenarioOverride | null;
 }
 
 function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -72,6 +73,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
   track,
   currentTimeIndex,
   activePointIndex,
+  scenario,
 }) => {
   const [lstm, setLstm] = useState<LstmForecastResponse | null>(null);
   const [gemini, setGemini] = useState<GeminiForecastResponse | null>(null);
@@ -124,6 +126,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
             body: JSON.stringify({
               cyclone_id: cycloneId,
               recent_point_indices: indices,
+              scenario: scenario?.enabled ? scenario : undefined,
             }),
             signal: lstmController.signal,
           }).then(async (res) => {
@@ -140,6 +143,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
               cyclone_id: cycloneId,
               recent_point_count: 4,
               end_index: endIdx,
+              scenario: scenario?.enabled ? scenario : undefined,
             }),
             signal: geminiController.signal,
           }).then(async (res) => {
@@ -173,7 +177,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [cycloneId, effectivePointIndex, track]);
+  }, [cycloneId, effectivePointIndex, track, scenario]);
 
   useEffect(() => {
     fetchForecasts();

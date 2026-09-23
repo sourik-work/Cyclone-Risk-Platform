@@ -2,19 +2,21 @@
 
 import React, { useEffect, useState } from 'react';
 import { CloudRain, Mountain, Droplets, AlertTriangle, ShieldCheck, Compass, Info, Waves } from 'lucide-react';
-import { RainfallDamageResponse } from '../map/types';
+import { RainfallDamageResponse, ScenarioOverride } from '../map/types';
 import { getAuthHeader } from '../../lib/api';
 
 interface RainfallDamagePanelProps {
   districtName: string;
   cycloneId?: string;
   initialData?: RainfallDamageResponse | null;
+  scenario?: ScenarioOverride | null;
 }
 
 export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
   districtName,
   cycloneId,
   initialData,
+  scenario,
 }) => {
   const [data, setData] = useState<RainfallDamageResponse | null>(initialData || null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,6 +38,7 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
           body: JSON.stringify({
             district_name: districtName,
             cyclone_id: cycloneId,
+            scenario: scenario?.enabled ? scenario : undefined,
           }),
         });
         if (res.ok) {
@@ -94,7 +97,7 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [districtName, cycloneId]);
+  }, [districtName, cycloneId, scenario]);
 
   if (!data) return null;
 

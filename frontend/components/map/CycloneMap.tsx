@@ -9,6 +9,7 @@ import {
   InfrastructureFeatureCollection,
   MapLayerToggles,
   RainfallForecast,
+  ScenarioOverride,
   SurgeSimulation,
   TrackPoint,
   VulnerabilityFeatureCollection,
@@ -33,6 +34,7 @@ interface CycloneMapProps {
   onToggleLayer?: (layerKey: keyof MapLayerToggles) => void;
   selectedState?: string;
   infrastructureData?: InfrastructureFeatureCollection | null;
+  scenario?: ScenarioOverride | null;
 }
 
 /**
@@ -251,7 +253,8 @@ const GoogleMapsAiForecastLayer: React.FC<{
   track: CycloneTrack;
   activePointIndex: number;
   visible?: boolean;
-}> = ({ track, activePointIndex, visible = true }) => {
+  scenario?: ScenarioOverride | null;
+}> = ({ track, activePointIndex, visible = true, scenario }) => {
   const map = useMap();
   const [aiForecast, setAiForecast] = useState<ForecastTrackResponse | null>(null);
 
@@ -285,6 +288,7 @@ const GoogleMapsAiForecastLayer: React.FC<{
         body: JSON.stringify({
           cyclone_id: cycloneId,
           recent_point_indices: recentIndices,
+          scenario: scenario?.enabled ? scenario : undefined,
         }),
       })
         .then((res) => {
@@ -304,7 +308,7 @@ const GoogleMapsAiForecastLayer: React.FC<{
     return () => {
       isMounted = false;
     };
-  }, [track.id, track.name, track.track_points, activePointIndex, visible]);
+  }, [track.id, track.name, track.track_points, activePointIndex, visible, scenario]);
 
   useEffect(() => {
     if (!map || !visible || !aiForecast || typeof google === 'undefined') return;
@@ -939,12 +943,34 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   onToggleLayer,
   selectedState = 'Odisha',
   infrastructureData,
+  scenario,
 }) => {
   const isLive = mode === 'live';
   const isMonitoring = isLive && !hasActiveCyclone;
 
-  const isFani = track.name?.toLowerCase().includes('fani') || track.id === 'BOB-02-2019';
-  const isAmphan = track.name?.toLowerCase().includes('amphan') || track.id === 'BOB-01-2020';
+  const effectiveTrack: CycloneTrack = useMemo(() => {
+    if (!scenario?.enabled) return track;
+    const latShift = scenario.track_shift_lat || 0;
+    const lonShift = scenario.track_shift_lon || 0;
+    const windMult = scenario.wind_multiplier || 1.0;
+    const pressOffset = scenario.pressure_offset_hpa || 0;
+    const speedMult = scenario.forward_speed_multiplier || 1.0;
+
+    return {
+      ...track,
+      track_points: (track.track_points || []).map((pt) => ({
+        ...pt,
+        latitude: pt.latitude + latShift,
+        longitude: pt.longitude + lonShift,
+        wind_speed_kmph: Math.round((pt.wind_speed_kmph ?? 0) * windMult),
+        central_pressure_hpa: Math.round(pt.central_pressure_hpa + pressOffset),
+        forward_speed_kmph: Math.round((pt.forward_speed_kmph ?? 0) * speedMult),
+      })),
+    };
+  }, [track, scenario]);
+
+  const isFani = effectiveTrack.name?.toLowerCase().includes('fani') || effectiveTrack.id === 'BOB-02-2019';
+  const isAmphan = effectiveTrack.name?.toLowerCase().includes('amphan') || effectiveTrack.id === 'BOB-01-2020';
 
   // When mode === 'historical': render Earth Engine overlay (Fani only), track line, forecast cone, and markers as normal.
   // When mode === 'live': hide ALL historical layers.
@@ -1016,7 +1042,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   useEffect(() => {
     let isMounted = true;
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-    const cycloneId = track.name ? track.name.toLowerCase() : track.id;
+    const cycloneId = effectiveTrack.name ? effectiveTrack.name.toLowerCase() : effectiveTrack.id;
     const targetDistrict = selectedDistrict?.district_name || (selectedState === 'West Bengal' ? 'Purba Medinipur' : selectedState === 'Andhra Pradesh' ? 'Visakhapatnam' : selectedState === 'Tamil Nadu' ? 'Chennai' : 'Puri');
 
     // 1. Fetch surge simulation
@@ -1028,6 +1054,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
         body: JSON.stringify({
           cyclone_id: cycloneId,
           district_id: targetDistrict,
+          scenario: scenario?.enabled ? scenario : undefined,
         }),
       })
         .then((res) => {
@@ -1066,7 +1093,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [track.id, track.name, selectedDistrict?.district_name, selectedState, vulnerabilityData]);
+  }, [effectiveTrack.id, effectiveTrack.name, selectedDistrict?.district_name, selectedState, vulnerabilityData, scenario]);
 
   // Read key and tile URL from env with fallback to authenticated credentials
   const envKey =
@@ -1145,6 +1172,17 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
 
   return (
     <div className="relative w-full h-full flex flex-col">
+      {/* What-If Scenario Active Banner (Workstream 25) */}
+      {scenario?.enabled && (
+        <div
+          id="what-if-scenario-banner"
+          className="w-full bg-amber-500/20 border-b border-amber-500/50 px-4 py-1.5 text-amber-300 text-xs font-mono font-bold flex items-center justify-center gap-2 z-30 shadow-md backdrop-blur-md shrink-0"
+        >
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span>⚡ WHAT-IF SCENARIO ACTIVE — displaying hypothetical parameters</span>
+        </div>
+      )}
+
       {/* Map Control Bar */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
         {/* Earth Engine Overlay Active Pill (Historical Mode - Fani only) */}
@@ -1283,23 +1321,24 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
 
               {/* 2. Storm Track Separate Layer (Observed + Forecast) - Historical or Live Active */}
               <GoogleMapsTrackLayer
-                track={track}
+                track={effectiveTrack}
                 activePointIndex={activePointIndex}
                 visible={effectiveShowTrack}
               />
 
               {/* 3. Uncertainty Cone Separate Layer - Historical or Live Active */}
               <GoogleMapsUncertaintyConeLayer
-                track={track}
+                track={effectiveTrack}
                 activePointIndex={activePointIndex}
                 visible={effectiveShowForecastCone}
               />
 
               {/* 4. AI Forecast Trajectory Layer (TrackLSTM - Dashed Yellow Line) */}
               <GoogleMapsAiForecastLayer
-                track={track}
+                track={effectiveTrack}
                 activePointIndex={activePointIndex}
                 visible={effectiveShowAiForecast}
+                scenario={scenario}
               />
 
               {/* 5. Coastal District Vulnerability Overlay (With Rainfall Color Coding when active) */}
@@ -1349,7 +1388,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           </APIProvider>
         ) : (
           <MapFallbackRadar
-            track={track}
+            track={effectiveTrack}
             activePointIndex={activePointIndex}
             vulnerabilityData={vulnerabilityData}
             selectedDistrict={selectedDistrict}

@@ -67,6 +67,8 @@ from backend.schemas.cyclone import (
     TriageResponse,
     AssetStatusUpdate,
     AssetStatusResponse,
+    ScenarioOverride,
+    apply_scenario_override,
     VulnerabilityFeatureCollection,
 )
 from backend.services.bigquery_service import (
@@ -564,6 +566,9 @@ def forecast_cyclone_track(
     """Predicts a 48-hour forward cyclone trajectory and intensity using the trained TrackLSTM model."""
     # 1. Load the cyclone track data
     track = get_cyclone_track(req.cyclone_id)
+    if req.scenario and req.scenario.enabled:
+        track = apply_scenario_override(track, req.scenario)
+
     if len(track.track_points) < 4:
         raise HTTPException(
             status_code=400,
@@ -665,6 +670,8 @@ async def gemini_forecast(
     track = _find_historical_track(req.cyclone_id)
     if not track:
         raise HTTPException(404, detail=f"Cyclone track '{req.cyclone_id}' not found")
+    if req.scenario and req.scenario.enabled:
+        track = apply_scenario_override(track, req.scenario)
 
     # Take observed points up to end_index if specified, else last N points
     if req.end_index is not None:
@@ -731,6 +738,8 @@ def triage_rank_endpoint(
 
     # 1. Retrieve storm track coordinates
     track = _find_historical_track(req.cyclone_id)
+    if track and req.scenario and req.scenario.enabled:
+        track = apply_scenario_override(track, req.scenario)
     storm_data: Dict[str, Any] = {"cyclone_id": req.cyclone_id}
     if track and track.track_points:
         storm_data["track_points"] = [
@@ -788,7 +797,7 @@ def rainfall_damage_pathway(
     from backend.services.rainfall_service import get_rainfall_forecast, _load_districts
     from backend.services.rainfall_damage_service import compute_damage_pathway
 
-    rainfall = get_rainfall_forecast(req.district_name, req.cyclone_id)
+    rainfall = get_rainfall_forecast(req.district_name, req.cyclone_id, scenario=req.scenario)
     districts = _load_districts()
     district_meta = districts.get(req.district_name.lower(), {})
     result = compute_damage_pathway(req.district_name, rainfall, district_meta)
@@ -801,7 +810,7 @@ def simulate_surge_endpoint(
     auth: dict = Depends(require_auth),
 ) -> SurgeSimulation:
     """Simulates hydrodynamic storm surge, inland inundation polygon, and exposed assets."""
-    data = simulate_surge(cyclone_id=req.cyclone_id, district_id=req.district_id)
+    data = simulate_surge(cyclone_id=req.cyclone_id, district_id=req.district_id, scenario=req.scenario)
     return SurgeSimulation.model_validate(data)
 
 
@@ -1064,6 +1073,8 @@ def evaluate_insurance_contracts(
 
     # 2. Extract storm track metadata (max wind)
     peak_wind = _load_track_max_wind(payload.cyclone_id)
+    if payload.scenario and payload.scenario.enabled:
+        peak_wind = peak_wind * payload.scenario.wind_multiplier
 
     # District metrics map across all districts mentioned in contracts
     district_metrics: Dict[str, Dict[str, float]] = {}
@@ -1074,14 +1085,14 @@ def evaluate_insurance_contracts(
             if d not in district_metrics:
                 # Surge simulation
                 try:
-                    surge_res = simulate_surge(cyclone_id=payload.cyclone_id, district_id=d)
+                    surge_res = simulate_surge(cyclone_id=payload.cyclone_id, district_id=d, scenario=payload.scenario)
                     max_surge_m = float(surge_res.get("max_surge_m", 0.0))
                 except Exception:
                     max_surge_m = 0.0
 
                 # Rainfall forecast
                 try:
-                    rf_res = get_rainfall_forecast(district_id=d, cyclone_id=payload.cyclone_id)
+                    rf_res = get_rainfall_forecast(district_id=d, cyclone_id=payload.cyclone_id, scenario=payload.scenario)
                     rain_mm = float(rf_res.get("forecast_24h_mm", 0.0))
                 except Exception:
                     rain_mm = 0.0
@@ -1370,9 +1381,11 @@ async def reason_exposure(
     from backend.services.rainfall_service import get_rainfall_forecast
     from backend.services.rainfall_service import _load_track_max_wind
 
-    surge = simulate_surge(req.cyclone_id, req.district_name)
-    rain = get_rainfall_forecast(req.district_name, req.cyclone_id)
+    surge = simulate_surge(req.cyclone_id, req.district_name, scenario=req.scenario)
+    rain = get_rainfall_forecast(req.district_name, req.cyclone_id, scenario=req.scenario)
     wind = _load_track_max_wind(req.cyclone_id)
+    if req.scenario and req.scenario.enabled:
+        wind = wind * req.scenario.wind_multiplier
 
     storm_data = {
         "wind_kmph": wind,

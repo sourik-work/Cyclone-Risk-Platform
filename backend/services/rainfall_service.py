@@ -108,7 +108,11 @@ def classify_rainfall_risk(mm_24h: float) -> str:
         return "CRITICAL"
 
 
-def get_rainfall_forecast(district_id: str, cyclone_id: Optional[str] = None) -> Dict[str, Any]:
+def get_rainfall_forecast(
+    district_id: str,
+    cyclone_id: Optional[str] = None,
+    scenario: Optional[Any] = None,
+) -> Dict[str, Any]:
     """Generates a deterministic 24/48/72h accumulated rainfall forecast in mm.
     
     - Base rainfall derived from district coastal proximity, coastline length, and elevation.
@@ -138,6 +142,8 @@ def get_rainfall_forecast(district_id: str, cyclone_id: Optional[str] = None) ->
 
     # 2. Storm intensity scaling
     max_wind_kmph = _load_track_max_wind(cyclone_id)
+    if scenario and getattr(scenario, "enabled", False):
+        max_wind_kmph = max_wind_kmph * getattr(scenario, "wind_multiplier", 1.0)
     if max_wind_kmph >= 180.0:
         # Severe / Extremely Severe / Super Cyclonic Storm (e.g. Fani, Amphan)
         base_intensity = 195.0 + (max_wind_kmph - 180.0) * 0.75

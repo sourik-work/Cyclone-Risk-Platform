@@ -399,5 +399,15 @@ export interface TriageResponse {
   top_priority_assets: TriageAsset[];
 }
 
+export interface ScenarioOverride {
+  cyclone_id: string;
+  wind_multiplier: number; // 0.5 to 1.5
+  pressure_offset_hpa: number; // -30 to +30
+  track_shift_lat: number; // -1.0 to +1.0
+  track_shift_lon: number; // -1.0 to +1.0
+  forward_speed_multiplier: number; // 0.5 to 2.0
+  enabled: boolean;
+}
+
 
 

@@ -58,6 +58,8 @@ import { RainfallDamagePanel } from './RainfallDamagePanel';
 import { TriageRankingCard } from './TriageRankingCard';
 import { AuditLogPanel } from './AuditLogPanel';
 import { APACAgencyStatusPanel } from './APACAgencyStatusPanel';
+import { ScenarioOverridePanel } from './ScenarioOverridePanel';
+import { ScenarioOverride } from '../map/types';
 import { getAuthHeader } from '../../lib/api';
 
 interface TelemetrySidebarProps {
@@ -80,6 +82,8 @@ interface TelemetrySidebarProps {
   selectedCountry?: string;
   onSelectCountry?: (country: string) => void;
   countries?: Array<{ id: string; name: string; states: string[] }>;
+  scenario?: ScenarioOverride | null;
+  onApplyScenario?: (scenario: ScenarioOverride | null) => void;
 }
 
 const formatCount = (val: number): string => {
@@ -272,6 +276,8 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   selectedCountry = 'india',
   onSelectCountry,
   countries,
+  scenario,
+  onApplyScenario,
 }) => {
   const currentCountries = countries || [
     { id: 'india', name: 'India', states: COASTAL_STATES },
@@ -1354,6 +1360,13 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         )}
       </div>
 
+      {/* 2.45 What-If Scenario Override Panel (Workstream 25) */}
+      <ScenarioOverridePanel
+        scenario={scenario || null}
+        onApplyScenario={onApplyScenario || (() => {})}
+        track={track}
+      />
+
       {/* 2.5 Infrastructure Exposure Card (Phase 1, Workstream 1) */}
       <div
         id="infrastructure-exposure-card"
@@ -1552,12 +1565,14 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         key={`exposure-${track.id || selectedStormId}-${selectedDistrict?.district_name || 'Puri'}`}
         districtName={selectedDistrict?.district_name || 'Puri'}
         cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
+        scenario={scenario}
       />
 
       {/* 2.58 Infrastructure Triage Ranking (Workstream 16: Operational Criticality Priority Ranking) */}
       <TriageRankingCard
         cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
         stormName={track.name || (selectedStormId === 'amphan' ? 'Amphan' : 'Fani')}
+        scenario={scenario}
       />
 
       {/* 2.6 Hazard Forecast Card (Workstream 2: Rainfall Damage Pathway & Storm Surge Modeling) */}
@@ -1678,6 +1693,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       <RainfallDamagePanel
         districtName={selectedDistrict?.district_name || 'Puri'}
         cycloneId={track.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
+        scenario={scenario}
       />
 
       {/* FCM Push Alert Subscription Card */}
@@ -1696,6 +1712,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         cycloneName={mode === 'live' ? (liveData?.active_cyclone?.name || null) : (track?.name || (selectedStormId === 'amphan' ? 'Amphan' : 'Fani'))}
         cycloneCategory={mode === 'live' ? (liveData?.active_cyclone?.current_status || null) : (track?.current_status || 'Super Cyclonic Storm')}
         currentState={selectedState || 'Odisha'}
+        scenario={scenario}
       />
 
       {/* 3. Gemini Multilingual Anticipatory Action Early Warning */}
@@ -2051,6 +2068,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         track={track}
         activePointIndex={activePointIndex}
         currentTimeIndex={activePointIndex}
+        scenario={scenario}
       />
 
       {/* 6. Human-in-the-Loop & System Audit Log (Workstream 19) */}

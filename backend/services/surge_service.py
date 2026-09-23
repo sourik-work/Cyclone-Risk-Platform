@@ -121,7 +121,7 @@ def _generate_inundation_polygon(
     }
 
 
-def simulate_surge(cyclone_id: str, district_id: str) -> Dict[str, Any]:
+def simulate_surge(cyclone_id: str, district_id: str, scenario: Optional[Any] = None) -> Dict[str, Any]:
     """Simulates storm surge height, inundation extent, and affected population/infrastructure.
     
     Uses the physics-lite formulation:
@@ -160,6 +160,8 @@ def simulate_surge(cyclone_id: str, district_id: str) -> Dict[str, Any]:
     # 1. Physics-lite surge calculation
     # wind_kmph from active cyclone track or baseline
     wind_kmph = _load_track_max_wind(cyclone_id)
+    if scenario and getattr(scenario, "enabled", False):
+        wind_kmph = wind_kmph * getattr(scenario, "wind_multiplier", 1.0)
     bathymetry_factor = BATHYMETRY_FACTORS.get(state_name.lower(), 1.25)
     
     # Low-elevation districts suffer greater onshore surge run-up
