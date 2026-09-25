@@ -1,5 +1,7 @@
 """Unit tests for TrackLSTM cyclone track forecasting service and API route."""
 
+import json
+from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
@@ -115,12 +117,33 @@ def test_forecast_track_custom_indices_amphan(client: TestClient):
 
 def test_gemini_forecast_with_recent_point_indices(client: TestClient):
     """Verifies /api/forecast/gemini accepts recent_point_indices."""
-    res = client.post("/api/forecast/gemini", json={
-        "cyclone_id": "BOB-01-2020",
-        "recent_point_indices": [4, 5, 6, 7]
+    mock_payload = json.dumps({
+        "forecast": [
+            {
+                "lead_hours": (i + 1) * 3,
+                "lat": round(21.7 + (i + 1) * 0.10, 2),
+                "lon": round(88.3 + (i + 1) * 0.08, 2),
+                "wind_kmph": round(155.0 - (i * 5.0), 1),
+                "pressure_hpa": round(960.0 + (i * 3.0), 1),
+            }
+            for i in range(16)
+        ],
+        "reasoning": "Northward trajectory maintained along Bay of Bengal.",
+        "confidence": "HIGH",
     })
+
+    with patch("backend.services.gemini_forecast_service._get_client") as mock_client:
+        mock_client.return_value.models.generate_content.return_value.text = mock_payload
+        res = client.post("/api/forecast/gemini", json={
+            "cyclone_id": "BOB-01-2020",
+            "recent_point_indices": [4, 5, 6, 7]
+        })
+
     assert res.status_code == 200
     data = res.json()
     assert data["cyclone_id"] == "BOB-01-2020"
     assert "forecast" in data
+    assert len(data["forecast"]) == 16
+    assert data["confidence"] == "HIGH"
+
 
