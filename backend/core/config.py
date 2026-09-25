@@ -29,8 +29,9 @@ class AppSettings(BaseSettings):
     environment: str = "development"
     log_level: str = "INFO"
 
-    # Firebase
+    # Firebase & Frontend
     firebase_project_id: Optional[str] = None
+    frontend_url: Optional[str] = None
 
     model_config = SettingsConfigDict(
         env_file=(
