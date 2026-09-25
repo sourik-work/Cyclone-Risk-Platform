@@ -699,6 +699,26 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
     hasActiveCyclone,
   ]);
 
+  // Count total infrastructure assets for the active state
+  const stateAssetCount = useMemo(() => {
+    const data = infrastructureData || SEED_INFRASTRUCTURE_DATA;
+    const targetState = selectedDistrict?.state_name || activeState;
+    const stateNameLower = targetState.toLowerCase();
+    const isUT =
+      stateNameLower === 'union territories' ||
+      stateNameLower === 'ut' ||
+      stateNameLower === 'union_territories';
+
+    return data.features.filter((f) => {
+      const p = f.properties;
+      const s = (p.state || '').toLowerCase();
+      if (isUT) {
+        return s.includes('union') || s === 'ut' || s === 'union territories';
+      }
+      return s === stateNameLower;
+    }).length;
+  }, [infrastructureData, selectedDistrict?.state_name, activeState]);
+
   // Hazard Forecast State (Rainfall Accumulation & Storm Surge Hydrodynamics)
   const [hazardData, setHazardData] = useState<HazardSummary | null>(null);
   const [isLoadingHazards, setIsLoadingHazards] = useState<boolean>(false);
@@ -1368,197 +1388,209 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       />
 
       {/* 2.5 Infrastructure Exposure Card (Phase 1, Workstream 1) */}
-      <div
-        id="infrastructure-exposure-card"
-        className="card-glass p-4 space-y-3"
-      >
-        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-amber-400" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
-              INFRASTRUCTURE EXPOSURE
-            </h3>
+      {stateAssetCount === 0 ? (
+        <div className="card-glass p-4 space-y-2 border border-white/[0.06]">
+          <div className="flex items-center gap-2 text-text-secondary text-xs mono-data font-semibold">
+            <Info className="w-4 h-4 text-accent-cyan shrink-0" />
+            <span>INFRASTRUCTURE COVERAGE</span>
           </div>
-          <span className="text-[10px] text-amber-400 mono-data font-semibold">
-            {(selectedDistrict?.district_name || activeState).toUpperCase()}
-          </span>
+          <p className="text-xs text-text-tertiary leading-relaxed">
+            Infrastructure layer not yet populated for this region. Vulnerability + forecast coverage active.
+          </p>
         </div>
-
-        {/* CRITICAL — storm active + assets in surge cone */}
-        {districtInfrastructure.coastalWarningTier === 'CRITICAL' && (
-          <div
-            id="coastal-exposure-warning-badge"
-            className="flex items-center gap-2 p-3 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs mono-data backdrop-blur-sm"
-          >
-            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse shrink-0" />
-            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-            <div className="leading-tight">
-              <span className="font-bold text-red-200">CRITICAL STORM EXPOSURE:</span>{' '}
-              <span>{districtInfrastructure.criticalCoastalAssetsCount} asset(s) within 5km of shore AND inside the forecast cone</span>
+      ) : (
+        <div
+          id="infrastructure-exposure-card"
+          className="card-glass p-4 space-y-3"
+        >
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-400" />
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
+                INFRASTRUCTURE EXPOSURE
+              </h3>
             </div>
+            <span className="text-[10px] text-amber-400 mono-data font-semibold">
+              {(selectedDistrict?.district_name || activeState).toUpperCase()}
+            </span>
           </div>
-        )}
 
-        {/* ELEVATED — storm active, coastal assets but not in cone */}
-        {districtInfrastructure.coastalWarningTier === 'ELEVATED' && (
-          <div
-            id="coastal-exposure-warning-badge"
-            className="flex items-center gap-2 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs mono-data backdrop-blur-sm"
-          >
-            <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-            <div className="leading-tight">
-              <span className="font-bold text-amber-200">ELEVATED COASTAL RISK:</span>{' '}
-              <span>{districtInfrastructure.coastalAssetsCount} coastal asset(s) — currently outside storm cone</span>
+          {/* CRITICAL — storm active + assets in surge cone */}
+          {districtInfrastructure.coastalWarningTier === 'CRITICAL' && (
+            <div
+              id="coastal-exposure-warning-badge"
+              className="flex items-center gap-2 p-3 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs mono-data backdrop-blur-sm"
+            >
+              <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse shrink-0" />
+              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+              <div className="leading-tight">
+                <span className="font-bold text-red-200">CRITICAL STORM EXPOSURE:</span>{' '}
+                <span>{districtInfrastructure.criticalCoastalAssetsCount} asset(s) within 5km of shore AND inside the forecast cone</span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* COASTAL_PROXIMITY — no storm, just geographic info */}
-        {districtInfrastructure.coastalWarningTier === 'COASTAL_PROXIMITY' && (
-          <div
-            id="coastal-exposure-warning-badge"
-            className="flex items-center gap-2 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-text-secondary text-xs mono-data"
-          >
-            <span className="w-2 h-2 rounded-full bg-text-tertiary shrink-0" />
-            <Info className="w-4 h-4 text-text-tertiary shrink-0" />
-            <div className="leading-tight">
-              <span className="font-medium text-text-primary">COASTAL PROXIMITY:</span>{' '}
-              <span>{districtInfrastructure.coastalAssetsCount} asset(s) within 5km of shoreline (informational)</span>
+          {/* ELEVATED — storm active, coastal assets but not in cone */}
+          {districtInfrastructure.coastalWarningTier === 'ELEVATED' && (
+            <div
+              id="coastal-exposure-warning-badge"
+              className="flex items-center gap-2 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs mono-data backdrop-blur-sm"
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="leading-tight">
+                <span className="font-bold text-amber-200">ELEVATED COASTAL RISK:</span>{' '}
+                <span>{districtInfrastructure.coastalAssetsCount} coastal asset(s) — currently outside storm cone</span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Summary metrics grid */}
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          {/* Substations */}
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-text-secondary">
-              <span className="flex items-center gap-1 font-medium text-text-primary">
-                <Zap className="w-3.5 h-3.5 text-amber-400" /> Substations
-              </span>
-              <span className="mono-data font-bold text-amber-400">
-                {districtInfrastructure.substations.length}
-              </span>
+          {/* COASTAL_PROXIMITY — no storm, just geographic info */}
+          {districtInfrastructure.coastalWarningTier === 'COASTAL_PROXIMITY' && (
+            <div
+              id="coastal-exposure-warning-badge"
+              className="flex items-center gap-2 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-text-secondary text-xs mono-data"
+            >
+              <span className="w-2 h-2 rounded-full bg-text-tertiary shrink-0" />
+              <Info className="w-4 h-4 text-text-tertiary shrink-0" />
+              <div className="leading-tight">
+                <span className="font-medium text-text-primary">COASTAL PROXIMITY:</span>{' '}
+                <span>{districtInfrastructure.coastalAssetsCount} asset(s) within 5km of shoreline (informational)</span>
+              </div>
             </div>
-            <div className="space-y-1">
-              {districtInfrastructure.substations.length > 0 ? (
-                districtInfrastructure.substations.map((s, idx) => (
-                  <div key={s.asset_id || idx} className="flex items-center justify-between text-[11px] gap-1">
-                    <span className="text-slate-300 truncate text-[10px]" title={s.name}>
-                      {s.name}
+          )}
+
+          {/* Summary metrics grid */}
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {/* Substations */}
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+              <div className="flex items-center justify-between text-text-secondary">
+                <span className="flex items-center gap-1 font-medium text-text-primary">
+                  <Zap className="w-3.5 h-3.5 text-amber-400" /> Substations
+                </span>
+                <span className="mono-data font-bold text-amber-400">
+                  {districtInfrastructure.substations.length}
+                </span>
+              </div>
+              <div className="space-y-1">
+                {districtInfrastructure.substations.length > 0 ? (
+                  districtInfrastructure.substations.map((s, idx) => (
+                    <div key={s.asset_id || idx} className="flex items-center justify-between text-[11px] gap-1">
+                      <span className="text-slate-300 truncate text-[10px]" title={s.name}>
+                        {s.name}
+                      </span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {s.is_at_risk && (
+                          <span className="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
+                            AT RISK
+                          </span>
+                        )}
+                        <span className="text-[9px] font-mono text-slate-400">{s.voltage_kv}kV</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-[10px] text-slate-500 italic">No grid substations</div>
+                )}
+              </div>
+            </div>
+
+            {/* Arterial Roads */}
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+              <div className="flex items-center justify-between text-text-secondary">
+                <span className="flex items-center gap-1 font-medium text-text-primary">
+                  <Navigation className="w-3.5 h-3.5 text-blue-400" /> Arterial Roads
+                </span>
+                <span className="mono-data font-bold text-blue-400">
+                  {districtInfrastructure.roads.length}
+                </span>
+              </div>
+              <div className="space-y-1">
+                {districtInfrastructure.roads.length > 0 ? (
+                  districtInfrastructure.roads.map((r, idx) => (
+                    <div key={r.road_id || idx} className="flex items-center justify-between text-[11px] gap-1">
+                      <span className="text-slate-300 truncate text-[10px]" title={r.name}>
+                        {r.name} ({r.road_class})
+                      </span>
+                      {r.is_at_risk && (
+                        <span className="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40 shrink-0 animate-pulse">
+                          AT RISK
+                        </span>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-[10px] text-slate-500 italic">No arterial roads</div>
+                )}
+              </div>
+            </div>
+
+            {/* Hospitals */}
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+              <div className="flex items-center justify-between text-text-secondary">
+                <span className="flex items-center gap-1 font-medium text-text-primary">
+                  <Building2 className="w-3.5 h-3.5 text-rose-400" /> Hospitals
+                </span>
+                <span className="mono-data font-bold text-rose-400">
+                  {districtInfrastructure.totalHospitalBeds} beds
+                </span>
+              </div>
+              <div className="text-[10px] text-slate-400 font-mono">
+                {districtInfrastructure.hospitals.length} facilities
+              </div>
+              <div className="space-y-1">
+                {districtInfrastructure.hospitals.map((h, idx) => (
+                  <div key={h.facility_id || idx} className="flex items-center justify-between text-[11px] gap-1">
+                    <span className="text-slate-300 truncate text-[10px]" title={h.name}>
+                      {h.name}
                     </span>
                     <div className="flex items-center gap-1 shrink-0">
-                      {s.is_at_risk && (
+                      {h.is_at_risk && (
                         <span className="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
                           AT RISK
                         </span>
                       )}
-                      <span className="text-[9px] font-mono text-slate-400">{s.voltage_kv}kV</span>
+                      <span className="text-[9px] font-mono text-slate-400">{h.bed_capacity}b</span>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-[10px] text-slate-500 italic">No grid substations</div>
-              )}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Arterial Roads */}
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-text-secondary">
-              <span className="flex items-center gap-1 font-medium text-text-primary">
-                <Navigation className="w-3.5 h-3.5 text-blue-400" /> Arterial Roads
-              </span>
-              <span className="mono-data font-bold text-blue-400">
-                {districtInfrastructure.roads.length}
-              </span>
-            </div>
-            <div className="space-y-1">
-              {districtInfrastructure.roads.length > 0 ? (
-                districtInfrastructure.roads.map((r, idx) => (
-                  <div key={r.road_id || idx} className="flex items-center justify-between text-[11px] gap-1">
-                    <span className="text-slate-300 truncate text-[10px]" title={r.name}>
-                      {r.name} ({r.road_class})
+            {/* Shelters */}
+            <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
+              <div className="flex items-center justify-between text-text-secondary">
+                <span className="flex items-center gap-1 font-medium text-text-primary">
+                  <Shield className="w-3.5 h-3.5 text-emerald-400" /> Shelters
+                </span>
+                <span className="mono-data font-bold text-emerald-400">
+                  {districtInfrastructure.totalShelterCapacity} cap
+                </span>
+              </div>
+              <div className="text-[10px] text-slate-400 font-mono">
+                {districtInfrastructure.shelters.length} cyclone shelters
+              </div>
+              <div className="space-y-1">
+                {districtInfrastructure.shelters.map((sh, idx) => (
+                  <div key={sh.facility_id || idx} className="flex items-center justify-between text-[11px] gap-1">
+                    <span className="text-slate-300 truncate text-[10px]" title={sh.name}>
+                      {sh.name}
                     </span>
-                    {r.is_at_risk && (
-                      <span className="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40 shrink-0 animate-pulse">
-                        AT RISK
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1 shrink-0">
+                      {sh.is_at_risk && (
+                        <span className="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
+                          AT RISK
+                        </span>
+                      )}
+                      <span className="text-[9px] font-mono text-slate-400">{sh.shelter_capacity}p</span>
+                    </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-[10px] text-slate-500 italic">No arterial roads</div>
-              )}
-            </div>
-          </div>
-
-          {/* Hospitals */}
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-text-secondary">
-              <span className="flex items-center gap-1 font-medium text-text-primary">
-                <Building2 className="w-3.5 h-3.5 text-rose-400" /> Hospitals
-              </span>
-              <span className="mono-data font-bold text-rose-400">
-                {districtInfrastructure.totalHospitalBeds} beds
-              </span>
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono">
-              {districtInfrastructure.hospitals.length} facilities
-            </div>
-            <div className="space-y-1">
-              {districtInfrastructure.hospitals.map((h, idx) => (
-                <div key={h.facility_id || idx} className="flex items-center justify-between text-[11px] gap-1">
-                  <span className="text-slate-300 truncate text-[10px]" title={h.name}>
-                    {h.name}
-                  </span>
-                  <div className="flex items-center gap-1 shrink-0">
-                    {h.is_at_risk && (
-                      <span className="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
-                        AT RISK
-                      </span>
-                    )}
-                    <span className="text-[9px] font-mono text-slate-400">{h.bed_capacity}b</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Shelters */}
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5">
-            <div className="flex items-center justify-between text-text-secondary">
-              <span className="flex items-center gap-1 font-medium text-text-primary">
-                <Shield className="w-3.5 h-3.5 text-emerald-400" /> Shelters
-              </span>
-              <span className="mono-data font-bold text-emerald-400">
-                {districtInfrastructure.totalShelterCapacity} cap
-              </span>
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono">
-              {districtInfrastructure.shelters.length} cyclone shelters
-            </div>
-            <div className="space-y-1">
-              {districtInfrastructure.shelters.map((sh, idx) => (
-                <div key={sh.facility_id || idx} className="flex items-center justify-between text-[11px] gap-1">
-                  <span className="text-slate-300 truncate text-[10px]" title={sh.name}>
-                    {sh.name}
-                  </span>
-                  <div className="flex items-center gap-1 shrink-0">
-                    {sh.is_at_risk && (
-                      <span className="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
-                        AT RISK
-                      </span>
-                    )}
-                    <span className="text-[9px] font-mono text-slate-400">{sh.shelter_capacity}p</span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 2.55 Gemini Exposure Reasoning Card (Workstream 11b: Multimodal Reasoning over SAR + Infrastructure) */}
       <ExposureReasoningCard

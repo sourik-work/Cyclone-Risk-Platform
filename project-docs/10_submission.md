@@ -17,10 +17,10 @@ The Bay of Bengal experiences **6% of global cyclones but over 50% of global cyc
 
 An AI-powered predictive risk platform that transforms the 48-hour warning window into actionable intelligence:
 
-- **Dual predictive models**: A trained LSTM (119k params, RMSE 85.6 km @ 24h) and Gemini 3.7 Flash in-context reasoning, **agreeing within 21 km at 48 hours** — an ensemble forecast approach
+- **Dual predictive models**: A trained LSTM (119k params, RMSE 85.6 km @ 24h) and Gemini 3.7 Flash in-context reasoning for cross-check sanity
 - **Real-time IMD bulletins**: Live monitoring with honest "basin quiescent" states
 - **Gemini multimodal reasoning**: Analyses Sentinel-1 SAR flood extent + infrastructure geometry to generate district-level exposure narratives
-- **Parametric insurance liquidity**: ₹823 Cr pre-landfall payout for Fani-level storms, with 4 contracts across states
+- **Parametric insurance liquidity**: ₹823 Cr pre-landfall payout for Fani-level storms (illustrative coefficients), with 4 contracts across states
 - **6 Indian languages** (English, Hindi, Odia, Bengali, Telugu, Tamil) with Gemini TTS voice for low-literacy coastal populations
 - **Full-stack deployment**: Vercel (frontend) + Render (backend) with public HTTPS URLs
 
@@ -60,15 +60,15 @@ An AI-powered predictive risk platform that transforms the 48-hour warning windo
 
 | Metric | Value |
 |--------|-------|
-| States covered | **4** (Odisha, West Bengal, Andhra Pradesh, Tamil Nadu) |
+| States covered | **4 core** (Odisha, West Bengal, Andhra Pradesh, Tamil Nadu) |
 | Coastal districts | **16** |
-| Population served | **24M+** |
+| Population in coverage area | **24M+** |
 | Languages | **6** |
 | Infrastructure assets mapped | **120** (substations, roads, hospitals) |
-| TrackLSTM RMSE @ 24h | **85.6 km** (beats operational baseline) |
-| Model agreement @ 48h | **21 km** (LSTM vs Gemini) |
-| Fani insurance payout | **₹823 Cr** (617,743 households) |
-| Backend tests | **118 passing** |
+| TrackLSTM RMSE @ 24h | **85.6 km** (illustrative, on held-out cases) |
+| Model cross-check delta @ 48h | **21 km** (LSTM vs Gemini on Fani) |
+| Fani insurance payout | **₹823 Cr** (illustrative, 617,743 households) |
+| Backend tests | **162 passing** |
 
 ---
 
@@ -126,11 +126,11 @@ graph TD
 
 ## 🏆 What Makes This Different
 
-- **Ensemble forecasting**: Two independent models agreeing within 21 km
+- **Secondary cross-check**: Gemini in-context sanity check to catch gross LSTM errors
 - **Multimodal reasoning**: Gemini reasons over SAR data, not just text
 - **Honest monitoring state**: No fake cyclones — displays "quiescent" when quiet
 - **Production-deployed**: Live HTTPS URLs, not just localhost
-- **118 backend tests** with 0 failures
+- **162 backend tests** with 0 failures
 
 ---
 

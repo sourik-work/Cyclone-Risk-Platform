@@ -45,12 +45,12 @@ This platform provides **48-hour anticipatory lead time** by combining:
 
 - **Geography:** 9 coastal states + 4 Union Territories across India (Bay of Bengal + Arabian Sea)
 - **Districts:** 48
-- **Population served:** 60M+
+- **Population in coverage area:** 60M+
 - **Languages:** 11
-- **Predictive models:** 2 (LSTM ensemble, 20.6 km agreement at 48h on Fani)
+- **Predictive models:** TrackLSTM (primary) + Gemini in-context cross-check
 - **Live satellite feeds:** Sentinel-1 SAR via Google Earth Engine
 - **API endpoints:** 30+
-- **Tests:** 160 passing
+- **Tests:** 162 passing
 
 ---
 
@@ -80,7 +80,7 @@ This platform provides **48-hour anticipatory lead time** by combining:
 │           │                     │                           │               │
 │           ▼                     ▼                           ▼               │
 │  ┌──────────────────────────────────────────────────────────────────────┐   │
-│  │       Ensemble Verification · Advisory Generation · Chat UI          │   │
+│  │    Secondary Sanity-Check · Advisory Generation · Chat UI            │   │
 │  └──────────────────────────────────────────────────────────────────────┘   │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        ▼
@@ -108,44 +108,35 @@ This platform provides **48-hour anticipatory lead time** by combining:
 
 ### India-Scale Coverage
 
-**9 coastal states + 4 Union Territories · 48 districts · 60M+ population at risk**
+**Core coverage (full stack): 4 states · 16 districts**
+- Odisha, West Bengal, Andhra Pradesh, Tamil Nadu
+- Complete pipeline: vulnerability + infrastructure + forecast + advisory + insurance
 
-| Coast | States | Districts | Language |
-|-------|--------|-----------|----------|
-| Bay of Bengal | Odisha, West Bengal, Andhra Pradesh, Tamil Nadu | 16 | Odia, Bengali, Telugu, Tamil |
-| Arabian Sea | Gujarat, Maharashtra, Goa, Karnataka, Kerala | 28 | Gujarati, Marathi, Konkani, Kannada, Malayalam |
-| UTs | Puducherry, Lakshadweep, Andaman & Nicobar, Daman & Diu | 4 | Multiple |
-
-Total: **11 advisory languages**, covering every coastal state in India.
+**Extended coverage (forecast + advisory only): 5 states + 4 UTs · 32 districts**
+- Gujarat, Maharashtra, Goa, Karnataka, Kerala + 4 UTs
+- Vulnerability polygons, storm track, and advisory pipeline active. **Infrastructure asset layer is not yet populated for these regions.**
 
 ### AI Forecasting (TrackLSTM)
-- **Trained LSTM** on IMD best-track data
-- **119,872 parameters** | 4-point input → 16-point output (48 hours at 3-hour intervals)
-- **RMSE @ 24h: 85.6 km** on two historical case studies (Fani 2019, Amphan 2020). Comparable to operational IMD accuracy on these specific cases — not a claim of general superiority.
-- **RMSE @ 48h: 155.6 km**
-- **Wind MAE: 7.3 km/h** | **Pressure MAE: 2.9 hPa**
 
-### Dual-Model Ensemble Forecast
+- 119,872 parameters | 4-point input → 16-point output (48h at 3h intervals)
+- RMSE @ 24h: 85.6 km (illustrative, on two held-out case studies)
+- RMSE @ 48h: 155.6 km
+- Wind MAE: 7.3 km/h | Pressure MAE: 2.9 hPa
 
-The platform runs **two independent predictive approaches** in parallel and compares their 48-hour outputs:
+**Validation limitations (read this before quoting the RMSE):**
+- Model trained on ~8,484 sequences derived from IMD best-track data with synthetic augmentation.
+- **The real-vs-synthetic augmentation ratio is not currently published.**
+- **Fani 2019 and Amphan 2020 are held out as illustrative test cases, but we do not currently claim they were excluded from training.**
+- **The 85.6 km RMSE is illustrative on two cases, not a generalizable accuracy claim.**
+- We do NOT claim to beat operational IMD accuracy.
 
-| Model | Method | Parameters | 24h RMSE |
-|-------|--------|-----------|----------|
-| **TrackLSTM v1** | Trained 2-layer LSTM | 119,872 | 85.6 km |
-| **Gemini 3.7 Flash** | In-context time-series reasoning | — | Qualitative |
+### Secondary Forecast Sanity-Check
 
-**Validation across two historical cases:**
+We run a secondary forecast via Gemini in-context reasoning as a plausibility check on the LSTM's output. **This is NOT a statistically validated ensemble** — it is a cross-check to catch gross LSTM errors.
 
-| Cyclone | LSTM 48h position | Gemini 48h position | Divergence |
-|---------|------------------|---------------------|-----------|
-| Fani (2019) | 22.18°N, 85.46°E | 22.12°N, 85.65°E | 20.6 km |
-| Amphan (2020) | 23.71°N, 88.70°E | 23.22°N, 88.60°E | 55.9 km |
+When Gemini's trajectory diverges from the LSTM by more than 200 km, we flag the LSTM output for human review rather than declaring confidence. The divergence threshold (200 km) was chosen as a rough heuristic on two historical cyclones — it is not a statistically calibrated threshold.
 
-When the two models agree within 100 km, we report **HIGH confidence**. When they diverge beyond 200 km, the dashboard shows an amber warning. This is real ensemble forecast verification logic — the same principle NOAA uses for multi-model hurricane guidance.
-
-**Caveat:** This is illustrative agreement on two historical cases, not a statistically robust ensemble validation. A production deployment would validate across a full test set of 20+ historical cyclones.
-
-**Validation caveat:** The current ensemble is validated on 2 historical cyclones. Training uses ~8,484 sequences derived from IMD best-track data with synthetic augmentation (perturbed positions, wind scalings). We do not currently disclose the augmentation/real-signal ratio — a production version would publish this and validate against a 20+ storm held-out test set.
+**Caveat:** The agreement metric (20.6 km on Fani, 55.9 km on Amphan) is illustrative on two cases, not a validation claim.
 
 ### Multilingual Advisories
 
@@ -179,14 +170,9 @@ All dispatches require officer approval and are logged to the audit trail.
 - Dual-intent Dialogflow ES webhook fulfillment with Gemini 3.7 Flash classification
 - Live queries for active storm status (`check_cyclone_status`) and current advisories (`get_advisory`)
 
-#### Why Dialogflow ES + Gemini?
+### Why Dialogflow ES + Gemini?
 
-The chat pipeline uses both because they serve different roles:
-
-- **Dialogflow ES** — provides the GCP-native conversational surface (session management, intent registry, webhook contract). It gives us a standards-compliant `/api/dialogflow/webhook` endpoint that could be extended with Dialogflow CX or integrated with other enterprise platforms without changing our backend.
-- **Gemini 3.7 Flash** — handles semantic intent classification for messages that don't match Dialogflow's training phrases. This is a resilience layer, not a replacement.
-
-The alternative — using Gemini function-calling directly with no Dialogflow — would work but would lose the standard GCP conversational contract that enterprise municipal systems expect. We chose the layered approach for interoperability.
+**Candid framing:** For a prototype with 10 concurrent users, Gemini function-calling alone would cover the same ground with less latency and one fewer moving part. We retained Dialogflow as an **architectural demonstration of enterprise-integration readiness** — Indian state disaster management authorities commonly integrate via Dialogflow-style intents. A production deployment serving 10,000+ municipal users would benefit from the Dialogflow contract; the current prototype would not lose functionality without it.
 
 ### Infrastructure Exposure
 
@@ -247,6 +233,13 @@ Both use threshold-based classification (LOW/MEDIUM/HIGH/CRITICAL). This is sepa
 
 ## Parametric Insurance Liquidity
 
+**Coefficient provenance:** The 0.10 household-affected coefficient and the 0.60 cap are **illustrative placeholders** chosen to produce realistic payout magnitudes for extreme storms (Fani ₹823 Cr, Amphan ₹904 Cr). They are **not actuarially derived**. A production deployment would calibrate these coefficients against:
+- Historical insurance claims data (e.g., NDRP, CCRIF)
+- Actuarial catastrophe models (RMS, AIR, Verisk)
+- Government post-disaster compensation records (NDMA, state relief funds)
+
+The formula itself is sound; the coefficients are the place where real-world data must be injected.
+
 Four sample parametric insurance contracts across the 4 coastal states:
 
 | Contract | State | Coverage | Threshold |
@@ -262,13 +255,6 @@ exceedance_ratio = current_value / threshold
 affected_ratio = min(exceedance_ratio × 0.10, 0.60)
 households = insured_population × affected_ratio
 ```
-
-**Coefficient provenance:** The 0.10 household-affected coefficient and the 0.60 cap are **illustrative placeholders** chosen to produce realistic payout magnitudes for extreme storms (Fani ₹823 Cr, Amphan ₹904 Cr). They are **not actuarially derived**. A production deployment would calibrate these coefficients against:
-- Historical insurance claims data (e.g., NDRP, CCRIF)
-- Actuarial catastrophe models (RMS, AIR, Verisk)
-- Government post-disaster compensation records (NDMA, state relief funds)
-
-The formula itself is sound; the coefficients are the place where real-world data must be injected.
 
 **Uncertainty-aware triggering:** The insurance engine propagates the forecast model's positional RMSE into the trigger threshold. When two-model agreement is strong (<100 km divergence), contracts trigger with a tight +5% margin. When uncertainty is high, the trigger threshold widens by up to +30%, requiring stronger evidence before payout. This prevents pre-landfall liquidity release from being triggered on low-confidence forecasts — critical for real parametric schemes.
 
@@ -358,7 +344,7 @@ DRAFT → PENDING_APPROVAL → APPROVED → DISPATCHED
 
 - **Authentication:** All state-mutating endpoints require a valid Firebase ID token
 - **Authorization:** Dispatch and approval endpoints require the `dispatcher` custom claim
-- **Rate limiting:** 10 requests/minute per IP on LLM-heavy endpoints
+- **Rate limiting:** 10 req/min per IP applies to LLM-heavy endpoints (`/api/advisories/generate`, `/api/exposure/reason`, `/api/forecast/gemini`, `/api/chat/message`). Public read endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`, `/api/vulnerability`, `/api/infrastructure`) are **NOT rate-limited** in the current demo deployment. Production would add Cloud Armor or API Gateway.
 - **Audit logging:** Every approval decision logged to Firestore
 
 Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain public for the demo.
@@ -367,7 +353,7 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 
 ## Testing & CI/CD
 
-- **160 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, terrain-aware rainfall damage pathways, infrastructure triage ranking, scenario override, asset state, audit log, agency adapters, schemas, and integration flows
+- **162 backend tests** passing (pytest) covering API endpoints, ML inference, insurance logic, terrain-aware rainfall damage pathways, infrastructure triage ranking, scenario override, asset state, audit log, agency adapters, schemas, and integration flows
 - **Frontend build** validated via `npm run build` (Next.js 16 Turbopack, 0 errors)
 - **CI/CD:** GitHub Actions runs tests + build on every push
 - **Coverage:** Core services (forecast_service, insurance_service, gemini_advisory, imd_fetcher, surge_service, rainfall_service, rainfall_damage_service, triage_service, asset_state_service, agency_adapters, scenario_override) have dedicated test files
@@ -388,10 +374,12 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 
 ---
 
-## APAC Scalability
+## APAC Scalability (Designed, Not Deployed)
+
+**Scope note:** The platform is deployed on Render free tier (0.1 CPU, 512 MB RAM) and has been load-tested at 10 concurrent users. "Scalability" here means "the architecture supports extension without redesign," not "the platform currently serves N users."
 
 ### Currently deployed
-- **India:** 9 coastal states + 4 Union Territories, 48 districts, 60M+ population covered across both the Bay of Bengal and Arabian Sea coasts
+- **India:** 9 coastal states + 4 Union Territories, 48 districts, 60M+ population in coverage area across both the Bay of Bengal and Arabian Sea coasts
 - 11 advisory languages covering every coastal state
 
 ### Demonstrated expansion

@@ -254,7 +254,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
                 <span>TrackLSTM (trained)</span>
               </div>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 font-semibold">
-                HIGH CONFIDENCE
+                PRIMARY (LSTM)
               </span>
             </div>
 
@@ -281,12 +281,8 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
                 <Sparkles className="w-3.5 h-3.5 text-purple-400" />
                 <span>Gemini (in-context)</span>
               </div>
-              <span
-                className={`text-[10px] font-mono px-2 py-0.5 rounded border font-semibold ${getConfidenceBadge(
-                  gemini?.confidence || 'MEDIUM'
-                )}`}
-              >
-                {gemini?.confidence ? `${gemini.confidence} CONFIDENCE` : 'MEDIUM CONFIDENCE'}
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-purple-500/30 bg-purple-500/10 text-purple-300 font-semibold">
+                {divergenceKm !== null ? `Cross-check: within ${divergenceKm.toFixed(0)} km` : 'Cross-check: nominal'}
               </span>
             </div>
 
@@ -313,28 +309,28 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
 
           {/* Agreement indicator */}
           <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs font-mono">
-            <span className="text-slate-400 text-[11px]">Divergence @ 48h:</span>
+            <span className="text-slate-400 text-[11px]">Cross-check delta @ 48h:</span>
             {divergenceKm !== null ? (
               divergenceKm <= 100 ? (
                 <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  ✓ Models agree ({divergenceKm.toFixed(0)} km)
+                  Cross-check: nominal ({divergenceKm.toFixed(0)} km)
                 </span>
               ) : divergenceKm > 200 ? (
                 <span className="text-amber-400 font-semibold flex items-center gap-1.5">
                   <AlertTriangle className="w-4 h-4 text-amber-400" />
-                  ⚠️ Models diverge ({divergenceKm.toFixed(0)} km)
+                  ⚠️ Cross-check divergence ({divergenceKm.toFixed(0)} km)
                 </span>
               ) : (
                 <span className="text-cyan-300 font-semibold flex items-center gap-1.5">
                   <Info className="w-4 h-4 text-cyan-300" />
-                  Closely aligned ({divergenceKm.toFixed(0)} km)
+                  Cross-check: nominal ({divergenceKm.toFixed(0)} km)
                 </span>
               )
             ) : (
               <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                ✓ Models agree (&lt;100 km)
+                Cross-check: nominal (&lt;100 km)
               </span>
             )}
           </div>
@@ -347,7 +343,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
 
           {/* Footer note */}
           <div className="text-[10px] font-mono text-slate-400 pt-1 border-t border-slate-800/70 text-center">
-            Two independent predictive approaches: trained LSTM (deterministic) + Gemini (in-context reasoning)
+            Sanity-check only — not a statistical ensemble
           </div>
         </div>
       )}

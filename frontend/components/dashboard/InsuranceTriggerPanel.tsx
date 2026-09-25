@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { ShieldCheck, Coins, CheckCircle2, XCircle, Clock, RefreshCw, Zap, Loader2 } from 'lucide-react';
+import { ShieldCheck, Coins, CheckCircle2, XCircle, Clock, RefreshCw, Zap, Loader2, AlertTriangle } from 'lucide-react';
 import { fetchWithCache } from '../../lib/cache';
 import { getAuthHeader } from '../../lib/api';
 import { ScenarioOverride } from '../map/types';
@@ -242,6 +242,14 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
       {/* Subtle top indicator bar */}
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 via-emerald-500 to-amber-500" />
 
+      {/* Illustrative Coefficients Banner */}
+      <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-500/8 border border-amber-500/20 mb-4">
+        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+        <div className="text-xs text-amber-200">
+          <span className="font-semibold">Illustrative coefficients:</span> Payout figures use placeholder math (not actuarially calibrated). They demonstrate formula behavior, not expected real-world claims.
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
         <div className="flex items-center gap-2 text-cyan-400">
@@ -376,7 +384,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
                 evalData.total_payout_inr > 0 ? 'text-emerald-400' : 'text-slate-400'
               }`}
             >
-              {formatCrore(evalData.total_payout_inr)}
+              {formatCrore(evalData.total_payout_inr)} <span className="text-[10px] text-text-tertiary ml-1 font-normal">(illustrative)</span>
             </div>
           </div>
         </div>
@@ -516,7 +524,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
                     <span>Auto-Disbursement:</span>
                   </span>
                   <span className="font-bold text-red-200">
-                    {formatCrore(contract.payout_estimate_inr)} (
+                    {formatCrore(contract.payout_estimate_inr)} <span className="text-[10px] text-text-tertiary ml-1 font-normal">(illustrative)</span> (
                     {contract.households_affected.toLocaleString()} HH)
                   </span>
                 </div>

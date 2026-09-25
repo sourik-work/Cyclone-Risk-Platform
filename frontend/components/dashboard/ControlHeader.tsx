@@ -119,10 +119,11 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
               {/* India-Scale Serving Coverage Badge */}
               <span
                 id="platform-coverage-badge"
-                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-medium card-glass text-accent-cyan border-border-subtle shadow-sm"
+                title="Core coverage = full infrastructure + vulnerability + advisory pipeline. Forecast coverage = vulnerability + storm track + advisory, but infrastructure layer not yet populated."
+                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-medium card-glass text-accent-cyan border-border-subtle shadow-sm cursor-help"
               >
                 <MapPin className="w-3 h-3 text-accent-cyan" />
-                Serving 9 states + 4 UTs · 50+ districts · 60M+ population at risk
+                Core coverage: 4 states, 16 districts · Forecast coverage: 9 states + 4 UTs
               </span>
             </div>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -280,7 +281,7 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                 <div>
                   <div className="flex items-center gap-2">
                     <h2 className="text-lg font-bold text-slate-100 font-mono tracking-wide">
-                      APAC SCALABILITY &amp; ARCHITECTURAL PORTABILITY
+                      APAC SCALABILITY (DESIGNED, NOT DEPLOYED) &amp; ARCHITECTURAL PORTABILITY
                     </h2>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                       Live Bangladesh Demo
