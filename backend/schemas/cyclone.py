@@ -625,6 +625,7 @@ class GeminiForecastRequest(BaseModel):
     cyclone_id: str
     recent_point_count: int = 4  # how many recent points to send to Gemini
     end_index: Optional[int] = None  # which point is the "current" observation
+    recent_point_indices: Optional[List[int]] = None
     scenario: Optional[ScenarioOverride] = None
 
 

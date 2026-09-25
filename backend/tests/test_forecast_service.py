@@ -99,3 +99,28 @@ def test_invalid_input_points_handled():
     """Verifies that fewer or more than 4 points raises ValueError."""
     with pytest.raises(ValueError):
         predict_track([{"lat": 10.0, "lon": 85.0, "wind_kmph": 65.0, "pressure_hpa": 1000.0}])
+
+
+def test_forecast_track_custom_indices_amphan(client: TestClient):
+    """Verifies passing explicit recent_point_indices [4, 5, 6, 7] for Amphan returns forecast starting at point 7."""
+    res = client.post("/api/forecast/track", json={
+        "cyclone_id": "BOB-01-2020",
+        "recent_point_indices": [4, 5, 6, 7]
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["cyclone_id"] == "BOB-01-2020"
+    assert len(data["model_forecast"]) == 16
+
+
+def test_gemini_forecast_with_recent_point_indices(client: TestClient):
+    """Verifies /api/forecast/gemini accepts recent_point_indices."""
+    res = client.post("/api/forecast/gemini", json={
+        "cyclone_id": "BOB-01-2020",
+        "recent_point_indices": [4, 5, 6, 7]
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["cyclone_id"] == "BOB-01-2020"
+    assert "forecast" in data
+

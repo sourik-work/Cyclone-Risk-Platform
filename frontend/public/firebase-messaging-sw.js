@@ -2,7 +2,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/10.9.0/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "AIzaSyBE9xeHoT2SvDYwO0D_l7KxNRGugH0b_5s",
+ apiKey: "AIzaSyD-jnp80ZnWR4A8VOBSScOAbgnDqqSQgXQ",
   authDomain: "cyclone-risk-platform.firebaseapp.com",
   projectId: "cyclone-risk-platform",
   storageBucket: "cyclone-risk-platform.firebasestorage.app",

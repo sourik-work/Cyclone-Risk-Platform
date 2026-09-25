@@ -98,13 +98,14 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
 
     try {
       // Dynamic index calculation based on track length
-      const totalPoints = track?.track_points?.length || 12;
-      const endIdx = Math.max(
-        Math.min(3, totalPoints - 1),
-        Math.min(effectivePointIndex, totalPoints - 1)
-      );
+      const total = track?.track_points?.length || 12;
+      const endIdx = Math.min(effectivePointIndex, total - 1);
       const startIdx = Math.max(0, endIdx - 3);
-      const indices = [startIdx, startIdx + 1, startIdx + 2, endIdx];
+      const indices = endIdx >= 3
+        ? [startIdx, startIdx + 1, startIdx + 2, endIdx]
+        : [0, 1, 2, 3];
+
+      const canRunLstm = !track?.track_points || track.track_points.length >= 4;
 
       // TASK 5: 120-second timeout for Gemini endpoint
       const geminiController = new AbortController();
@@ -115,42 +116,47 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
 
       try {
         const authHeader = await getAuthHeader();
-        // TASK 1: Parallelize with Promise.allSettled without blocking on individual fetches
-        const [lstmSettled, geminiSettled] = await Promise.allSettled([
-          fetch(`${backendUrl}/api/forecast/track`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...authHeader,
-            },
-            body: JSON.stringify({
-              cyclone_id: cycloneId,
-              recent_point_indices: indices,
-              scenario: scenario?.enabled ? scenario : undefined,
-            }),
-            signal: lstmController.signal,
-          }).then(async (res) => {
-            if (!res.ok) throw new Error(`LSTM returned HTTP ${res.status}`);
-            return res.json();
+        // Guard: only call LSTM when >= 4 observed track points exist
+        const lstmFetch = canRunLstm
+          ? fetch(`${backendUrl}/api/forecast/track`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...authHeader,
+              },
+              body: JSON.stringify({
+                cyclone_id: cycloneId,
+                recent_point_indices: indices,
+                scenario: scenario?.enabled ? scenario : undefined,
+              }),
+              signal: lstmController.signal,
+            }).then(async (res) => {
+              if (!res.ok) throw new Error(`LSTM returned HTTP ${res.status}`);
+              return res.json();
+            })
+          : Promise.reject(new Error('Insufficient track points for LSTM forecast (requires 4+)'));
+
+        const geminiFetch = fetch(`${backendUrl}/api/forecast/gemini`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeader,
+          },
+          body: JSON.stringify({
+            cyclone_id: cycloneId,
+            recent_point_indices: indices,
+            recent_point_count: 4,
+            end_index: endIdx,
+            scenario: scenario?.enabled ? scenario : undefined,
           }),
-          fetch(`${backendUrl}/api/forecast/gemini`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...authHeader,
-            },
-            body: JSON.stringify({
-              cyclone_id: cycloneId,
-              recent_point_count: 4,
-              end_index: endIdx,
-              scenario: scenario?.enabled ? scenario : undefined,
-            }),
-            signal: geminiController.signal,
-          }).then(async (res) => {
-            if (!res.ok) throw new Error(`Gemini returned HTTP ${res.status}`);
-            return res.json();
-          }),
-        ]);
+          signal: geminiController.signal,
+        }).then(async (res) => {
+          if (!res.ok) throw new Error(`Gemini returned HTTP ${res.status}`);
+          return res.json();
+        });
+
+        // Parallelize with Promise.allSettled without blocking on individual fetches
+        const [lstmSettled, geminiSettled] = await Promise.allSettled([lstmFetch, geminiFetch]);
 
         if (lstmSettled.status === 'fulfilled') {
           setLstm(lstmSettled.value as LstmForecastResponse);

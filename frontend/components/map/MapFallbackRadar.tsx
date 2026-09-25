@@ -12,6 +12,7 @@ import {
 } from './types';
 import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
 import { Shield, Waves, CloudRain } from 'lucide-react';
+import { computeLinearExtrapolation } from './linearExtrapolation';
 
 interface MapFallbackRadarProps {
   track: CycloneTrack;
@@ -460,6 +461,43 @@ export const MapFallbackRadar: React.FC<MapFallbackRadarProps> = ({
             strokeLinecap="round"
           />
         )}
+
+        {/* Linear Extrapolation Fallback (when < 4 points, dotted orange line) */}
+        {track.track_points.length < 4 && (() => {
+          const extrapolated = computeLinearExtrapolation(activePoint, 48, 3);
+          const pts = [
+            project(activePoint.latitude, activePoint.longitude).join(','),
+            ...extrapolated.map((pt) => project(pt.lat, pt.lon).join(',')),
+          ].join(' ');
+          return (
+            <g key="linear-extrapolation-radar">
+              <polyline
+                points={pts}
+                fill="none"
+                stroke="#f97316"
+                strokeWidth="2.5"
+                strokeDasharray="3 4"
+                strokeLinecap="round"
+              />
+              {extrapolated.filter((p) => [12, 24, 36, 48].includes(p.lead_hours)).map((p, idx) => {
+                const [x, y] = project(p.lat, p.lon);
+                return (
+                  <circle
+                    key={`extrap-pt-${idx}`}
+                    cx={x}
+                    cy={y}
+                    r={4}
+                    fill="#f97316"
+                    stroke="#7c2d12"
+                    strokeWidth="1.5"
+                  >
+                    <title>{`Linear Extrapolation T+${p.lead_hours}h: ${p.lat}°N, ${p.lon}°E`}</title>
+                  </circle>
+                );
+              })}
+            </g>
+          );
+        })()}
 
         {/* Track Observation Markers */}
         {showTrack &&

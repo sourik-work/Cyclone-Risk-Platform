@@ -673,8 +673,10 @@ async def gemini_forecast(
     if req.scenario and req.scenario.enabled:
         track = apply_scenario_override(track, req.scenario)
 
-    # Take observed points up to end_index if specified, else last N points
-    if req.end_index is not None:
+    # Take observed points: from recent_point_indices if specified, or up to end_index, else last N points
+    if req.recent_point_indices:
+        recent = [track.track_points[i] for i in req.recent_point_indices if 0 <= i < len(track.track_points)]
+    elif req.end_index is not None:
         end = min(req.end_index + 1, len(track.track_points))
         start = max(0, end - req.recent_point_count)
         recent = track.track_points[start:end]

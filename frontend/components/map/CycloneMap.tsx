@@ -16,8 +16,16 @@ import {
 } from './types';
 import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
 import { MapFallbackRadar } from './MapFallbackRadar';
-import { Radio, Layers, Satellite, Sliders, Cpu, Compass, Zap, Activity, CloudRain, Waves } from 'lucide-react';
+import { Radio, Layers, Satellite, Sliders, Cpu, Compass, Zap, Activity, CloudRain, Waves, Info } from 'lucide-react';
 import { getAuthHeader } from '../../lib/api';
+import { computeLinearExtrapolation } from './linearExtrapolation';
+
+export const EE_TILE_URLS: Record<string, string | null> = {
+  'BOB-02-2019': process.env.NEXT_PUBLIC_EE_TILE_URL || null,
+  'fani': process.env.NEXT_PUBLIC_EE_TILE_URL || null,
+  'BOB-01-2020': process.env.NEXT_PUBLIC_EE_AMPHAN_TILE_URL || null,
+  'amphan': process.env.NEXT_PUBLIC_EE_AMPHAN_TILE_URL || null,
+};
 
 const AUTHENTICATED_EE_TILE_URL =
   'https://earthengine.googleapis.com/v1/projects/cyclone-risk-platform/maps/b3a9fb812b939765aa9e34a318c3149b-39495b43e12ed39f1a31ec4eae471f26/tiles/{z}/{x}/{y}?key=AIzaSyBWf8E_V67W3PenTBi2Q5OR2MU-DDCk1jw';
@@ -246,8 +254,9 @@ const GoogleMapsUncertaintyConeLayer: React.FC<{
 };
 
 /**
- * 4. AI Forecast Trajectory Layer (TrackLSTM)
- * Renders the 48-hour LSTM predicted trajectory (dashed yellow) starting from the last observed point.
+ * 4. AI Forecast Trajectory Layer
+ * Renders the 48-hour LSTM predicted trajectory (dashed yellow) when >= 4 points exist,
+ * or a linear extrapolation fallback (dotted orange line) using heading + forward speed when < 4 points.
  */
 const GoogleMapsAiForecastLayer: React.FC<{
   track: CycloneTrack;
@@ -258,9 +267,12 @@ const GoogleMapsAiForecastLayer: React.FC<{
   const map = useMap();
   const [aiForecast, setAiForecast] = useState<ForecastTrackResponse | null>(null);
 
-  // Fetch forecast whenever track changes or layer becomes visible
+  const isInsufficientHistory = !track.track_points || track.track_points.length < 4;
+
+  // Guard: if activeTrack.track_points.length < 4, do NOT call the LSTM forecast
   useEffect(() => {
-    if (!visible || !track.track_points || track.track_points.length < 4) {
+    if (!visible || isInsufficientHistory) {
+      setAiForecast(null);
       return;
     }
 
@@ -269,16 +281,13 @@ const GoogleMapsAiForecastLayer: React.FC<{
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
     const cycloneId = track.name ? track.name.toLowerCase() : track.id;
 
-    // Compute last 4 indices dynamically based on the CURRENT track length
-    const totalPoints = track.track_points.length;
-    const forecastEndIndex = Math.max(3, Math.min(activePointIndex, totalPoints - 1));
-    const forecastStartIndex = Math.max(0, forecastEndIndex - 3);
-    const recentIndices = [
-      forecastStartIndex,
-      forecastStartIndex + 1,
-      forecastStartIndex + 2,
-      forecastEndIndex,
-    ];
+    // Compute forecast starting indices dynamically from the current activePointIndex
+    const total = track.track_points.length;
+    const endIdx = Math.min(activePointIndex, total - 1);
+    const startIdx = Math.max(0, endIdx - 3);
+    const indices = endIdx >= 3
+      ? [startIdx, startIdx + 1, startIdx + 2, endIdx]
+      : [0, 1, 2, 3];
 
     getAuthHeader().then((authHeader) => {
       if (!isMounted) return;
@@ -287,7 +296,7 @@ const GoogleMapsAiForecastLayer: React.FC<{
         headers: { 'Content-Type': 'application/json', ...authHeader },
         body: JSON.stringify({
           cyclone_id: cycloneId,
-          recent_point_indices: recentIndices,
+          recent_point_indices: indices,
           scenario: scenario?.enabled ? scenario : undefined,
         }),
       })
@@ -308,14 +317,82 @@ const GoogleMapsAiForecastLayer: React.FC<{
     return () => {
       isMounted = false;
     };
-  }, [track.id, track.name, track.track_points, activePointIndex, visible, scenario]);
+  }, [track.id, track.name, track.track_points, activePointIndex, visible, scenario, isInsufficientHistory]);
 
   useEffect(() => {
-    if (!map || !visible || !aiForecast || typeof google === 'undefined') return;
+    if (!map || !visible || typeof google === 'undefined') return;
 
-    const activePoint = track.track_points[activePointIndex] || track.track_points[0];
+    // Linear extrapolation fallback (dotted orange line) when < 4 track points
+    if (isInsufficientHistory) {
+      const activePoint = track.track_points[activePointIndex] || track.track_points[0];
+      if (!activePoint) return;
 
-    // Trajectory starting from the last observed point
+      const extrapolated = computeLinearExtrapolation(activePoint, 48, 3);
+      const fallbackCoords = [
+        { lat: activePoint.latitude, lng: activePoint.longitude },
+        ...extrapolated.map((p) => ({ lat: p.lat, lng: p.lon })),
+      ];
+
+      // Dotted orange line for linear extrapolation fallback
+      const fallbackPolyline = new google.maps.Polyline({
+        map,
+        path: fallbackCoords,
+        geodesic: true,
+        strokeColor: '#f97316', // orange-500
+        strokeOpacity: 0.0,
+        icons: [
+          {
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              fillOpacity: 1.0,
+              fillColor: '#f97316',
+              strokeColor: '#ea580c',
+              strokeWeight: 1,
+              scale: 2.5,
+            },
+            offset: '0',
+            repeat: '10px',
+          },
+        ],
+        zIndex: 25,
+      });
+
+      // Circular orange waypoint markers at 12h, 24h, 36h, 48h
+      const waypointMarkers: google.maps.Marker[] = [];
+      extrapolated.forEach((pt) => {
+        if ([12, 24, 36, 48].includes(pt.lead_hours)) {
+          const marker = new google.maps.Marker({
+            map,
+            position: { lat: pt.lat, lng: pt.lon },
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 4.5,
+              fillColor: '#f97316',
+              fillOpacity: 1,
+              strokeColor: '#7c2d12',
+              strokeWeight: 2,
+            },
+            title: `Linear Extrapolation T+${pt.lead_hours}h: ${pt.lat}°N, ${pt.lon}°E (${pt.wind_kmph} km/h)`,
+            zIndex: 26,
+          });
+          waypointMarkers.push(marker);
+        }
+      });
+
+      return () => {
+        fallbackPolyline.setMap(null);
+        waypointMarkers.forEach((m) => m.setMap(null));
+      };
+    }
+
+    // Normal LSTM trajectory rendering (when aiForecast available)
+    if (!aiForecast) return;
+
+    const total = track.track_points.length;
+    const endIdx = Math.min(activePointIndex, total - 1);
+    const activePoint = track.track_points[endIdx] || track.track_points[activePointIndex] || track.track_points[0];
+
+    // Trajectory starting from the dynamically computed last observed point
     const forecastCoords = [
       { lat: activePoint.latitude, lng: activePoint.longitude },
       ...aiForecast.model_forecast.map((p) => ({ lat: p.lat, lng: p.lon })),
@@ -369,7 +446,7 @@ const GoogleMapsAiForecastLayer: React.FC<{
       aiPolyline.setMap(null);
       waypointMarkers.forEach((m) => m.setMap(null));
     };
-  }, [map, visible, aiForecast, activePointIndex, track.track_points]);
+  }, [map, visible, aiForecast, activePointIndex, track.track_points, isInsufficientHistory]);
 
   return null;
 };
@@ -972,12 +1049,13 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   const isFani = effectiveTrack.name?.toLowerCase().includes('fani') || effectiveTrack.id === 'BOB-02-2019';
   const isAmphan = effectiveTrack.name?.toLowerCase().includes('amphan') || effectiveTrack.id === 'BOB-01-2020';
 
-  // When mode === 'historical': render Earth Engine overlay (Fani only), track line, forecast cone, and markers as normal.
-  // When mode === 'live': hide ALL historical layers.
-  // If active_cyclone is null (monitoring status), show ONLY the base Google Map with NO overlays.
-  // If active_cyclone is not null, render the live cyclone track instead.
-  // Flood extent data is available for Fani 2019 only; Amphan tile pending.
-  const effectiveShowEE = !isLive && isFani && layerToggles.showEarthEngine !== false;
+  const stormKey = effectiveTrack.id || (effectiveTrack.name ? effectiveTrack.name.toLowerCase() : 'BOB-02-2019');
+  const selectedTileUrl = EE_TILE_URLS[stormKey] ?? EE_TILE_URLS[effectiveTrack.name?.toLowerCase() || ''] ?? null;
+  const amphanTileUrl = EE_TILE_URLS['BOB-01-2020'] || EE_TILE_URLS['amphan'] || null;
+
+  // When mode === 'historical': render Earth Engine overlay only if tile URL exists
+  // If tile URL is null, hide the overlay.
+  const effectiveShowEE = !isLive && Boolean(selectedTileUrl) && layerToggles.showEarthEngine !== false;
   const effectiveShowTrack = isLive ? (hasActiveCyclone && layerToggles.showTrack) : layerToggles.showTrack;
   const effectiveShowForecastCone = isLive ? (hasActiveCyclone && layerToggles.showForecastCone) : layerToggles.showForecastCone;
   const effectiveShowAiForecast = isLive ? (hasActiveCyclone && Boolean(layerToggles.showAiForecast)) : Boolean(layerToggles.showAiForecast);
@@ -1212,14 +1290,17 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           </div>
         )}
 
-        {/* Amphan Flood Extent Pending Badge (Historical Mode) */}
-        {!isLive && isAmphan && (
+        {/* Amphan Flood Extent Pending Info Icon (Historical Mode) */}
+        {!isLive && isAmphan && !selectedTileUrl && (
           <div
-            id="amphan-ee-pending-pill"
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-950/80 border border-amber-500/40 text-amber-300 text-xs font-mono backdrop-blur-md shadow-lg"
+            id="amphan-ee-pending-info"
+            className="group relative flex items-center justify-center p-1.5 rounded-lg bg-slate-900/90 border border-amber-500/40 text-amber-400 backdrop-blur-md cursor-help shadow-lg"
+            title="Sentinel-1 SAR tiles available for Fani 2019. Amphan generation pending."
           >
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            <span>Flood extent data available for Fani 2019 only — Amphan tile pending</span>
+            <Info className="w-4 h-4 text-amber-400" />
+            <div className="hidden group-hover:block absolute top-full right-0 mt-1.5 w-64 p-2 rounded-lg bg-slate-900/95 border border-slate-700 text-[11px] font-mono text-amber-200 shadow-xl z-50 pointer-events-none">
+              Sentinel-1 SAR tiles available for Fani 2019. Amphan generation pending.
+            </div>
           </div>
         )}
 
@@ -1314,7 +1395,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             >
               {/* 1. Earth Engine ImageMapType Overlay (Opacity: 0.7) - Historical only */}
               <EarthEngineTileOverlay
-                tileUrl={eeTileUrl}
+                tileUrl={selectedTileUrl || eeTileUrl}
                 opacity={eeOpacity}
                 visible={effectiveShowEE}
               />
@@ -1441,34 +1522,56 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           </div>
         )}
 
-        {/* 5. Corner Legend: IMD Official (solid) vs AI Forecast (dashed) */}
+        {/* 5. Corner Legend: IMD Official vs AI Forecast / Linear Extrapolation */}
         {effectiveShowAiForecast && (
           <div
             id="forecast-comparison-legend"
             className="absolute bottom-6 left-6 z-20 flex flex-col gap-1.5 p-3 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-2xl text-xs font-mono select-none"
           >
-            <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
-              <Cpu className="w-3.5 h-3.5 text-yellow-400" />
-              <span>IMD Official (solid) vs AI Forecast (dashed)</span>
-            </div>
-            <div className="flex items-center justify-between gap-4 text-[11px]">
-              <div className="flex items-center gap-2 text-slate-300">
-                <span className="w-5 h-1 rounded-full bg-[#00e5ff] shadow-sm shadow-cyan-500/50"></span>
-                <span className="text-cyan-300 font-medium">IMD Official Track</span>
-              </div>
-              <span className="text-[10px] text-slate-500">Official Bulletin</span>
-            </div>
-            <div className="flex items-center justify-between gap-4 text-[11px]">
-              <div className="flex items-center gap-2 text-slate-300">
-                <span className="w-5 h-0.5 border-t-2 border-dashed border-yellow-400"></span>
-                <span className="text-yellow-300 font-medium">AI Forecast</span>
-              </div>
-              <span className="text-[10px] text-yellow-400 font-bold">TrackLSTM</span>
-            </div>
-            <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 flex items-center justify-between">
-              <span>RMSE: 85.6 km @ 24h</span>
-              <span className="text-emerald-400 font-semibold">119K Params</span>
-            </div>
+            {effectiveTrack.track_points && effectiveTrack.track_points.length < 4 ? (
+              <>
+                <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
+                  <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
+                  <span>Linear Extrapolation (insufficient history for LSTM)</span>
+                </div>
+                <div className="flex items-center justify-between gap-4 text-[11px]">
+                  <div className="flex items-center gap-2 text-slate-300">
+                    <span className="w-5 h-0.5 border-t-2 border-dotted border-orange-400"></span>
+                    <span className="text-orange-300 font-medium">Extrapolated 48h Track</span>
+                  </div>
+                  <span className="text-[10px] text-orange-400 font-bold">Heading + Speed</span>
+                </div>
+                <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 flex items-center justify-between">
+                  <span>Points: {effectiveTrack.track_points.length} (Requires 4+)</span>
+                  <span className="text-amber-400 font-semibold">Fallback Mode</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
+                  <Cpu className="w-3.5 h-3.5 text-yellow-400" />
+                  <span>IMD Official (solid) vs AI Forecast (dashed)</span>
+                </div>
+                <div className="flex items-center justify-between gap-4 text-[11px]">
+                  <div className="flex items-center gap-2 text-slate-300">
+                    <span className="w-5 h-1 rounded-full bg-[#00e5ff] shadow-sm shadow-cyan-500/50"></span>
+                    <span className="text-cyan-300 font-medium">IMD Official Track</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500">Official Bulletin</span>
+                </div>
+                <div className="flex items-center justify-between gap-4 text-[11px]">
+                  <div className="flex items-center gap-2 text-slate-300">
+                    <span className="w-5 h-0.5 border-t-2 border-dashed border-yellow-400"></span>
+                    <span className="text-yellow-300 font-medium">AI Forecast</span>
+                  </div>
+                  <span className="text-[10px] text-yellow-400 font-bold">TrackLSTM</span>
+                </div>
+                <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 flex items-center justify-between">
+                  <span>RMSE: 85.6 km @ 24h</span>
+                  <span className="text-emerald-400 font-semibold">119K Params</span>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

@@ -326,7 +326,7 @@ export default function Home() {
   useEffect(() => {
     const totalPoints = activeTrack.track_points.length;
     if (mode === 'live') {
-      setActivePointIndex(0);
+      setActivePointIndex(Math.max(0, totalPoints - 1));
     } else {
       setActivePointIndex(Math.min(7, Math.max(0, totalPoints - 1)));
     }
@@ -663,6 +663,7 @@ export default function Home() {
                 : 'Bay of Bengal (Continuous Monitoring)'
               : undefined
           }
+          trackPointCount={activeTrack?.track_points?.length || 0}
         />
 
         {/* Dynamic Display Grid: Map (Left) & Telemetry/Advisories (Right) */}

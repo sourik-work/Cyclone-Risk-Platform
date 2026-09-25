@@ -12,6 +12,7 @@ interface MapControlsProps {
   mode?: 'historical' | 'live';
   liveStormName?: string;
   hasActiveCyclone?: boolean;
+  trackPointCount?: number;
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
@@ -22,10 +23,15 @@ export const MapControls: React.FC<MapControlsProps> = ({
   mode = 'historical',
   liveStormName,
   hasActiveCyclone = false,
+  trackPointCount,
 }) => {
   const isLiveMonitoring = mode === 'live' && !hasActiveCyclone;
-  const isAmphan = mode === 'historical' && selectedStormId === 'amphan';
-  const isEEDisabled = isLiveMonitoring || isAmphan;
+  const amphanTileUrl = process.env.NEXT_PUBLIC_EE_AMPHAN_TILE_URL || null;
+  const isAmphan = mode === 'historical' && (selectedStormId === 'amphan' || selectedStormId === 'BOB-01-2020');
+  const isEEDisabled = isLiveMonitoring || (isAmphan && !amphanTileUrl);
+
+  const hasInsufficientHistory = trackPointCount !== undefined && trackPointCount < 4;
+  const isAiForecastDisabled = isLiveMonitoring || hasInsufficientHistory;
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 card-glass p-3">
@@ -98,18 +104,27 @@ export const MapControls: React.FC<MapControlsProps> = ({
         <button
           id="toggle-layer-ai-forecast"
           onClick={() => onToggleLayer('showAiForecast')}
-          disabled={isLiveMonitoring}
+          disabled={isAiForecastDisabled}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            isLiveMonitoring
+            isAiForecastDisabled
               ? 'bg-surface-2/60 border-white/[0.04] text-text-tertiary cursor-not-allowed opacity-50'
               : layerToggles.showAiForecast
               ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300 font-semibold shadow-sm'
               : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
           }`}
-          title={isLiveMonitoring ? 'No forecast in monitoring mode' : 'Toggle AI LSTM Forecast Trajectory'}
+          title={
+            hasInsufficientHistory
+              ? `AI Forecast requires 4+ observed points. Live storm has ${trackPointCount}.`
+              : isLiveMonitoring
+              ? 'No forecast in monitoring mode'
+              : 'Toggle AI LSTM Forecast Trajectory'
+          }
         >
           <Cpu className="w-3.5 h-3.5 text-yellow-400" />
           <span>AI Forecast</span>
+          {hasInsufficientHistory && (
+            <span className="text-[10px] font-mono text-amber-400 font-semibold">(Req 4+)</span>
+          )}
         </button>
 
         <button
@@ -182,7 +197,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
           <span>🏥 Hospitals</span>
         </button>
 
-        {/* Earth Engine Satellite Overlay Toggle - Disabled in Live Monitoring & Amphan */}
+        {/* Earth Engine Satellite Overlay Toggle - Disabled in Live Monitoring & Amphan when pending */}
         <button
           id="toggle-layer-earth-engine"
           onClick={() => onToggleLayer('showEarthEngine')}
@@ -197,8 +212,8 @@ export const MapControls: React.FC<MapControlsProps> = ({
           title={
             isLiveMonitoring
               ? 'Earth Engine flood SAR data disabled during live monitoring (calm basin)'
-              : isAmphan
-              ? 'Flood extent data available for Fani 2019 only — Amphan tile pending'
+              : isAmphan && !amphanTileUrl
+              ? 'Sentinel-1 SAR tiles available for Fani 2019. Amphan generation pending.'
               : 'Toggle Earth Engine Satellite Overlay'
           }
         >
@@ -207,21 +222,10 @@ export const MapControls: React.FC<MapControlsProps> = ({
           {isLiveMonitoring && (
             <span className="text-[10px] font-mono text-slate-500">(Disabled)</span>
           )}
-          {isAmphan && (
+          {isAmphan && !amphanTileUrl && (
             <span className="text-[10px] font-mono text-amber-400 font-semibold">(Pending)</span>
           )}
         </button>
-
-        {/* Small badge explaining pending flood data for Amphan */}
-        {isAmphan && (
-          <span
-            id="amphan-ee-pending-badge"
-            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-mono shadow-sm"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-            <span>Flood extent data available for Fani 2019 only — Amphan tile pending</span>
-          </span>
-        )}
       </div>
     </div>
   );
