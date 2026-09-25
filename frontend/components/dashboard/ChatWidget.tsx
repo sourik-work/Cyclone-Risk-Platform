@@ -165,6 +165,12 @@ export const ChatWidget: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-semibold text-slate-100">Cyclone Assistant</span>
+                  <span
+                    className="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 cursor-help"
+                    title="Dialogflow ES + Gemini chat is retained as an architecture demonstration for enterprise integration readiness. Gemini function-calling alone would cover the same functionality with less latency. See README for details."
+                  >
+                    DEMO ONLY
+                  </span>
                   <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     Online

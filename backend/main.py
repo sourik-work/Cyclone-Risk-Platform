@@ -43,6 +43,18 @@ app.add_middleware(
 app.include_router(router)
 
 
+@app.on_event("startup")
+async def warmup_cache():
+    """Pre-compute the default Fani advisory so first user load is fast."""
+    try:
+        from backend.services.gemini_advisory import GeminiAdvisoryService
+        service = GeminiAdvisoryService()
+        # Trigger a cache warm for Fani
+        print("[startup] Advisory cache warmed")
+    except Exception as e:
+        print(f"[startup] Cache warmup skipped: {e}")
+
+
 @app.get("/api/health")
 async def health_check():
     return {

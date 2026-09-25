@@ -38,7 +38,20 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
   const [triageAssets, setTriageAssets] = useState<TriageAsset[]>([]);
   const [totalCount, setTotalCount] = useState<number>(105);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isLongLoading, setIsLongLoading] = useState<boolean>(false);
   const [activeMenuAssetId, setActiveMenuAssetId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      setIsLongLoading(false);
+      const timer = setTimeout(() => {
+        setIsLongLoading(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLongLoading(false);
+    }
+  }, [loading]);
   const [assetStatuses, setAssetStatuses] = useState<Record<string, { status: AssetStatus; reason?: string }>>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [noteModalAsset, setNoteModalAsset] = useState<TriageAsset | null>(null);
@@ -392,7 +405,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
         </div>
         {loading && (
           <span className="text-[10px] text-rose-400 font-mono animate-pulse">
-            Ranking...
+            {isLongLoading ? 'Still loading (backend warming)...' : 'Ranking...'}
           </span>
         )}
       </div>

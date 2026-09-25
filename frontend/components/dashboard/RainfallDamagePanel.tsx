@@ -20,6 +20,19 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
 }) => {
   const [data, setData] = useState<RainfallDamageResponse | null>(initialData || null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isLongLoading, setIsLongLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (loading) {
+      setIsLongLoading(false);
+      const timer = setTimeout(() => {
+        setIsLongLoading(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLongLoading(false);
+    }
+  }, [loading]);
 
   useEffect(() => {
     let isMounted = true;
@@ -159,7 +172,9 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
           </div>
         </div>
         {loading && (
-          <span className="text-[10px] text-teal-400 font-mono animate-pulse">Syncing...</span>
+          <span className="text-[10px] text-teal-400 font-mono animate-pulse">
+            {isLongLoading ? 'Still loading (backend warming)...' : 'Syncing...'}
+          </span>
         )}
       </div>
 

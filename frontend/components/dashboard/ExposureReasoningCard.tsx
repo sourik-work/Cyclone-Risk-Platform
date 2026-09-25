@@ -32,7 +32,20 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
 }) => {
   const [data, setData] = useState<ExposureReasoningData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLongLoading, setIsLongLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isLoading) {
+      setIsLongLoading(false);
+      const timer = setTimeout(() => {
+        setIsLongLoading(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLongLoading(false);
+    }
+  }, [isLoading]);
 
   const fetchExposureReasoning = useCallback(async () => {
     if (!districtName) return;
@@ -147,8 +160,10 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
       {isLoading && (
         <div className="py-6 flex flex-col items-center justify-center gap-2.5 text-center">
           <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
-          <p className="text-xs text-slate-300 font-mono">
-            Gemini is reasoning over SAR imagery + infrastructure...
+          <p className="text-xs text-slate-300 font-mono font-semibold">
+            {isLongLoading
+              ? 'Still loading — backend may be warming up. This is expected on first visit.'
+              : 'Loading...'}
           </p>
           <p className="text-[10px] text-slate-500">
             Synthesizing Sentinel-1 SAR flood extent with OSM power grid & lifelines

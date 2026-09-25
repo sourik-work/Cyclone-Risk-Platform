@@ -289,6 +289,19 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   const currentPoint: TrackPoint = track.track_points[activePointIndex] || track.track_points[0];
   const [localAdvisoryOverride, setLocalAdvisoryOverride] = useState<AnticipatoryAdvisory | null>(null);
   const [isApprovalActionLoading, setIsApprovalActionLoading] = useState<boolean>(false);
+  const [advisoryLoadingLong, setAdvisoryLoadingLong] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isLoadingAdvisory || !advisory) {
+      setAdvisoryLoadingLong(false);
+      const timer = setTimeout(() => {
+        setAdvisoryLoadingLong(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setAdvisoryLoadingLong(false);
+    }
+  }, [isLoadingAdvisory, advisory]);
 
   useEffect(() => {
     setLocalAdvisoryOverride(null);
@@ -1912,7 +1925,9 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           <div className="py-8 flex flex-col items-center justify-center gap-2.5 text-center bg-slate-950/60 rounded-lg border border-red-500/20 p-4">
             <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
             <p className="text-xs text-amber-300 font-mono font-semibold">
-              Synthesizing Gemini Multilingual Anticipatory Advisory...
+              {advisoryLoadingLong
+                ? 'Still loading — backend may be warming up. This is expected on first visit.'
+                : 'Loading...'}
             </p>
             <p className="text-[10px] text-slate-500">
               Evaluating pre-landfall trajectory & coastal risk parameters
@@ -2044,7 +2059,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           <div className="flex items-center gap-2 text-yellow-400">
             <Cpu className="w-4 h-4 text-yellow-400" />
             <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
-              MODEL VALIDATION
+              MODEL VALIDATION (ILLUSTRATIVE)
             </h3>
           </div>
           <span className="text-[10px] mono-data px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 font-semibold">
@@ -2090,6 +2105,11 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             <span>Training samples:</span>
             <span className="text-text-primary font-semibold">8,484</span>
           </div>
+        </div>
+
+        {/* Footnote */}
+        <div className="pt-2 border-t border-white/[0.06] text-[10px] text-text-tertiary leading-relaxed">
+          Trained on 2 historical cases. Not validated across a broader test set. See README for methodology.
         </div>
       </div>
 

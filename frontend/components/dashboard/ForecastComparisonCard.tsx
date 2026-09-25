@@ -78,7 +78,20 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
   const [lstm, setLstm] = useState<LstmForecastResponse | null>(null);
   const [gemini, setGemini] = useState<GeminiForecastResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLongLoading, setIsLongLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isLoading) {
+      setIsLongLoading(false);
+      const timer = setTimeout(() => {
+        setIsLongLoading(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLongLoading(false);
+    }
+  }, [isLoading]);
 
   const effectivePointIndex =
     activePointIndex !== undefined
@@ -242,7 +255,11 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
       {isLoading ? (
         <div className="py-6 flex flex-col items-center justify-center gap-2 text-slate-400 text-xs font-mono">
           <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
-          <span>Evaluating dual model trajectories...</span>
+          <span className="text-slate-300 font-semibold">
+            {isLongLoading
+              ? 'Still loading — backend may be warming up. This is expected on first visit.'
+              : 'Loading...'}
+          </span>
         </div>
       ) : (
         <div className="space-y-3">

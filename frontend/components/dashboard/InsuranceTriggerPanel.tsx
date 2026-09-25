@@ -122,7 +122,20 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
 }) => {
   const [data, setData] = useState<InsuranceEvaluateResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isLongLoading, setIsLongLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      setIsLongLoading(false);
+      const timer = setTimeout(() => {
+        setIsLongLoading(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLongLoading(false);
+    }
+  }, [loading]);
 
   const fetchEvaluation = useCallback(async () => {
     setLoading(true);
@@ -239,48 +252,64 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
       id="parametric-insurance-panel"
       className="bg-slate-900/90 backdrop-blur-md border border-cyan-500/30 rounded-xl p-4 shadow-xl space-y-3 relative overflow-hidden transition-all duration-300"
     >
+      {/* Watermark overlay */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center z-10 overflow-hidden">
+        <span className="text-[120px] font-black text-amber-500/8 rotate-[-30deg] whitespace-nowrap select-none">
+          ILLUSTRATIVE
+        </span>
+      </div>
+
       {/* Subtle top indicator bar */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 via-emerald-500 to-amber-500" />
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 via-emerald-500 to-amber-500 z-20" />
 
-      {/* Illustrative Coefficients Banner */}
-      <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-500/8 border border-amber-500/20 mb-4">
-        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-        <div className="text-xs text-amber-200">
-          <span className="font-semibold">Illustrative coefficients:</span> Payout figures use placeholder math (not actuarially calibrated). They demonstrate formula behavior, not expected real-world claims.
+      {/* Main panel content wrapper */}
+      <div className="relative z-20 space-y-3">
+        {/* Illustrative Coefficients Banner */}
+        <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-500/8 border border-amber-500/20 mb-4">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <div className="text-xs text-amber-200">
+            <span className="font-semibold">Illustrative coefficients:</span> Payout figures use placeholder math (not actuarially calibrated). They demonstrate formula behavior, not expected real-world claims.
+          </div>
         </div>
-      </div>
 
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-        <div className="flex items-center gap-2 text-cyan-400">
-          <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
-          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
-            PARAMETRIC INSURANCE TRIGGERS
-          </h3>
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+          <div className="flex items-center gap-2 text-cyan-400">
+            <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+              <span>PARAMETRIC INSURANCE TRIGGERS</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                ⚠️ PLACEHOLDER COEFFICIENTS
+              </span>
+            </h3>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-semibold">
+              NDRP Risk Pool
+            </span>
+            <button
+              onClick={fetchEvaluation}
+              disabled={loading}
+              className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Re-evaluate triggers against latest storm telemetry"
+            >
+              <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-semibold">
-            NDRP Risk Pool
-          </span>
-          <button
-            onClick={fetchEvaluation}
-            disabled={loading}
-            className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Re-evaluate triggers against latest storm telemetry"
-          >
-            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
-          </button>
-        </div>
-      </div>
 
-      {/* Loading state that hides stale data (TASK 5) */}
-      {loading ? (
-        <div className="py-8 flex flex-col items-center justify-center gap-2.5 text-slate-400 text-xs font-mono">
-          <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
-          <span className="text-slate-300 font-semibold">Evaluating parametric insurance triggers for {cycloneName || cycloneId}...</span>
-          <span className="text-[10px] text-slate-500">Calculating wind, surge & composite hazard exceedances</span>
-        </div>
-      ) : (
+        {/* Loading state that hides stale data (TASK 5) */}
+        {loading ? (
+          <div className="py-8 flex flex-col items-center justify-center gap-2.5 text-slate-400 text-xs font-mono">
+            <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+            <span className="text-slate-300 font-semibold">
+              {isLongLoading
+                ? 'Still loading — backend may be warming up. This is expected on first visit.'
+                : 'Loading...'}
+            </span>
+            <span className="text-[10px] text-slate-500">Calculating wind, surge & composite hazard exceedances</span>
+          </div>
+        ) : (
         <>
           {/* TASK 2: Context Banner — Explains why numbers are what they are */}
           {mode === 'historical' && (
@@ -540,6 +569,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
       <div className="pt-2 text-[10px] text-slate-400 font-sans border-t border-slate-800/60 leading-tight">
         Payout = affected households × ₹/household, capped at contract max. Payouts release
         pre-landfall via NDRP parametric trigger.
+      </div>
       </div>
     </div>
   );

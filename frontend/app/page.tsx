@@ -28,7 +28,7 @@ import {
 } from '../lib/seedData';
 import { SEED_INFRASTRUCTURE_DATA } from '../lib/infrastructureSeed';
 import { fetchWithCache, getCachedData } from '../lib/cache';
-import { RefreshCw, Radio, ShieldCheck, AlertCircle } from 'lucide-react';
+import { RefreshCw, Radio, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 
 export const COUNTRIES = [
   {
@@ -124,33 +124,38 @@ const MONITORING_ADVISORY: AnticipatoryAdvisory = {
 };
 
 export default function Home() {
-  // TASK 4: Cold-start status banner state
-  const [isColdStart, setIsColdStart] = useState<boolean>(false);
+  // Global cold-start warmup banner state
+  const [isWarmingUp, setIsWarmingUp] = useState(false);
+  const [warmingMessage, setWarmingMessage] = useState('');
 
-  // TASK 2: Fire an early warmup ping to trigger Render cold start ASAP
   useEffect(() => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-    let isResolved = false;
+    let timeoutId: NodeJS.Timeout;
 
-    // TASK 4: If initial health check takes >5s, show cold-start banner
-    const coldStartTimer = setTimeout(() => {
-      if (!isResolved) {
-        setIsColdStart(true);
-      }
-    }, 5000);
+    const warmupTimeout = setTimeout(() => {
+      setIsWarmingUp(true);
+      setWarmingMessage('Waking up backend (free tier cold start). This takes 30-60 seconds on first visit...');
+    }, 3000);
 
-    fetch(`${backendUrl}/api/health`, { method: 'GET' })
+    fetch(`${backendUrl}/api/health`)
+      .then((r) => r.json())
       .then(() => {
-        isResolved = true;
-        clearTimeout(coldStartTimer);
-        setIsColdStart(false);
+        clearTimeout(warmupTimeout);
+        setIsWarmingUp(false);
       })
       .catch(() => {
-        // Render backend may be warming up
+        clearTimeout(warmupTimeout);
+        setIsWarmingUp(false);
       });
 
+    // Escalate message after 15s
+    timeoutId = setTimeout(() => {
+      setWarmingMessage('Backend is starting up. Still warming... (Render free tier cold start)');
+    }, 15000);
+
     return () => {
-      clearTimeout(coldStartTimer);
+      clearTimeout(warmupTimeout);
+      clearTimeout(timeoutId);
     };
   }, []);
 
@@ -190,7 +195,7 @@ export default function Home() {
       ]);
 
       // Clear cold start as soon as any endpoint settles
-      setIsColdStart(false);
+      setIsWarmingUp(false);
 
       if (infraRes.status === 'fulfilled' && infraRes.value?.features?.length) {
         setInfrastructureData(infraRes.value);
@@ -450,7 +455,7 @@ export default function Home() {
 
         const data: AnticipatoryAdvisory = await res.json();
         setAdvisory(data);
-        setIsColdStart(false);
+        setIsWarmingUp(false);
       } catch (err: any) {
         if (err.name === 'AbortError' || signal?.aborted) {
           return;
@@ -561,23 +566,21 @@ export default function Home() {
         districts={SEED_ALL_COASTAL_VULNERABILITY.features.map((f) => f.properties)}
       />
 
+      {/* Global Cold-Start Warmup Banner */}
+      {isWarmingUp && (
+        <div
+          id="cold-start-banner"
+          className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 backdrop-blur-xl shadow-lg max-w-2xl animate-fadeIn"
+        >
+          <div className="flex items-center gap-3">
+            <Loader2 className="w-5 h-5 text-amber-400 animate-spin shrink-0" />
+            <div className="text-sm text-amber-100">{warmingMessage}</div>
+          </div>
+        </div>
+      )}
+
       {/* Main Operations Center Layout */}
       <div className="flex-1 p-4 lg:p-6 flex flex-col gap-4 max-w-[1750px] w-full mx-auto">
-        {/* TASK 4: Cold-Start Warmup Banner */}
-        {isColdStart && (
-          <div
-            id="cold-start-banner"
-            className="bg-amber-900/40 border border-amber-700 text-amber-200 px-4 py-2 text-sm rounded-xl flex items-center justify-between gap-3 shadow-lg backdrop-blur-md animate-fadeIn"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-base animate-pulse">⏳</span>
-              <span>Backend is warming up (first visit only — takes 30-60s). All data will load automatically.</span>
-            </div>
-            <span className="text-xs font-mono text-amber-300/70 hidden sm:inline">
-              Render Free Tier Cold Start
-            </span>
-          </div>
-        )}
         {/* Live Mode Monitoring Banner: displayed when in Live Mode and monitoring continuously */}
         {mode === 'live' && (!liveData || liveData.status === 'monitoring' || !liveData.active_cyclone) && (
           <div

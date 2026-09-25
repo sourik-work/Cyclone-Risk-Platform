@@ -40,8 +40,16 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
   liveStatus,
   districts,
 }) => {
-  const [timeUtc, setTimeUtc] = useState<string>('');
-  const [timeIst, setTimeIst] = useState<string>('');
+  const [timeUtc, setTimeUtc] = useState<string>(() => new Date().toUTCString().slice(17, 25) + ' UTC');
+  const [timeIst, setTimeIst] = useState<string>(() =>
+    new Date().toLocaleTimeString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }) + ' IST'
+  );
   const [showApacModal, setShowApacModal] = useState<boolean>(false);
   const [showReportDamage, setShowReportDamage] = useState<boolean>(false);
 
@@ -116,19 +124,38 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                 </span>
               )}
 
-              {/* India-Scale Serving Coverage Badge */}
+              {/* Demo Mode Pill */}
               <span
-                id="platform-coverage-badge"
-                title="Core coverage = full infrastructure + vulnerability + advisory pipeline. Forecast coverage = vulnerability + storm track + advisory, but infrastructure layer not yet populated."
-                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-medium card-glass text-accent-cyan border-border-subtle shadow-sm cursor-help"
+                className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 cursor-help"
+                title="Backend runs on Render free tier (0.1 CPU, 512MB). First request after inactivity takes 30-60s. Demo deployment: 10 concurrent users tested. Production path is Cloud Run autoscaling (documented in README)."
               >
-                <MapPin className="w-3 h-3 text-accent-cyan" />
-                Core coverage: 4 states, 16 districts · Forecast coverage: 9 states + 4 UTs
+                DEMO · Render free tier
               </span>
+
+              {/* India-Scale Two-Tier Coverage Badges */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span
+                  id="platform-coverage-badge-core"
+                  title="Full infrastructure + insurance + advisory + forecast pipeline"
+                  className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 cursor-help"
+                >
+                  ✅ FULL PIPELINE · 4 states · 16 districts
+                </span>
+                <span
+                  id="platform-coverage-badge-forecast"
+                  title="Vulnerability + storm track + advisory active. Infrastructure asset layer not yet populated."
+                  className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/15 text-blue-300 border border-blue-500/30 cursor-help"
+                >
+                  📡 FORECAST ONLY · +5 states · +4 UTs
+                </span>
+              </div>
             </div>
             <p className="text-xs text-text-secondary mt-0.5">
               India Coastal Predictive Vulnerability & Pre-Landfall Evacuation Engine
             </p>
+            <div className="text-[10px] text-text-tertiary mt-1">
+              Demo deployment · 4 states full pipeline · 9 states + 4 UTs forecast coverage · Illustrative coefficients (see README)
+            </div>
           </div>
         </div>
 
@@ -181,9 +208,9 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           {/* UTC / IST Digital Clock */}
           <div className="hidden xl:flex items-center gap-2 card-glass border-border-subtle px-3 py-1.5 rounded-md font-mono text-xs text-text-secondary">
             <Activity className="w-3.5 h-3.5 text-accent-cyan" />
-            <span className="text-accent-cyan">{timeUtc || '--:--:-- UTC'}</span>
+            <span className="text-accent-cyan">{timeUtc}</span>
             <span className="text-text-tertiary">•</span>
-            <span className="text-amber-300">{timeIst || '--:--:-- IST'}</span>
+            <span className="text-amber-300">{timeIst}</span>
           </div>
 
           {/* Multilingual Selector */}

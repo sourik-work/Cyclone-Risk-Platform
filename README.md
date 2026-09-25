@@ -37,7 +37,18 @@ This platform provides **48-hour anticipatory lead time** by combining:
 - Terrain-aware rainfall damage pathways (flash flood for lowland, landslide for hilly)
 - Human-in-the-loop approval gate for advisories and insurance payouts
 - Multi-channel last-mile delivery (radio + SMS + IVR)
-- What-if scenario override for contingency planning
+### Live vs. Documented Features
+
+| Feature | Status | What works today |
+|---------|--------|------------------|
+| IMD live bulletins | ✅ LIVE | Real-time parse from RSMC New Delhi |
+| Sentinel-1 SAR (Fani 2019) | ✅ LIVE | Real GEE tile overlay on map |
+| Sentinel-1 SAR (Amphan 2020) | ✅ LIVE | Real GEE tile overlay on map |
+| Sentinel-2 NDVI/NDWI change | 🟡 DOCUMENTED | Scripts ready, tiles pending GEE export |
+| JTWC / PAGASA / BMKG / DMH adapters | 🟡 STUB | Interface implemented, data source not wired |
+| Gemini multimodal exposure reasoning | ✅ LIVE | Real-time Gemini API calls |
+| Parametric insurance triggers | ✅ LIVE | Working math (illustrative coefficients) |
+| Dialogflow chat | ✅ LIVE | Real webhook + Gemini classification |
 
 ---
 
@@ -116,19 +127,26 @@ This platform provides **48-hour anticipatory lead time** by combining:
 - Gujarat, Maharashtra, Goa, Karnataka, Kerala + 4 UTs
 - Vulnerability polygons, storm track, and advisory pipeline active. **Infrastructure asset layer is not yet populated for these regions.**
 
-### AI Forecasting (TrackLSTM)
+### AI Forecasting (TrackLSTM) — Illustrative Trajectory Forecaster
 
-- 119,872 parameters | 4-point input → 16-point output (48h at 3h intervals)
-- RMSE @ 24h: 85.6 km (illustrative, on two held-out case studies)
-- RMSE @ 48h: 155.6 km
-- Wind MAE: 7.3 km/h | Pressure MAE: 2.9 hPa
+**Framing:** This model should be read as a **trajectory-smoothing demo forecaster**, not a validated operational predictor. The current RMSE numbers are illustrative on two historical cases and would require leave-one-storm-out validation across 15+ cyclones to be treated as generalizable accuracy claims.
 
-**Validation limitations (read this before quoting the RMSE):**
-- Model trained on ~8,484 sequences derived from IMD best-track data with synthetic augmentation.
-- **The real-vs-synthetic augmentation ratio is not currently published.**
-- **Fani 2019 and Amphan 2020 are held out as illustrative test cases, but we do not currently claim they were excluded from training.**
-- **The 85.6 km RMSE is illustrative on two cases, not a generalizable accuracy claim.**
-- We do NOT claim to beat operational IMD accuracy.
+| Metric | Lead Time | Value |
+|--------|-----------|-------|
+| Position RMSE | 24h | 85.6 km |
+| Position RMSE | 48h | 155.6 km |
+| Wind Speed MAE | — | 7.3 km/h |
+| Central Pressure MAE | — | 2.9 hPa |
+
+- **Architecture:** 2-layer LSTM, 119,872 parameters (4-point input → 16-point output, 48h at 3h intervals)
+
+**Reproducibility caveat:** The training set (~8,484 sequences) derives from IMD best-track data with synthetic augmentation. The synthetic-to-real ratio is not currently disclosed. Fani (2019) and Amphan (2020) are used as illustrative test cases, but we do NOT currently claim they were fully held out from training. A production-grade validation would:
+1. Hold out Fani and Amphan from training
+2. Report augmentation ratio
+3. Run leave-one-storm-out validation across 15-20 unseen storms
+4. Publish confidence intervals, not point estimates
+
+Until (1)-(4) are completed, treat the 85.6 km RMSE as a directional indicator only. We do NOT claim to beat operational IMD accuracy.
 
 ### Secondary Forecast Sanity-Check
 
@@ -164,15 +182,6 @@ Advisories dispatch through three complementary channels to maximize reach in lo
 | IVR Voice Call | 95% | 8,400 village heads | Any phone, pre-recorded local language |
 
 All dispatches require officer approval and are logged to the audit trail.
-
-### Dialogflow Conversational Agent
-- **Floating Chat Widget** on operations dashboard
-- Dual-intent Dialogflow ES webhook fulfillment with Gemini 3.7 Flash classification
-- Live queries for active storm status (`check_cyclone_status`) and current advisories (`get_advisory`)
-
-### Why Dialogflow ES + Gemini?
-
-**Candid framing:** For a prototype with 10 concurrent users, Gemini function-calling alone would cover the same ground with less latency and one fewer moving part. We retained Dialogflow as an **architectural demonstration of enterprise-integration readiness** — Indian state disaster management authorities commonly integrate via Dialogflow-style intents. A production deployment serving 10,000+ municipal users would benefit from the Dialogflow contract; the current prototype would not lose functionality without it.
 
 ### Infrastructure Exposure
 
@@ -372,9 +381,27 @@ Read-only endpoints (`/api/health`, `/api/tracks`, `/api/cyclone/live`) remain p
 | Concurrent users (tested) | 10 (free tier limit) |
 | Scale path | Render → Cloud Run with autoscaling (0→N) |
 
+### Scalability Path (Designed, Not Deployed)
+
+The current deployment runs on Render free tier (0.1 CPU, 512MB RAM) and has been load-tested at 10 concurrent users. This is a demo deployment, not production capacity.
+
+**Production path — Cloud Run autoscaling:**
+- Backend container (FastAPI + LSTM) runs on Cloud Run with autoscaling 0→N
+- Expected cost at 100 concurrent users: ~$15-25/month (Cloud Run pricing at ~50ms average inference)
+- BigQuery handles data warehouse queries with automatic scaling
+- Firestore handles real-time state with 50k+ reads/sec capacity
+- Rate limiting via Cloud Armor at the edge
+- This migration is a 2-3 hour task (Dockerfile + Cloud Run deploy) and does not require code changes
+
+**Current honest limits:**
+- 10 concurrent users tested
+- 60s cold start on Render free tier
+- No rate limiting on public read endpoints
+- Single-region deployment (Render Singapore)
+
 ---
 
-## APAC Scalability (Designed, Not Deployed)
+## APAC Adapter Architecture (Stub — Planned Data Wiring)
 
 **Scope note:** The platform is deployed on Render free tier (0.1 CPU, 512 MB RAM) and has been load-tested at 10 concurrent users. "Scalability" here means "the architecture supports extension without redesign," not "the platform currently serves N users."
 
@@ -423,6 +450,18 @@ Users can toggle a scenario override panel to test hypothetical storm parameters
 When enabled, all downstream models update live — forecast, surge simulation, rainfall pathway, insurance triggers, infrastructure triage, and Gemini exposure reasoning. This is standard "what-if" analysis used by disaster management authorities to test contingency plans.
 
 A visual indicator on the map and header makes it clear that displayed data is hypothetical.
+
+---
+
+## Future Integrations (Architecture Demonstration)
+
+### Dialogflow Conversational Agent
+
+- **Floating Chat Widget** on operations dashboard
+- Dual-intent Dialogflow ES webhook fulfillment with Gemini 3.7 Flash classification
+- Live queries for active storm status (`check_cyclone_status`) and current advisories (`get_advisory`)
+
+**Candid framing:** For a prototype with 10 concurrent users, Gemini function-calling alone would cover the same ground with less latency and one fewer moving part. We retained Dialogflow as an **architectural demonstration of enterprise-integration readiness** — Indian state disaster management authorities commonly integrate via Dialogflow-style intents. A production deployment serving 10,000+ municipal users would benefit from the Dialogflow contract; the current prototype would not lose functionality without it.
 
 ---
 
