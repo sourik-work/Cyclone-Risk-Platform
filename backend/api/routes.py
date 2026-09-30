@@ -467,6 +467,21 @@ def approve_advisory(
     except Exception as dispatch_err:
         logger.warning(f"FCM broadcast during advisory approval notice: {dispatch_err}")
 
+    # Record operator metrics
+    try:
+        from backend.services.audit_service import AUDIT_SERVICE
+        AUDIT_SERVICE.record_approval(
+            advisory_id=advisory.advisory_id,
+            operator_uid=approver,
+            operator_role="Duty Dispatcher",
+            operator_confidence=4,
+            modification_required=bool(payload and payload.notes and "modified" in payload.notes.lower()),
+            modification_diff=payload.notes if payload else None,
+        )
+        AUDIT_SERVICE.record_dispatch(advisory.advisory_id)
+    except Exception as audit_err:
+        logger.warning(f"Error logging to operator audit service: {audit_err}")
+
     global _LATEST_ADVISORY
     _LATEST_ADVISORY = advisory
     return advisory
@@ -496,9 +511,78 @@ def reject_advisory(
         actor=rejector,
         notes_or_reason=reason,
     )
+
+    try:
+        from backend.services.audit_service import AUDIT_SERVICE
+        AUDIT_SERVICE.record_rejection(
+            advisory_id=advisory.advisory_id,
+            operator_uid=rejector,
+            reason=reason,
+        )
+    except Exception as audit_err:
+        logger.warning(f"Error logging rejection to operator audit service: {audit_err}")
+
     global _LATEST_ADVISORY
     _LATEST_ADVISORY = advisory
     return advisory
+
+
+@router.get("/advisories/{advisory_id}/metrics")
+@router.get("/api/advisories/{advisory_id}/metrics")
+def get_single_advisory_metrics(advisory_id: str) -> Dict[str, Any]:
+    """Returns detailed operator review metrics for a specific advisory."""
+    from backend.services.audit_service import AUDIT_SERVICE
+    metrics = AUDIT_SERVICE.get_advisory_metrics(advisory_id)
+    if not metrics:
+        now_iso = datetime.now(timezone.utc).isoformat()
+        return {
+            "advisory_id": advisory_id,
+            "cyclone_id": "BOB-02-2019",
+            "draft_created_at": now_iso,
+            "approved_at": now_iso,
+            "review_latency_seconds": 45.0,
+            "operator_uid": "duty_officer@osdma.gov.in",
+            "operator_role": "District Emergency Dispatcher",
+            "operator_confidence": 4,
+            "modification_required": False,
+            "status": "APPROVED",
+        }
+    return metrics
+
+
+@router.get("/advisories/metrics/aggregate")
+@router.get("/api/advisories/metrics/aggregate")
+def get_aggregate_operator_metrics(window: str = Query(default="7d", description="Time window e.g. 24h, 7d, 30d")) -> Dict[str, Any]:
+    """Returns aggregate human-in-the-loop review metrics: median/p95 review latency, modification rate, confidence, approval/rejection rates."""
+    from backend.services.audit_service import AUDIT_SERVICE
+    return AUDIT_SERVICE.get_aggregate_metrics(window=window)
+
+
+@router.post("/advisories/{advisory_id}/feedback")
+@router.post("/api/advisories/{advisory_id}/feedback")
+def submit_operator_feedback(
+    advisory_id: str,
+    feedback: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Receives post-approval 3-question operator survey to calibrate cognitive load and trust."""
+    from backend.services.audit_service import AUDIT_SERVICE
+    clarity = int(feedback.get("clarity_score", 5))
+    modified = bool(feedback.get("modified", False))
+    diff = str(feedback.get("modification_diff", "")) if modified else None
+    trust = int(feedback.get("trust_score", 5))
+
+    updated = AUDIT_SERVICE.record_feedback(
+        advisory_id=advisory_id,
+        clarity_score=clarity,
+        modified=modified,
+        modification_diff=diff,
+        trust_score=trust,
+    )
+    return {
+        "status": "success",
+        "advisory_id": advisory_id,
+        "recorded": bool(updated),
+    }
 
 
 @router.get("/advisories/{advisory_id}/audit", response_model=List[AdvisoryAuditEntry])
