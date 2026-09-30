@@ -1,0 +1,3990 @@
+[
+  {
+    "asset_id": "OD-SUB-001",
+    "name": "Puri 220kV Grid Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Puri",
+    "voltage_kv": 220,
+    "capacity_mva": 320,
+    "operator": "OPTCL",
+    "latitude": 19.81,
+    "longitude": 85.83,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-002",
+    "name": "Konark 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Puri",
+    "voltage_kv": 132,
+    "capacity_mva": 160,
+    "operator": "OPTCL",
+    "latitude": 19.89,
+    "longitude": 86.09,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-003",
+    "name": "Paradip Port 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "voltage_kv": 220,
+    "capacity_mva": 400,
+    "operator": "OPTCL",
+    "latitude": 20.31,
+    "longitude": 86.61,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-004",
+    "name": "Jagatsinghpur 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "OPTCL",
+    "latitude": 20.26,
+    "longitude": 86.17,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-005",
+    "name": "Chandbali 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "voltage_kv": 132,
+    "capacity_mva": 120,
+    "operator": "OPTCL",
+    "latitude": 20.78,
+    "longitude": 86.74,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-006",
+    "name": "Bhadrak 220kV Grid Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "voltage_kv": 220,
+    "capacity_mva": 320,
+    "operator": "OPTCL",
+    "latitude": 21.05,
+    "longitude": 86.51,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-007",
+    "name": "Balasore 400kV Grid Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Balasore",
+    "voltage_kv": 400,
+    "capacity_mva": 630,
+    "operator": "OPTCL",
+    "latitude": 21.49,
+    "longitude": 86.93,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-008",
+    "name": "Jaleswar 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Balasore",
+    "voltage_kv": 132,
+    "capacity_mva": 80,
+    "operator": "OPTCL",
+    "latitude": 21.81,
+    "longitude": 87.21,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-009",
+    "name": "Chhatrapur 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "voltage_kv": 220,
+    "capacity_mva": 200,
+    "operator": "OPTCL",
+    "latitude": 19.35,
+    "longitude": 84.99,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-010",
+    "name": "Berhampur 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "voltage_kv": 132,
+    "capacity_mva": 160,
+    "operator": "OPTCL",
+    "latitude": 19.31,
+    "longitude": 84.79,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-010",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-011",
+    "name": "Gopalpur 220kV Industrial Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "voltage_kv": 220,
+    "capacity_mva": 300,
+    "operator": "OPTCL",
+    "latitude": 19.26,
+    "longitude": 84.91,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-011",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-012",
+    "name": "Kendrapara 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Kendrapara",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "OPTCL",
+    "latitude": 20.5,
+    "longitude": 86.42,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-012",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-013",
+    "name": "Aul 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Kendrapara",
+    "voltage_kv": 132,
+    "capacity_mva": 80,
+    "operator": "OPTCL",
+    "latitude": 20.67,
+    "longitude": 86.63,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-013",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-014",
+    "name": "Pipili 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Puri",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "OPTCL",
+    "latitude": 20.12,
+    "longitude": 85.83,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-014",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SUB-015",
+    "name": "Dhamra Port 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "voltage_kv": 220,
+    "capacity_mva": 250,
+    "operator": "OPTCL",
+    "latitude": 20.82,
+    "longitude": 86.95,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/grid/substations/OD-SUB-015",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-001",
+    "name": "Digha 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "WBSETCL",
+    "latitude": 21.62,
+    "longitude": 87.52,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-002",
+    "name": "Haldia 400kV Grid Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "voltage_kv": 400,
+    "capacity_mva": 800,
+    "operator": "WBSETCL",
+    "latitude": 22.06,
+    "longitude": 88.06,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-003",
+    "name": "Contai 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "voltage_kv": 132,
+    "capacity_mva": 120,
+    "operator": "WBSETCL",
+    "latitude": 21.78,
+    "longitude": 87.75,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-004",
+    "name": "Tamluk 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "voltage_kv": 220,
+    "capacity_mva": 315,
+    "operator": "WBSETCL",
+    "latitude": 22.3,
+    "longitude": 87.92,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-005",
+    "name": "Kakdwip 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 132,
+    "capacity_mva": 80,
+    "operator": "WBSETCL",
+    "latitude": 21.87,
+    "longitude": 88.18,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-006",
+    "name": "Diamond Harbour 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "WBSETCL",
+    "latitude": 22.19,
+    "longitude": 88.19,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-007",
+    "name": "Canning 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 132,
+    "capacity_mva": 80,
+    "operator": "WBSETCL",
+    "latitude": 22.31,
+    "longitude": 88.66,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-008",
+    "name": "Gosaba Island Solar/Grid Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 33,
+    "capacity_mva": 40,
+    "operator": "WBSETCL",
+    "latitude": 22.16,
+    "longitude": 88.81,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-009",
+    "name": "Basirhat 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "voltage_kv": 132,
+    "capacity_mva": 120,
+    "operator": "WBSETCL",
+    "latitude": 22.66,
+    "longitude": 88.89,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-010",
+    "name": "Hingalganj 33kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "voltage_kv": 33,
+    "capacity_mva": 30,
+    "operator": "WBSETCL",
+    "latitude": 22.47,
+    "longitude": 88.98,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-010",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-011",
+    "name": "Barasat 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "voltage_kv": 220,
+    "capacity_mva": 315,
+    "operator": "WBSETCL",
+    "latitude": 22.72,
+    "longitude": 88.48,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-011",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-012",
+    "name": "Nandigram 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "voltage_kv": 132,
+    "capacity_mva": 60,
+    "operator": "WBSETCL",
+    "latitude": 21.95,
+    "longitude": 87.98,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-012",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-013",
+    "name": "Bakkhali 33kV Coastal Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 33,
+    "capacity_mva": 40,
+    "operator": "WBSETCL",
+    "latitude": 21.56,
+    "longitude": 88.25,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-013",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-014",
+    "name": "Namkhana 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 132,
+    "capacity_mva": 80,
+    "operator": "WBSETCL",
+    "latitude": 21.76,
+    "longitude": 88.23,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-014",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SUB-015",
+    "name": "Sagar Island 33kV Grid Hub",
+    "asset_type": "SUBSTATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 33,
+    "capacity_mva": 50,
+    "operator": "WBSETCL",
+    "latitude": 21.64,
+    "longitude": 88.08,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/grid/substations/WB-SUB-015",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-001",
+    "name": "Visakhapatnam 400kV Kalpaka Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "voltage_kv": 400,
+    "capacity_mva": 1000,
+    "operator": "APTRANSCO",
+    "latitude": 17.68,
+    "longitude": 83.21,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-002",
+    "name": "Anakapalle 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Anakapalle",
+    "voltage_kv": 220,
+    "capacity_mva": 315,
+    "operator": "APTRANSCO",
+    "latitude": 17.69,
+    "longitude": 83.0,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-003",
+    "name": "Kakinada 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Kakinada",
+    "voltage_kv": 220,
+    "capacity_mva": 400,
+    "operator": "APTRANSCO",
+    "latitude": 16.98,
+    "longitude": 82.24,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-004",
+    "name": "Amalapuram 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Dr. B.R. Ambedkar Konaseema",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "APTRANSCO",
+    "latitude": 16.58,
+    "longitude": 82.0,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-005",
+    "name": "Machilipatnam 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Krishna",
+    "voltage_kv": 220,
+    "capacity_mva": 200,
+    "operator": "APTRANSCO",
+    "latitude": 16.18,
+    "longitude": 81.13,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-006",
+    "name": "Bapatla 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Bapatla",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "APTRANSCO",
+    "latitude": 15.9,
+    "longitude": 80.46,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-007",
+    "name": "Ongole 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Prakasam",
+    "voltage_kv": 220,
+    "capacity_mva": 315,
+    "operator": "APTRANSCO",
+    "latitude": 15.5,
+    "longitude": 80.05,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-008",
+    "name": "Nellore 400kV Manubolu Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "SPSR Nellore",
+    "voltage_kv": 400,
+    "capacity_mva": 1000,
+    "operator": "APTRANSCO",
+    "latitude": 14.44,
+    "longitude": 79.98,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-009",
+    "name": "Srikakulam 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Srikakulam",
+    "voltage_kv": 220,
+    "capacity_mva": 200,
+    "operator": "APTRANSCO",
+    "latitude": 18.29,
+    "longitude": 83.89,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-010",
+    "name": "Tekkali 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Srikakulam",
+    "voltage_kv": 132,
+    "capacity_mva": 100,
+    "operator": "APTRANSCO",
+    "latitude": 18.61,
+    "longitude": 84.23,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-010",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-011",
+    "name": "Bhimavaram 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "West Godavari",
+    "voltage_kv": 220,
+    "capacity_mva": 250,
+    "operator": "APTRANSCO",
+    "latitude": 16.54,
+    "longitude": 81.52,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-011",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-012",
+    "name": "Chirala 132kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Bapatla",
+    "voltage_kv": 132,
+    "capacity_mva": 80,
+    "operator": "APTRANSCO",
+    "latitude": 15.82,
+    "longitude": 80.35,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-012",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-013",
+    "name": "Gudur 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "Tirupati",
+    "voltage_kv": 220,
+    "capacity_mva": 200,
+    "operator": "APTRANSCO",
+    "latitude": 14.15,
+    "longitude": 79.85,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-013",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SUB-014",
+    "name": "Krishnapatnam Port 400kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Andhra Pradesh",
+    "district": "SPSR Nellore",
+    "voltage_kv": 400,
+    "capacity_mva": 800,
+    "operator": "APTRANSCO",
+    "latitude": 14.28,
+    "longitude": 80.12,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/grid/substations/AP-SUB-014",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-001",
+    "name": "Chennai North 400kV NCTPS Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "voltage_kv": 400,
+    "capacity_mva": 1200,
+    "operator": "TANTRANSCO",
+    "latitude": 13.25,
+    "longitude": 80.32,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-002",
+    "name": "Ennore 230kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Tiruvallur",
+    "voltage_kv": 230,
+    "capacity_mva": 400,
+    "operator": "TANTRANSCO",
+    "latitude": 13.2,
+    "longitude": 80.32,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-003",
+    "name": "Cuddalore 230kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Cuddalore",
+    "voltage_kv": 230,
+    "capacity_mva": 300,
+    "operator": "TANTRANSCO",
+    "latitude": 11.75,
+    "longitude": 79.77,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-004",
+    "name": "Nagapattinam 230kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "voltage_kv": 230,
+    "capacity_mva": 250,
+    "operator": "TANTRANSCO",
+    "latitude": 10.76,
+    "longitude": 79.84,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-005",
+    "name": "Tuticorin 400kV TTPS Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Thoothukudi",
+    "voltage_kv": 400,
+    "capacity_mva": 1000,
+    "operator": "TANTRANSCO",
+    "latitude": 8.76,
+    "longitude": 78.18,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-006",
+    "name": "Rameswaram 110kV Island Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Ramanathapuram",
+    "voltage_kv": 110,
+    "capacity_mva": 80,
+    "operator": "TANTRANSCO",
+    "latitude": 9.28,
+    "longitude": 79.31,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-007",
+    "name": "Velankanni 110kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "voltage_kv": 110,
+    "capacity_mva": 60,
+    "operator": "TANTRANSCO",
+    "latitude": 10.68,
+    "longitude": 79.84,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-008",
+    "name": "Karaikal 110kV Coastal Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Karaikal",
+    "voltage_kv": 110,
+    "capacity_mva": 80,
+    "operator": "TANTRANSCO",
+    "latitude": 10.92,
+    "longitude": 79.83,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-009",
+    "name": "Chidambaram 110kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Cuddalore",
+    "voltage_kv": 110,
+    "capacity_mva": 100,
+    "operator": "TANTRANSCO",
+    "latitude": 11.39,
+    "longitude": 79.69,
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-010",
+    "name": "Tharamani 230kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "voltage_kv": 230,
+    "capacity_mva": 400,
+    "operator": "TANTRANSCO",
+    "latitude": 12.98,
+    "longitude": 80.24,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-010",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-011",
+    "name": "Tiruvallur 230kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Tiruvallur",
+    "voltage_kv": 230,
+    "capacity_mva": 300,
+    "operator": "TANTRANSCO",
+    "latitude": 13.14,
+    "longitude": 79.91,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-011",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SUB-012",
+    "name": "Kanyakumari 110kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Tamil Nadu",
+    "district": "Kanyakumari",
+    "voltage_kv": 110,
+    "capacity_mva": 80,
+    "operator": "TANTRANSCO",
+    "latitude": 8.08,
+    "longitude": 77.53,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/grid/substations/TN-SUB-012",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "GJ-SUB-001",
+    "name": "Kandla Port 220kV Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Gujarat",
+    "district": "Kutch",
+    "voltage_kv": 220,
+    "capacity_mva": 350,
+    "operator": "GETCO",
+    "latitude": 23.0,
+    "longitude": 70.22,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/grid/substations/GJ-SUB-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "GJ-SUB-002",
+    "name": "Mundra 400kV Ultra Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Gujarat",
+    "district": "Kutch",
+    "voltage_kv": 400,
+    "capacity_mva": 1200,
+    "operator": "GETCO",
+    "latitude": 22.84,
+    "longitude": 69.72,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/grid/substations/GJ-SUB-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "GJ-SUB-003",
+    "name": "Porbandar 220kV Coastal Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Gujarat",
+    "district": "Porbandar",
+    "voltage_kv": 220,
+    "capacity_mva": 250,
+    "operator": "GETCO",
+    "latitude": 21.64,
+    "longitude": 69.62,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/grid/substations/GJ-SUB-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "GJ-SUB-004",
+    "name": "Jamnagar 400kV Refining Hub Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Gujarat",
+    "district": "Jamnagar",
+    "voltage_kv": 400,
+    "capacity_mva": 1000,
+    "operator": "GETCO",
+    "latitude": 22.47,
+    "longitude": 70.07,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/grid/substations/GJ-SUB-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "GJ-SUB-005",
+    "name": "Bhavnagar 220kV Coastal Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Gujarat",
+    "district": "Bhavnagar",
+    "voltage_kv": 220,
+    "capacity_mva": 300,
+    "operator": "GETCO",
+    "latitude": 21.76,
+    "longitude": 72.15,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/grid/substations/GJ-SUB-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "KL-SUB-001",
+    "name": "Kochi Port 220kV Kalamassery Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Kerala",
+    "district": "Ernakulam",
+    "voltage_kv": 220,
+    "capacity_mva": 400,
+    "operator": "KSEB",
+    "latitude": 10.04,
+    "longitude": 76.32,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://kseb.gov.in/grid/substations/KL-SUB-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "KL-SUB-002",
+    "name": "Thiruvananthapuram 220kV Pothencode Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Kerala",
+    "district": "Thiruvananthapuram",
+    "voltage_kv": 220,
+    "capacity_mva": 320,
+    "operator": "KSEB",
+    "latitude": 8.6,
+    "longitude": 76.89,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://kseb.gov.in/grid/substations/KL-SUB-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "KL-SUB-003",
+    "name": "Alappuzha 110kV Coastal Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Kerala",
+    "district": "Alappuzha",
+    "voltage_kv": 110,
+    "capacity_mva": 120,
+    "operator": "KSEB",
+    "latitude": 9.49,
+    "longitude": 76.33,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://kseb.gov.in/grid/substations/KL-SUB-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "KL-SUB-004",
+    "name": "Kozhikode 220kV Nallalam Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Kerala",
+    "district": "Kozhikode",
+    "voltage_kv": 220,
+    "capacity_mva": 300,
+    "operator": "KSEB",
+    "latitude": 11.21,
+    "longitude": 75.81,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://kseb.gov.in/grid/substations/KL-SUB-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "KL-SUB-005",
+    "name": "Kannur 110kV Coastal Substation",
+    "asset_type": "SUBSTATION",
+    "state": "Kerala",
+    "district": "Kannur",
+    "voltage_kv": 110,
+    "capacity_mva": 100,
+    "operator": "KSEB",
+    "latitude": 11.87,
+    "longitude": 75.37,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://kseb.gov.in/grid/substations/KL-SUB-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-COR-001",
+    "name": "Puri-Konark 132kV Coastal Feeder",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Odisha",
+    "district": "Puri",
+    "voltage_kv": 132,
+    "operator": "OPTCL",
+    "coordinates": [
+      [
+        85.83,
+        19.81
+      ],
+      [
+        86.09,
+        19.89
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/transmission/lines/OD-COR-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-COR-002",
+    "name": "Paradip-Jagatsinghpur 220kV Heavy Link",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "voltage_kv": 220,
+    "operator": "OPTCL",
+    "coordinates": [
+      [
+        86.61,
+        20.31
+      ],
+      [
+        86.17,
+        20.26
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/transmission/lines/OD-COR-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-COR-003",
+    "name": "Bhadrak-Balasore 220kV Trunk Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Odisha",
+    "district": "Balasore",
+    "voltage_kv": 220,
+    "operator": "OPTCL",
+    "coordinates": [
+      [
+        86.51,
+        21.05
+      ],
+      [
+        86.93,
+        21.49
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/transmission/lines/OD-COR-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-COR-004",
+    "name": "Chhatrapur-Berhampur 132kV Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "voltage_kv": 132,
+    "operator": "OPTCL",
+    "coordinates": [
+      [
+        84.99,
+        19.35
+      ],
+      [
+        84.79,
+        19.31
+      ]
+    ],
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/transmission/lines/OD-COR-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-COR-005",
+    "name": "Dhamra Port-Chandbali 132kV Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "voltage_kv": 132,
+    "operator": "OPTCL",
+    "coordinates": [
+      [
+        86.95,
+        20.82
+      ],
+      [
+        86.74,
+        20.78
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/transmission/lines/OD-COR-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-COR-006",
+    "name": "Kendrapara-Aul 132kV Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Odisha",
+    "district": "Kendrapara",
+    "voltage_kv": 132,
+    "operator": "OPTCL",
+    "coordinates": [
+      [
+        86.42,
+        20.5
+      ],
+      [
+        86.63,
+        20.67
+      ]
+    ],
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://optcl.gov.in/transmission/lines/OD-COR-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-COR-001",
+    "name": "Digha-Contai 132kV Coastal Corridor",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "voltage_kv": 132,
+    "operator": "WBSETCL",
+    "coordinates": [
+      [
+        87.52,
+        21.62
+      ],
+      [
+        87.75,
+        21.78
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/transmission/lines/WB-COR-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-COR-002",
+    "name": "Haldia-Tamluk 400kV Heavy Grid Link",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "voltage_kv": 400,
+    "operator": "WBSETCL",
+    "coordinates": [
+      [
+        88.06,
+        22.06
+      ],
+      [
+        87.92,
+        22.3
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/transmission/lines/WB-COR-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-COR-003",
+    "name": "Kakdwip-Diamond Harbour 132kV Corridor",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 132,
+    "operator": "WBSETCL",
+    "coordinates": [
+      [
+        88.18,
+        21.87
+      ],
+      [
+        88.19,
+        22.19
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/transmission/lines/WB-COR-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-COR-004",
+    "name": "Namkhana-Bakkhali 33kV Coastal Submarine Link",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 33,
+    "operator": "WBSETCL",
+    "coordinates": [
+      [
+        88.23,
+        21.76
+      ],
+      [
+        88.25,
+        21.56
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/transmission/lines/WB-COR-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-COR-005",
+    "name": "Canning-Gosaba 33kV Sundarbans Feeder",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "voltage_kv": 33,
+    "operator": "WBSETCL",
+    "coordinates": [
+      [
+        88.66,
+        22.31
+      ],
+      [
+        88.81,
+        22.16
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/transmission/lines/WB-COR-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-COR-006",
+    "name": "Barasat-Basirhat 132kV Trunk Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "voltage_kv": 132,
+    "operator": "WBSETCL",
+    "coordinates": [
+      [
+        88.48,
+        22.72
+      ],
+      [
+        88.89,
+        22.66
+      ]
+    ],
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://wbsetcl.gov.in/transmission/lines/WB-COR-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-COR-001",
+    "name": "Visakhapatnam-Anakapalle 400kV Trunk",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "voltage_kv": 400,
+    "operator": "APTRANSCO",
+    "coordinates": [
+      [
+        83.21,
+        17.68
+      ],
+      [
+        83.0,
+        17.69
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/transmission/lines/AP-COR-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-COR-002",
+    "name": "Kakinada-Amalapuram 220kV Delta Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Andhra Pradesh",
+    "district": "Kakinada",
+    "voltage_kv": 220,
+    "operator": "APTRANSCO",
+    "coordinates": [
+      [
+        82.24,
+        16.98
+      ],
+      [
+        82.0,
+        16.58
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/transmission/lines/AP-COR-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-COR-003",
+    "name": "Machilipatnam-Bapatla 132kV Coastal Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Andhra Pradesh",
+    "district": "Krishna",
+    "voltage_kv": 132,
+    "operator": "APTRANSCO",
+    "coordinates": [
+      [
+        81.13,
+        16.18
+      ],
+      [
+        80.46,
+        15.9
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/transmission/lines/AP-COR-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-COR-004",
+    "name": "Ongole-Nellore 400kV South Coastal Highway",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Andhra Pradesh",
+    "district": "Prakasam",
+    "voltage_kv": 400,
+    "operator": "APTRANSCO",
+    "coordinates": [
+      [
+        80.05,
+        15.5
+      ],
+      [
+        79.98,
+        14.44
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/transmission/lines/AP-COR-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-COR-005",
+    "name": "Srikakulam-Tekkali 132kV North Feeder",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Andhra Pradesh",
+    "district": "Srikakulam",
+    "voltage_kv": 132,
+    "operator": "APTRANSCO",
+    "coordinates": [
+      [
+        83.89,
+        18.29
+      ],
+      [
+        84.23,
+        18.61
+      ]
+    ],
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/transmission/lines/AP-COR-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-COR-006",
+    "name": "Nellore-Krishnapatnam 400kV Heavy Port Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Andhra Pradesh",
+    "district": "SPSR Nellore",
+    "voltage_kv": 400,
+    "operator": "APTRANSCO",
+    "coordinates": [
+      [
+        79.98,
+        14.44
+      ],
+      [
+        80.12,
+        14.28
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://aptransco.gov.in/transmission/lines/AP-COR-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-COR-001",
+    "name": "Chennai North-Ennore 400kV Interconnector",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "voltage_kv": 400,
+    "operator": "TANTRANSCO",
+    "coordinates": [
+      [
+        80.32,
+        13.25
+      ],
+      [
+        80.32,
+        13.2
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/transmission/lines/TN-COR-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-COR-002",
+    "name": "Cuddalore-Chidambaram 230kV Feeder",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Tamil Nadu",
+    "district": "Cuddalore",
+    "voltage_kv": 230,
+    "operator": "TANTRANSCO",
+    "coordinates": [
+      [
+        79.77,
+        11.75
+      ],
+      [
+        79.69,
+        11.39
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/transmission/lines/TN-COR-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-COR-003",
+    "name": "Nagapattinam-Velankanni 110kV Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "voltage_kv": 110,
+    "operator": "TANTRANSCO",
+    "coordinates": [
+      [
+        79.84,
+        10.76
+      ],
+      [
+        79.84,
+        10.68
+      ]
+    ],
+    "criticality": "MEDIUM",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/transmission/lines/TN-COR-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-COR-004",
+    "name": "Tuticorin-Kanyakumari 230kV Southern Spine",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Tamil Nadu",
+    "district": "Thoothukudi",
+    "voltage_kv": 230,
+    "operator": "TANTRANSCO",
+    "coordinates": [
+      [
+        78.18,
+        8.76
+      ],
+      [
+        77.53,
+        8.08
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/transmission/lines/TN-COR-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-COR-005",
+    "name": "Chennai North-Tharamani 230kV Urban Corridor",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "voltage_kv": 230,
+    "operator": "TANTRANSCO",
+    "coordinates": [
+      [
+        80.32,
+        13.25
+      ],
+      [
+        80.24,
+        12.98
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://tantransco.gov.in/transmission/lines/TN-COR-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "GJ-COR-001",
+    "name": "Kandla-Mundra 400kV Gulf of Kutch Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Gujarat",
+    "district": "Kutch",
+    "voltage_kv": 400,
+    "operator": "GETCO",
+    "coordinates": [
+      [
+        70.22,
+        23.0
+      ],
+      [
+        69.72,
+        22.84
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/transmission/lines/GJ-COR-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "GJ-COR-002",
+    "name": "Porbandar-Jamnagar 220kV Saurashtra Coastal Line",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Gujarat",
+    "district": "Porbandar",
+    "voltage_kv": 220,
+    "operator": "GETCO",
+    "coordinates": [
+      [
+        69.62,
+        21.64
+      ],
+      [
+        70.07,
+        22.47
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/transmission/lines/GJ-COR-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "GJ-COR-003",
+    "name": "Jamnagar-Bhavnagar 400kV Grid Backbone",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Gujarat",
+    "district": "Jamnagar",
+    "voltage_kv": 400,
+    "operator": "GETCO",
+    "coordinates": [
+      [
+        70.07,
+        22.47
+      ],
+      [
+        72.15,
+        21.76
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://getco.gov.in/transmission/lines/GJ-COR-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "KL-COR-001",
+    "name": "Kochi-Alappuzha 110kV Coastal Feeder",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Kerala",
+    "district": "Ernakulam",
+    "voltage_kv": 110,
+    "operator": "KSEB",
+    "coordinates": [
+      [
+        76.32,
+        10.04
+      ],
+      [
+        76.33,
+        9.49
+      ]
+    ],
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://kseb.gov.in/transmission/lines/KL-COR-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "KL-COR-002",
+    "name": "Thiruvananthapuram-Alappuzha 220kV Main Spine",
+    "asset_type": "TRANSMISSION_LINE",
+    "state": "Kerala",
+    "district": "Thiruvananthapuram",
+    "voltage_kv": 220,
+    "operator": "KSEB",
+    "coordinates": [
+      [
+        76.89,
+        8.6
+      ],
+      [
+        76.33,
+        9.49
+      ]
+    ],
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "DISCOM",
+      "source_url": "https://kseb.gov.in/transmission/lines/KL-COR-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-001",
+    "name": "Puri District Headquarters Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Puri",
+    "capacity": 450,
+    "latitude": 19.8,
+    "longitude": 85.82,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-002",
+    "name": "Konark Community Health Centre",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Puri",
+    "capacity": 100,
+    "latitude": 19.89,
+    "longitude": 86.1,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-003",
+    "name": "Paradip Port Trust Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "capacity": 200,
+    "latitude": 20.3,
+    "longitude": 86.6,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-004",
+    "name": "Balasore District Hospital & Medical College",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Balasore",
+    "capacity": 500,
+    "latitude": 21.49,
+    "longitude": 86.92,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-005",
+    "name": "Bhadrak District Headquarters Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "capacity": 300,
+    "latitude": 21.05,
+    "longitude": 86.5,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-006",
+    "name": "MKCG Medical College Berhampur",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "capacity": 1000,
+    "latitude": 19.31,
+    "longitude": 84.8,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-007",
+    "name": "Chhatrapur Sub-Divisional Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "capacity": 150,
+    "latitude": 19.35,
+    "longitude": 84.98,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-HOSP-008",
+    "name": "Kendrapara District Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Odisha",
+    "district": "Kendrapara",
+    "capacity": 250,
+    "latitude": 20.5,
+    "longitude": 86.41,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/OD-HOSP-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-001",
+    "name": "Puri Sea Beach Multipurpose Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Puri",
+    "capacity": 2000,
+    "latitude": 19.79,
+    "longitude": 85.81,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-002",
+    "name": "Astaranga Coastal Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Puri",
+    "capacity": 1500,
+    "latitude": 19.98,
+    "longitude": 86.27,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-003",
+    "name": "Ersama Cyclone Shelter Hub",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "capacity": 3000,
+    "latitude": 20.17,
+    "longitude": 86.47,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-004",
+    "name": "Nuagaon Multipurpose Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "capacity": 1200,
+    "latitude": 20.21,
+    "longitude": 86.38,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-005",
+    "name": "Chandbali Flood & Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "capacity": 1800,
+    "latitude": 20.77,
+    "longitude": 86.75,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-006",
+    "name": "Dhamra Port Area Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "capacity": 2500,
+    "latitude": 20.81,
+    "longitude": 86.94,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-007",
+    "name": "Chandipur Defence/Civilian Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Balasore",
+    "capacity": 2200,
+    "latitude": 21.46,
+    "longitude": 87.01,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-008",
+    "name": "Talasari Coastal Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Balasore",
+    "capacity": 1400,
+    "latitude": 21.59,
+    "longitude": 87.45,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-009",
+    "name": "Gopalpur Port Community Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "capacity": 2000,
+    "latitude": 19.26,
+    "longitude": 84.9,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-010",
+    "name": "Rajnagar Mangrove Buffer Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Kendrapara",
+    "capacity": 1600,
+    "latitude": 20.57,
+    "longitude": 86.73,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-010",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-011",
+    "name": "Mahakalapada High School Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Kendrapara",
+    "capacity": 1200,
+    "latitude": 20.43,
+    "longitude": 86.58,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-011",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-012",
+    "name": "Brahmagiri Chilika Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Puri",
+    "capacity": 1500,
+    "latitude": 19.8,
+    "longitude": 85.67,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-012",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-013",
+    "name": "Bhograi Coastal Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Balasore",
+    "capacity": 1800,
+    "latitude": 21.65,
+    "longitude": 87.38,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-013",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-SHEL-014",
+    "name": "Basudevpur Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "capacity": 1500,
+    "latitude": 21.13,
+    "longitude": 86.73,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/OD-SHEL-014",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-001",
+    "name": "Digha State General Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "capacity": 150,
+    "latitude": 21.63,
+    "longitude": 87.51,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-002",
+    "name": "Haldia Sub-Divisional Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "capacity": 300,
+    "latitude": 22.06,
+    "longitude": 88.05,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-003",
+    "name": "Contai Sub-Divisional Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "capacity": 250,
+    "latitude": 21.78,
+    "longitude": 87.74,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-004",
+    "name": "Kakdwip Sub-Divisional Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 200,
+    "latitude": 21.87,
+    "longitude": 88.19,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-005",
+    "name": "Diamond Harbour District Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 400,
+    "latitude": 22.19,
+    "longitude": 88.2,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-006",
+    "name": "Canning Sub-Divisional Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 200,
+    "latitude": 22.31,
+    "longitude": 88.65,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-007",
+    "name": "Gosaba Rural Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 80,
+    "latitude": 22.16,
+    "longitude": 88.8,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-HOSP-008",
+    "name": "Basirhat District Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "capacity": 350,
+    "latitude": 22.66,
+    "longitude": 88.88,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/WB-HOSP-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-001",
+    "name": "Digha Coastal Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "capacity": 2500,
+    "latitude": 21.62,
+    "longitude": 87.5,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-002",
+    "name": "Mandarmoni High Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "capacity": 1800,
+    "latitude": 21.66,
+    "longitude": 87.68,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-003",
+    "name": "Sagar Island Ganga Sagar Shelter Hub",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 4000,
+    "latitude": 21.65,
+    "longitude": 88.07,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-004",
+    "name": "Bakkhali Sea Beach Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 2200,
+    "latitude": 21.56,
+    "longitude": 88.26,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-005",
+    "name": "Fraserganj Fishing Harbor Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 1500,
+    "latitude": 21.58,
+    "longitude": 88.24,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-006",
+    "name": "Namkhana Bus Stand Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 1600,
+    "latitude": 21.77,
+    "longitude": 88.22,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-007",
+    "name": "Mousuni Island Reinforced Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "capacity": 2000,
+    "latitude": 21.68,
+    "longitude": 88.22,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-008",
+    "name": "Hingalganj Border Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "capacity": 1400,
+    "latitude": 22.47,
+    "longitude": 88.99,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-009",
+    "name": "Hasnabad Ferry Ghat Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "capacity": 1500,
+    "latitude": 22.57,
+    "longitude": 88.92,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-010",
+    "name": "Sandeshkhali Island Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "North 24 Parganas",
+    "capacity": 1800,
+    "latitude": 22.36,
+    "longitude": 88.88,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-010",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-011",
+    "name": "Nandigram High School Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "capacity": 1500,
+    "latitude": 21.95,
+    "longitude": 87.97,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-011",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-SHEL-012",
+    "name": "Khejuri Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "capacity": 1600,
+    "latitude": 21.85,
+    "longitude": 87.95,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/WB-SHEL-012",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-HOSP-001",
+    "name": "King George Hospital Visakhapatnam",
+    "asset_type": "HOSPITAL",
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "capacity": 1200,
+    "latitude": 17.7,
+    "longitude": 83.3,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/AP-HOSP-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-HOSP-002",
+    "name": "Government General Hospital Kakinada",
+    "asset_type": "HOSPITAL",
+    "state": "Andhra Pradesh",
+    "district": "Kakinada",
+    "capacity": 750,
+    "latitude": 16.97,
+    "longitude": 82.23,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/AP-HOSP-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-HOSP-003",
+    "name": "District Hospital Machilipatnam",
+    "asset_type": "HOSPITAL",
+    "state": "Andhra Pradesh",
+    "district": "Krishna",
+    "capacity": 350,
+    "latitude": 16.18,
+    "longitude": 81.14,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/AP-HOSP-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-HOSP-004",
+    "name": "RIMS Medical College Ongole",
+    "asset_type": "HOSPITAL",
+    "state": "Andhra Pradesh",
+    "district": "Prakasam",
+    "capacity": 600,
+    "latitude": 15.51,
+    "longitude": 80.04,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/AP-HOSP-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-HOSP-005",
+    "name": "ACSR Govt Medical College Nellore",
+    "asset_type": "HOSPITAL",
+    "state": "Andhra Pradesh",
+    "district": "SPSR Nellore",
+    "capacity": 750,
+    "latitude": 14.45,
+    "longitude": 79.99,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/AP-HOSP-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-HOSP-006",
+    "name": "RIMS Srikakulam",
+    "asset_type": "HOSPITAL",
+    "state": "Andhra Pradesh",
+    "district": "Srikakulam",
+    "capacity": 500,
+    "latitude": 18.3,
+    "longitude": 83.9,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/AP-HOSP-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-001",
+    "name": "Bheemunipatnam Beach Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "capacity": 2000,
+    "latitude": 17.89,
+    "longitude": 83.45,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-002",
+    "name": "Gangavaram Coastal Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "capacity": 1500,
+    "latitude": 17.62,
+    "longitude": 83.23,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-003",
+    "name": "Uppada Beach Multi-Hazard Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Kakinada",
+    "capacity": 2200,
+    "latitude": 17.08,
+    "longitude": 82.33,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-004",
+    "name": "Antarvedi Sea Shore Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Dr. B.R. Ambedkar Konaseema",
+    "capacity": 2500,
+    "latitude": 16.33,
+    "longitude": 81.73,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-005",
+    "name": "Manginapudi Beach Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Krishna",
+    "capacity": 1800,
+    "latitude": 16.24,
+    "longitude": 81.24,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-006",
+    "name": "Suryalanka Beach Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Bapatla",
+    "capacity": 2000,
+    "latitude": 15.85,
+    "longitude": 80.52,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-007",
+    "name": "Kothapatnam Coastal Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Prakasam",
+    "capacity": 1600,
+    "latitude": 15.45,
+    "longitude": 80.12,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-008",
+    "name": "Kavali Coastal Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "SPSR Nellore",
+    "capacity": 1500,
+    "latitude": 14.91,
+    "longitude": 80.0,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-009",
+    "name": "Mypadu Beach Disaster Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "SPSR Nellore",
+    "capacity": 2000,
+    "latitude": 14.5,
+    "longitude": 80.18,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-010",
+    "name": "Kalingapatnam Lighthouse Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Srikakulam",
+    "capacity": 1500,
+    "latitude": 18.34,
+    "longitude": 84.13,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-010",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-011",
+    "name": "Bhavanapadu Harbor Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Srikakulam",
+    "capacity": 1800,
+    "latitude": 18.56,
+    "longitude": 84.34,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-011",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-SHEL-012",
+    "name": "Sriharikota Island Defense Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Andhra Pradesh",
+    "district": "Tirupati",
+    "capacity": 3000,
+    "latitude": 13.72,
+    "longitude": 80.2,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/AP-SHEL-012",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-HOSP-001",
+    "name": "Rajiv Gandhi Government General Hospital Chennai",
+    "asset_type": "HOSPITAL",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "capacity": 1800,
+    "latitude": 13.08,
+    "longitude": 80.27,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/TN-HOSP-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-HOSP-002",
+    "name": "Stanley Medical College Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "capacity": 1200,
+    "latitude": 13.1,
+    "longitude": 80.28,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/TN-HOSP-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-HOSP-003",
+    "name": "Cuddalore Government Headquarters Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Tamil Nadu",
+    "district": "Cuddalore",
+    "capacity": 500,
+    "latitude": 11.74,
+    "longitude": 79.76,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/TN-HOSP-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-HOSP-004",
+    "name": "Nagapattinam Government Medical College Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "capacity": 600,
+    "latitude": 10.77,
+    "longitude": 79.83,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/TN-HOSP-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-HOSP-005",
+    "name": "Thoothukudi Medical College Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Tamil Nadu",
+    "district": "Thoothukudi",
+    "capacity": 800,
+    "latitude": 8.78,
+    "longitude": 78.13,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/TN-HOSP-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-HOSP-006",
+    "name": "Ramanathapuram Government Headquarters Hospital",
+    "asset_type": "HOSPITAL",
+    "state": "Tamil Nadu",
+    "district": "Ramanathapuram",
+    "capacity": 400,
+    "latitude": 9.37,
+    "longitude": 78.83,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/TN-HOSP-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-001",
+    "name": "Marina Beach Coastal Emergency Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "capacity": 3000,
+    "latitude": 13.05,
+    "longitude": 80.28,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-002",
+    "name": "Ennore Port Cyclone Evacuation Centre",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Tiruvallur",
+    "capacity": 2000,
+    "latitude": 13.22,
+    "longitude": 80.33,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-003",
+    "name": "Silver Beach Cuddalore Disaster Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Cuddalore",
+    "capacity": 2500,
+    "latitude": 11.71,
+    "longitude": 79.78,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-004",
+    "name": "Velankanni Pilgrim Disaster Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "capacity": 4000,
+    "latitude": 10.68,
+    "longitude": 79.85,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-005",
+    "name": "Vedaranyam Point Calimere Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "capacity": 2000,
+    "latitude": 10.37,
+    "longitude": 79.85,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-006",
+    "name": "Dhanushkodi Rameswaram Island Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Ramanathapuram",
+    "capacity": 1500,
+    "latitude": 9.17,
+    "longitude": 79.42,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-006",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-007",
+    "name": "Pamban Bridge North Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Ramanathapuram",
+    "capacity": 1800,
+    "latitude": 9.28,
+    "longitude": 79.22,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-007",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-008",
+    "name": "Thoothukudi Pearl Beach Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Thoothukudi",
+    "capacity": 2200,
+    "latitude": 8.79,
+    "longitude": 78.16,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-008",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-SHEL-009",
+    "name": "Kanyakumari Sunset Point Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Tamil Nadu",
+    "district": "Kanyakumari",
+    "capacity": 2500,
+    "latitude": 8.08,
+    "longitude": 77.54,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/TN-SHEL-009",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "GJ-HOSP-001",
+    "name": "GG Hospital Jamnagar Medical College",
+    "asset_type": "HOSPITAL",
+    "state": "Gujarat",
+    "district": "Jamnagar",
+    "capacity": 1200,
+    "latitude": 22.46,
+    "longitude": 70.06,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/GJ-HOSP-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "GJ-HOSP-002",
+    "name": "Bhavana Hospital Porbandar",
+    "asset_type": "HOSPITAL",
+    "state": "Gujarat",
+    "district": "Porbandar",
+    "capacity": 300,
+    "latitude": 21.63,
+    "longitude": 69.61,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/GJ-HOSP-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "GJ-HOSP-003",
+    "name": "GK General Hospital Bhuj",
+    "asset_type": "HOSPITAL",
+    "state": "Gujarat",
+    "district": "Kutch",
+    "capacity": 600,
+    "latitude": 23.25,
+    "longitude": 69.67,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/GJ-HOSP-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "GJ-SHEL-001",
+    "name": "Kandla Port Marine Cyclone Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Gujarat",
+    "district": "Kutch",
+    "capacity": 3000,
+    "latitude": 23.01,
+    "longitude": 70.21,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/GJ-SHEL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "GJ-SHEL-002",
+    "name": "Porbandar Chowpati Emergency Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Gujarat",
+    "district": "Porbandar",
+    "capacity": 2000,
+    "latitude": 21.64,
+    "longitude": 69.6,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/GJ-SHEL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "KL-HOSP-001",
+    "name": "Ernakulam General Hospital Kochi",
+    "asset_type": "HOSPITAL",
+    "state": "Kerala",
+    "district": "Ernakulam",
+    "capacity": 700,
+    "latitude": 9.97,
+    "longitude": 76.28,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/KL-HOSP-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "KL-HOSP-002",
+    "name": "Government Medical College Thiruvananthapuram",
+    "asset_type": "HOSPITAL",
+    "state": "Kerala",
+    "district": "Thiruvananthapuram",
+    "capacity": 1400,
+    "latitude": 8.52,
+    "longitude": 76.92,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/KL-HOSP-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "KL-HOSP-003",
+    "name": "General Hospital Alappuzha",
+    "asset_type": "HOSPITAL",
+    "state": "Kerala",
+    "district": "Alappuzha",
+    "capacity": 400,
+    "latitude": 9.5,
+    "longitude": 76.32,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "OSM",
+      "source_url": "https://www.openstreetmap.org/node/KL-HOSP-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 4
+    }
+  },
+  {
+    "asset_id": "KL-SHEL-001",
+    "name": "Chellanam Coastal Flood & Surge Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Kerala",
+    "district": "Ernakulam",
+    "capacity": 2000,
+    "latitude": 9.8,
+    "longitude": 76.27,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/KL-SHEL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "KL-SHEL-002",
+    "name": "Vizhinjam Port Marine Disaster Shelter",
+    "asset_type": "CYCLONE_SHELTER",
+    "state": "Kerala",
+    "district": "Thiruvananthapuram",
+    "capacity": 2500,
+    "latitude": 8.38,
+    "longitude": 76.99,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://www.openstreetmap.org/node/KL-SHEL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-FIRE-001",
+    "name": "Puri Coastal Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Odisha",
+    "district": "Puri",
+    "contact": "101",
+    "latitude": 19.81,
+    "longitude": 85.84,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-FIRE-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-FIRE-002",
+    "name": "Paradip Port Industrial Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "contact": "101",
+    "latitude": 20.31,
+    "longitude": 86.62,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-FIRE-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-FIRE-003",
+    "name": "Balasore Central Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Odisha",
+    "district": "Balasore",
+    "contact": "101",
+    "latitude": 21.49,
+    "longitude": 86.94,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-FIRE-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-FIRE-004",
+    "name": "Bhadrak Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "contact": "101",
+    "latitude": 21.05,
+    "longitude": 86.52,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-FIRE-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-FIRE-005",
+    "name": "Gopalpur Port Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Odisha",
+    "district": "Ganjam",
+    "contact": "101",
+    "latitude": 19.26,
+    "longitude": 84.92,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-FIRE-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-FIRE-001",
+    "name": "Digha Coastal Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "contact": "101",
+    "latitude": 21.63,
+    "longitude": 87.53,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-FIRE-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-FIRE-002",
+    "name": "Haldia Petrochemical Complex Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "contact": "101",
+    "latitude": 22.05,
+    "longitude": 88.07,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-FIRE-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-FIRE-003",
+    "name": "Kakdwip Sunderbans Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "contact": "101",
+    "latitude": 21.88,
+    "longitude": 88.19,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-FIRE-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-FIRE-004",
+    "name": "Diamond Harbour Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "contact": "101",
+    "latitude": 22.19,
+    "longitude": 88.21,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-FIRE-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-FIRE-005",
+    "name": "Canning Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "contact": "101",
+    "latitude": 22.31,
+    "longitude": 88.67,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-FIRE-005",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-FIRE-001",
+    "name": "Visakhapatnam Port Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "contact": "101",
+    "latitude": 17.69,
+    "longitude": 83.29,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/AP-FIRE-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-FIRE-002",
+    "name": "Kakinada Deepwater Port Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Andhra Pradesh",
+    "district": "Kakinada",
+    "contact": "101",
+    "latitude": 16.98,
+    "longitude": 82.25,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/AP-FIRE-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-FIRE-003",
+    "name": "Machilipatnam Marine Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Andhra Pradesh",
+    "district": "Krishna",
+    "contact": "101",
+    "latitude": 16.19,
+    "longitude": 81.15,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/AP-FIRE-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-FIRE-004",
+    "name": "Krishnapatnam Port Emergency Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Andhra Pradesh",
+    "district": "SPSR Nellore",
+    "contact": "101",
+    "latitude": 14.29,
+    "longitude": 80.13,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/AP-FIRE-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-FIRE-001",
+    "name": "Chennai Port Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "contact": "101",
+    "latitude": 13.09,
+    "longitude": 80.29,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-FIRE-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-FIRE-002",
+    "name": "Ennore Thermal Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Tiruvallur",
+    "contact": "101",
+    "latitude": 13.21,
+    "longitude": 80.33,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-FIRE-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-FIRE-003",
+    "name": "Cuddalore SIPCOT Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Cuddalore",
+    "contact": "101",
+    "latitude": 11.73,
+    "longitude": 79.77,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-FIRE-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-FIRE-004",
+    "name": "Nagapattinam Coastal Fire Station",
+    "asset_type": "FIRE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "contact": "101",
+    "latitude": 10.77,
+    "longitude": 79.84,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-FIRE-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-POL-001",
+    "name": "Puri Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Odisha",
+    "district": "Puri",
+    "contact": "100",
+    "latitude": 19.8,
+    "longitude": 85.83,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-POL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-POL-002",
+    "name": "Paradip Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Odisha",
+    "district": "Jagatsinghpur",
+    "contact": "100",
+    "latitude": 20.3,
+    "longitude": 86.61,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-POL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-POL-003",
+    "name": "Chandipur Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Odisha",
+    "district": "Balasore",
+    "contact": "100",
+    "latitude": 21.47,
+    "longitude": 87.02,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-POL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "OD-POL-004",
+    "name": "Dhamra Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Odisha",
+    "district": "Bhadrak",
+    "contact": "100",
+    "latitude": 20.8,
+    "longitude": 86.93,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/OD-POL-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-POL-001",
+    "name": "Digha Coastal Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "contact": "100",
+    "latitude": 21.62,
+    "longitude": 87.52,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-POL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-POL-002",
+    "name": "Haldia Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "West Bengal",
+    "district": "Purba Medinipur",
+    "contact": "100",
+    "latitude": 22.06,
+    "longitude": 88.06,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-POL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-POL-003",
+    "name": "Fraserganj Coastal Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "contact": "100",
+    "latitude": 21.57,
+    "longitude": 88.25,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-POL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "WB-POL-004",
+    "name": "Gosaba Coastal Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "West Bengal",
+    "district": "South 24 Parganas",
+    "contact": "100",
+    "latitude": 22.16,
+    "longitude": 88.81,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/WB-POL-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-POL-001",
+    "name": "Visakhapatnam Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "contact": "100",
+    "latitude": 17.69,
+    "longitude": 83.31,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/AP-POL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-POL-002",
+    "name": "Kakinada Port Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Andhra Pradesh",
+    "district": "Kakinada",
+    "contact": "100",
+    "latitude": 16.97,
+    "longitude": 82.25,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/AP-POL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "AP-POL-003",
+    "name": "Machilipatnam Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Andhra Pradesh",
+    "district": "Krishna",
+    "contact": "100",
+    "latitude": 16.18,
+    "longitude": 81.15,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/AP-POL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-POL-001",
+    "name": "Chennai Coastal Security Group Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "contact": "100",
+    "latitude": 13.06,
+    "longitude": 80.28,
+    "criticality": "CRITICAL",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-POL-001",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-POL-002",
+    "name": "Nagapattinam Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Nagapattinam",
+    "contact": "100",
+    "latitude": 10.76,
+    "longitude": 79.85,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-POL-002",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-POL-003",
+    "name": "Rameswaram Coastal Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Ramanathapuram",
+    "contact": "100",
+    "latitude": 9.28,
+    "longitude": 79.32,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-POL-003",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  },
+  {
+    "asset_id": "TN-POL-004",
+    "name": "Thoothukudi Marine Police Station",
+    "asset_type": "POLICE_STATION",
+    "state": "Tamil Nadu",
+    "district": "Thoothukudi",
+    "contact": "100",
+    "latitude": 8.78,
+    "longitude": 78.15,
+    "criticality": "HIGH",
+    "provenance": {
+      "source": "NDMA",
+      "source_url": "https://ndma.gov.in/facilities/TN-POL-004",
+      "fetched_at": "2026-09-30T00:00:00Z",
+      "confidence": 5
+    }
+  }
+]
