@@ -48,7 +48,7 @@ export const SignInButton: React.FC = () => {
 
   const handleSignIn = async () => {
     if (!auth) {
-      setErrorToast('Firebase Auth is not initialized.');
+      setErrorToast('Authentication is currently unavailable. Please check your configuration.');
       return;
     }
     const provider = new GoogleAuthProvider();
