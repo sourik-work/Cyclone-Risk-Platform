@@ -85,6 +85,10 @@ def test_api_agencies_status_endpoint():
     imd_status = next(a for a in agencies if "IMD" in a["agency"])
     assert imd_status["integration_status"] == "live"
 
-    for stub_name in ["JTWC", "PAGASA", "BMKG", "DMH"]:
+    for live_name in ["JTWC", "PAGASA"]:
+        live_status = next(a for a in agencies if a["agency"] == live_name)
+        assert live_status["integration_status"] == "live"
+
+    for stub_name in ["BMKG", "DMH"]:
         stub_status = next(a for a in agencies if a["agency"] == stub_name)
         assert stub_status["integration_status"] == "stub"

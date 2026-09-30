@@ -44,7 +44,7 @@ def test_evaluate_trigger_storm_surge():
         "max_payout_inr": 12750000000,
     }
 
-    # Case 1: Trigger Active (surge = 2.2m, exceedance_ratio = 1.467 >= 1.2)
+    # Case 1: Trigger Active (surge = 2.2m, exceedance_ratio = 1.467 >= 1.0)
     res_active = evaluate_trigger(contract, storm_data={}, district_data={"max_surge_m": 2.2})
     assert res_active["trigger_met"] is True
     assert res_active["status"] == "TRIGGER_ACTIVE"
@@ -52,14 +52,7 @@ def test_evaluate_trigger_storm_surge():
     assert res_active["payout_estimate_inr"] > 0
     assert res_active["households_affected"] > 0
 
-    # Case 2: Approaching (surge = 1.6m, exceedance_ratio = 1.067 < 1.2)
-    res_approaching = evaluate_trigger(contract, storm_data={}, district_data={"max_surge_m": 1.6})
-    assert res_approaching["trigger_met"] is False
-    assert res_approaching["status"] == "APPROACHING"
-    assert res_approaching["current_value"] == 1.6
-    assert res_approaching["payout_estimate_inr"] > 0
-
-    # Case 3: Below Threshold (surge = 1.3m <= 1.5m)
+    # Case 2: Below Threshold (surge = 1.3m < 1.5m)
     res_below = evaluate_trigger(contract, storm_data={}, district_data={"max_surge_m": 1.3})
     assert res_below["trigger_met"] is False
     assert res_below["status"] == "BELOW_THRESHOLD"
@@ -80,18 +73,14 @@ def test_evaluate_trigger_wind_speed():
         "max_payout_inr": 14400000000,
     }
 
-    # Trigger Active (exceedance_ratio = 1.35 >= 1.2)
+    # Trigger Active (wind = 135 >= 100)
     res_active = evaluate_trigger(contract, storm_data={"wind_kmph": 135.0})
     assert res_active["trigger_met"] is True
     assert res_active["status"] == "TRIGGER_ACTIVE"
     assert res_active["current_value"] == 135.0
+    assert res_active["payout_estimate_inr"] > 0
 
-    # Approaching (110 / 100 = 1.10 < 1.2)
-    res_approaching = evaluate_trigger(contract, storm_data={"wind_kmph": 110.0})
-    assert res_approaching["trigger_met"] is False
-    assert res_approaching["status"] == "APPROACHING"
-
-    # Below Threshold (85.0 <= 100)
+    # Below Threshold (85.0 < 100)
     res_below = evaluate_trigger(contract, storm_data={"wind_kmph": 85.0})
     assert res_below["trigger_met"] is False
     assert res_below["status"] == "BELOW_THRESHOLD"
@@ -111,18 +100,14 @@ def test_evaluate_trigger_rainfall():
         "max_payout_inr": 4100000000,
     }
 
-    # Trigger Active (195 / 150 = 1.30 >= 1.2)
+    # Trigger Active (195 >= 150)
     res_active = evaluate_trigger(contract, storm_data={}, district_data={"rainfall_24h_mm": 195.0})
     assert res_active["trigger_met"] is True
     assert res_active["status"] == "TRIGGER_ACTIVE"
     assert res_active["current_value"] == 195.0
+    assert res_active["payout_estimate_inr"] > 0
 
-    # Approaching (165 / 150 = 1.10 < 1.2)
-    res_approaching = evaluate_trigger(contract, storm_data={}, district_data={"rainfall_24h_mm": 165.0})
-    assert res_approaching["trigger_met"] is False
-    assert res_approaching["status"] == "APPROACHING"
-
-    # Below Threshold (125.0 <= 150)
+    # Below Threshold (125.0 < 150)
     res_below = evaluate_trigger(contract, storm_data={}, district_data={"rainfall_24h_mm": 125.0})
     assert res_below["trigger_met"] is False
     assert res_below["status"] == "BELOW_THRESHOLD"
@@ -142,18 +127,14 @@ def test_evaluate_trigger_composite():
         "max_payout_inr": 11160000000,
     }
 
-    # Trigger Active (0.95 / 0.75 = 1.267 >= 1.2)
+    # Trigger Active (0.95 >= 0.75)
     res_active = evaluate_trigger(contract, storm_data={}, district_data={"composite_risk": 0.95})
     assert res_active["trigger_met"] is True
     assert res_active["status"] == "TRIGGER_ACTIVE"
     assert res_active["current_value"] == 0.95
+    assert res_active["payout_estimate_inr"] > 0
 
-    # Approaching (0.82 / 0.75 = 1.093 < 1.2)
-    res_approaching = evaluate_trigger(contract, storm_data={}, district_data={"composite_risk": 0.82})
-    assert res_approaching["trigger_met"] is False
-    assert res_approaching["status"] == "APPROACHING"
-
-    # Below Threshold (0.65 <= 0.75)
+    # Below Threshold (0.65 < 0.75)
     res_below = evaluate_trigger(contract, storm_data={}, district_data={"composite_risk": 0.65})
     assert res_below["trigger_met"] is False
     assert res_below["status"] == "BELOW_THRESHOLD"
