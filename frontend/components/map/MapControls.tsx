@@ -1,40 +1,47 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MapLayerToggles } from './types';
-import { Compass, ShieldAlert, Sparkles, Satellite, Cpu } from 'lucide-react';
+import { Building2, Compass, Cpu, Layers, Route, Satellite, ShieldAlert, Sparkles, Zap, type LucideIcon } from 'lucide-react';
 
 interface MapControlsProps {
-  layerToggles: MapLayerToggles;
-  onToggleLayer: (layerKey: keyof MapLayerToggles) => void;
   selectedStormId: string;
   onSelectStorm: (stormId: string) => void;
   mode?: 'historical' | 'live';
   liveStormName?: string;
   hasActiveCyclone?: boolean;
-  trackPointCount?: number;
 }
 
+interface MapLayerMenuProps {
+  layerToggles: MapLayerToggles;
+  onToggleLayer: (layerKey: keyof MapLayerToggles) => void;
+  mode: 'historical' | 'live';
+  hasActiveCyclone: boolean;
+  trackPointCount?: number;
+  isAmphan: boolean;
+  amphanTileUrl: string | null;
+}
+
+const LAYER_OPTIONS: Array<{ key: keyof MapLayerToggles; label: string; Icon: LucideIcon }> = [
+  { key: 'showTrack', label: 'Track Line', Icon: Compass },
+  { key: 'showAiForecast', label: 'AI Forecast', Icon: Cpu },
+  { key: 'showForecastCone', label: 'Forecast Cone', Icon: Sparkles },
+  { key: 'showVulnerability', label: 'Vulnerability Grid', Icon: ShieldAlert },
+  { key: 'showPowerGrid', label: 'Power Grid', Icon: Zap },
+  { key: 'showRoads', label: 'Roads', Icon: Route },
+  { key: 'showHospitals', label: 'Hospitals', Icon: Building2 },
+  { key: 'showEarthEngine', label: 'Earth Engine', Icon: Satellite },
+];
+
 export const MapControls: React.FC<MapControlsProps> = ({
-  layerToggles,
-  onToggleLayer,
   selectedStormId,
   onSelectStorm,
   mode = 'historical',
   liveStormName,
   hasActiveCyclone = false,
-  trackPointCount,
 }) => {
-  const isLiveMonitoring = mode === 'live' && !hasActiveCyclone;
-  const amphanTileUrl = process.env.NEXT_PUBLIC_EE_AMPHAN_TILE_URL || null;
-  const isAmphan = mode === 'historical' && (selectedStormId === 'amphan' || selectedStormId === 'BOB-01-2020');
-  const isEEDisabled = isLiveMonitoring || (isAmphan && !amphanTileUrl);
-
-  const hasInsufficientHistory = trackPointCount !== undefined && trackPointCount < 4;
-  const isAiForecastDisabled = isLiveMonitoring || hasInsufficientHistory;
-
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 card-glass p-3">
+    <div className="flex flex-wrap items-center gap-3 card-glass p-3">
       {/* Storm Selector / Live Status Indicator */}
       <div className="flex items-center gap-2">
         <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wider">
@@ -49,9 +56,9 @@ export const MapControls: React.FC<MapControlsProps> = ({
           <div className="flex items-center bg-surface-2 border border-white/[0.06] rounded-xl p-0.5 text-xs">
             <button
               onClick={() => onSelectStorm('fani')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              className={`dashboard-control rounded-lg font-medium transition-colors ${
                 selectedStormId === 'fani'
-                  ? 'bg-red-500/20 text-red-400 border border-red-500/30 shadow-sm'
+                  ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                   : 'text-text-secondary hover:text-text-primary'
               }`}
             >
@@ -59,9 +66,9 @@ export const MapControls: React.FC<MapControlsProps> = ({
             </button>
             <button
               onClick={() => onSelectStorm('amphan')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              className={`dashboard-control rounded-lg font-medium transition-colors ${
                 selectedStormId === 'amphan'
-                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-sm'
+                  ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                   : 'text-text-secondary hover:text-text-primary'
               }`}
             >
@@ -70,9 +77,9 @@ export const MapControls: React.FC<MapControlsProps> = ({
             <button
               id="btn-storm-sidr"
               onClick={() => onSelectStorm('sidr')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              className={`dashboard-control rounded-lg font-medium transition-colors ${
                 selectedStormId === 'sidr'
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-sm'
+                  ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                   : 'text-text-secondary hover:text-text-primary'
               }`}
             >
@@ -82,154 +89,98 @@ export const MapControls: React.FC<MapControlsProps> = ({
         )}
       </div>
 
-      {/* Layer Toggles */}
-      <div className="flex items-center gap-1.5">
-        <button
-          onClick={() => onToggleLayer('showTrack')}
-          disabled={isLiveMonitoring}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            isLiveMonitoring
-              ? 'bg-surface-2/60 border-white/[0.04] text-text-tertiary cursor-not-allowed opacity-50'
-              : layerToggles.showTrack
-              ? 'bg-accent-cyan/15 border-accent-cyan/30 text-accent-cyan'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title={isLiveMonitoring ? 'No active cyclone track in monitoring mode' : 'Toggle Track Line'}
-        >
-          <Compass className="w-3.5 h-3.5" />
-          <span>Track Line</span>
-        </button>
+    </div>
+  );
+};
 
-        {/* AI Forecast Toggle Button (LSTM Track Forecaster) */}
-        <button
-          id="toggle-layer-ai-forecast"
-          onClick={() => onToggleLayer('showAiForecast')}
-          disabled={isAiForecastDisabled}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            isAiForecastDisabled
-              ? 'bg-surface-2/60 border-white/[0.04] text-text-tertiary cursor-not-allowed opacity-50'
-              : layerToggles.showAiForecast
-              ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300 font-semibold shadow-sm'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title={
-            hasInsufficientHistory
-              ? `AI Forecast requires 4+ observed points. Live storm has ${trackPointCount}.`
-              : isLiveMonitoring
-              ? 'No forecast in monitoring mode'
-              : 'Toggle AI LSTM Forecast Trajectory'
-          }
-        >
-          <Cpu className="w-3.5 h-3.5 text-yellow-400" />
-          <span>AI Forecast</span>
-          {hasInsufficientHistory && (
-            <span className="text-[10px] font-mono text-amber-400 font-semibold">(Req 4+)</span>
-          )}
-        </button>
+export const MapLayerMenu: React.FC<MapLayerMenuProps> = ({
+  layerToggles,
+  onToggleLayer,
+  mode,
+  hasActiveCyclone,
+  trackPointCount,
+  isAmphan,
+  amphanTileUrl,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const isLiveMonitoring = mode === 'live' && !hasActiveCyclone;
+  const hasInsufficientHistory = trackPointCount !== undefined && trackPointCount < 4;
+  const activeCount = LAYER_OPTIONS.filter(({ key }) => layerToggles[key]).length;
+  const isDisabled = (key: keyof MapLayerToggles) => {
+    if (key === 'showTrack' || key === 'showForecastCone') return isLiveMonitoring;
+    if (key === 'showAiForecast') return isLiveMonitoring || hasInsufficientHistory;
+    if (key === 'showEarthEngine') return isLiveMonitoring || (isAmphan && !amphanTileUrl);
+    return false;
+  };
 
-        <button
-          onClick={() => onToggleLayer('showForecastCone')}
-          disabled={isLiveMonitoring}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            isLiveMonitoring
-              ? 'bg-surface-2/60 border-white/[0.04] text-text-tertiary cursor-not-allowed opacity-50'
-              : layerToggles.showForecastCone
-              ? 'bg-amber-500/15 border-amber-500/30 text-amber-400'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title={isLiveMonitoring ? 'No forecast cone in monitoring mode' : 'Toggle Forecast Cone'}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Forecast Cone</span>
-        </button>
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        aria-label={`Map layers, ${activeCount} active`}
+        aria-expanded={isOpen}
+        aria-controls="map-layer-menu"
+        onClick={() => setIsOpen((open) => !open)}
+        className="dashboard-control flex items-center gap-2 rounded-md border border-slate-700/80 bg-slate-950/95 text-slate-300 shadow-lg backdrop-blur-md transition-colors hover:bg-slate-800 hover:text-slate-100"
+      >
+        <Layers className="h-4 w-4" aria-hidden="true" />
+        <span>Layers</span>
+        {activeCount > 0 && (
+          <span className="min-w-5 rounded bg-slate-800 px-1 text-center text-[10px] text-slate-300">
+            {activeCount}
+          </span>
+        )}
+      </button>
 
-        <button
-          id="toggle-layer-vulnerability"
-          onClick={() => onToggleLayer('showVulnerability')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            layerToggles.showVulnerability
-              ? 'bg-red-500/15 border-red-500/30 text-red-400'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title="Toggle State Coastal District Vulnerability Polygon Overlay"
+      {isOpen && (
+        <div
+          id="map-layer-menu"
+          role="group"
+          aria-label="Map layers"
+          className="absolute right-0 top-full z-50 mt-2 w-64 rounded-lg border border-slate-700/90 bg-slate-950/95 p-2 shadow-2xl backdrop-blur-xl"
         >
-          <ShieldAlert className="w-3.5 h-3.5" />
-          <span>Vulnerability Grid</span>
-        </button>
+          <div className="mb-1 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            Map layers
+          </div>
+          <div className="flex flex-col gap-1">
+            {LAYER_OPTIONS.map(({ key, label, Icon }) => {
+              const disabled = isDisabled(key);
+              const active = Boolean(layerToggles[key]);
+              const title =
+                key === 'showAiForecast' && hasInsufficientHistory
+                  ? `AI Forecast requires 4+ observed points. Current track has ${trackPointCount}.`
+                  : key === 'showEarthEngine' && isAmphan && !amphanTileUrl
+                    ? 'Sentinel-1 tiles are available for Fani; Amphan generation is pending.'
+                    : disabled
+                      ? 'Unavailable while monitoring for an active cyclone.'
+                      : `Toggle ${label}`;
 
-        {/* Task 5: 3 Infrastructure Exposure Layer Toggles */}
-        <button
-          id="toggle-power-grid"
-          onClick={() => onToggleLayer('showPowerGrid')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            layerToggles.showPowerGrid
-              ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-sm'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title="Toggle Power Grid (Substations & Transmission Lines)"
-        >
-          <span>⚡ Power Grid</span>
-        </button>
-
-        <button
-          id="toggle-roads"
-          onClick={() => onToggleLayer('showRoads')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            layerToggles.showRoads
-              ? 'bg-blue-500/20 border-blue-500/40 text-blue-300 shadow-sm'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title="Toggle Arterial Roads (NH/SH/MDR)"
-        >
-          <span>🛣 Roads</span>
-        </button>
-
-        <button
-          id="toggle-hospitals"
-          onClick={() => onToggleLayer('showHospitals')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            layerToggles.showHospitals
-              ? 'bg-rose-500/20 border-rose-500/40 text-rose-300 shadow-sm'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title="Toggle Hospitals, PHCs & Cyclone Shelters"
-        >
-          <span>🏥 Hospitals</span>
-        </button>
-
-        {/* Earth Engine Satellite Overlay Toggle - Disabled in Live Monitoring & Amphan when pending */}
-        <button
-          id="toggle-layer-earth-engine"
-          onClick={() => onToggleLayer('showEarthEngine')}
-          disabled={isEEDisabled}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-            isEEDisabled
-              ? 'bg-surface-2/60 border-white/[0.04] text-text-tertiary cursor-not-allowed opacity-50'
-              : layerToggles.showEarthEngine
-              ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
-              : 'bg-surface-2 border-white/[0.06] text-text-tertiary hover:text-text-primary'
-          }`}
-          title={
-            isLiveMonitoring
-              ? 'Earth Engine flood SAR data disabled during live monitoring (calm basin)'
-              : isAmphan && !amphanTileUrl
-              ? 'Sentinel-1 SAR tiles available for Fani 2019. Amphan generation pending.'
-              : 'Toggle Earth Engine Satellite Overlay'
-          }
-        >
-          <Satellite className="w-3.5 h-3.5" />
-          <span>Earth Engine</span>
-          {!isEEDisabled ? (
-            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-              LIVE
-            </span>
-          ) : (
-            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-slate-500/20 text-slate-400 border border-slate-500/30">
-              STUB
-            </span>
-          )}
-        </button>
-      </div>
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  id={`toggle-layer-${key}`}
+                  aria-pressed={active}
+                  disabled={disabled}
+                  title={title}
+                  onClick={() => onToggleLayer(key)}
+                  className={`dashboard-control flex items-center justify-between rounded-md border transition-colors disabled:cursor-not-allowed disabled:opacity-45 ${
+                    active
+                      ? 'border-blue-500/35 bg-blue-500/15 text-blue-200'
+                      : 'border-slate-700/50 bg-slate-900/60 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                    {label}
+                  </span>
+                  <span className={`h-1.5 w-1.5 rounded-full ${active ? 'bg-cyan-300' : 'bg-slate-700'}`} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { AccordionPanel } from './DashboardAccordion';
 import { CloudRain, Mountain, Droplets, AlertTriangle, ShieldCheck, Compass, Info, Waves } from 'lucide-react';
 import { RainfallDamageResponse, ScenarioOverride } from '../map/types';
 import { getAuthHeader } from '../../lib/api';
+import { getBackendUrl } from '../../lib/config';
 
 interface RainfallDamagePanelProps {
   districtName: string;
@@ -36,7 +38,7 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
 
   useEffect(() => {
     let isMounted = true;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
 
     async function fetchPathway() {
       setLoading(true);
@@ -157,6 +159,7 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
   const TerrainIcon = terrainInfo.icon;
 
   return (
+    <AccordionPanel id="rainfall-damage-pathway" title="Rainfall Damage Pathway">
     <div className="bg-gradient-to-b from-slate-900 to-slate-950 border border-teal-800/50 rounded-xl p-4 shadow-xl text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -165,9 +168,6 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
             <CloudRain className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold tracking-wide text-teal-200">
-              🌧 RAINFALL DAMAGE PATHWAY
-            </h3>
             <p className="text-[10px] text-slate-400">Terrain-aware infiltration & slope hazard</p>
           </div>
         </div>
@@ -298,5 +298,6 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
         </div>
       </div>
     </div>
+    </AccordionPanel>
   );
 };

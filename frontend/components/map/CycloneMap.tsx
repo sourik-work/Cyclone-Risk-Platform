@@ -16,9 +16,11 @@ import {
 } from './types';
 import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
 import { MapFallbackRadar } from './MapFallbackRadar';
+import { MapLayerMenu } from './MapControls';
 import { Radio, Layers, Satellite, Sliders, Cpu, Compass, Zap, Activity, CloudRain, Waves, Info } from 'lucide-react';
 import { getAuthHeader } from '../../lib/api';
 import { computeLinearExtrapolation } from './linearExtrapolation';
+import { getBackendUrl } from '../../lib/config';
 
 export const EE_TILE_URLS: Record<string, string | null> = {
   'BOB-02-2019': process.env.NEXT_PUBLIC_EE_TILE_URL || null,
@@ -278,7 +280,7 @@ const GoogleMapsAiForecastLayer: React.FC<{
 
     let isMounted = true;
     setAiForecast(null);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
     const cycloneId = track.name ? track.name.toLowerCase() : track.id;
 
     // Compute forecast starting indices dynamically from the current activePointIndex
@@ -1119,7 +1121,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
   // Auto-refresh rainfall + surge when user switches state/district or cyclone changes
   useEffect(() => {
     let isMounted = true;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
     const cycloneId = effectiveTrack.name ? effectiveTrack.name.toLowerCase() : effectiveTrack.id;
     const targetDistrict = selectedDistrict?.district_name || (selectedState === 'West Bengal' ? 'Purba Medinipur' : selectedState === 'Andhra Pradesh' ? 'Visakhapatnam' : selectedState === 'Tamil Nadu' ? 'Chennai' : 'Puri');
 
@@ -1320,7 +1322,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           <button
             id="toggle-rainfall"
             onClick={handleToggleRainfall}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors flex items-center gap-1.5 ${
+            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
               isRainfallActive
                 ? 'bg-blue-600/30 text-blue-300 border border-blue-500/40 shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
@@ -1333,9 +1335,9 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           <button
             id="toggle-surge"
             onClick={handleToggleSurge}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors flex items-center gap-1.5 ${
+            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
               isSurgeActive
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
             title="Toggle Storm Surge Inundation Zone"
@@ -1349,7 +1351,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           <button
             id="btn-mode-google-maps"
             onClick={() => setMapMode('google')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors flex items-center gap-1.5 ${
+            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
               mapMode === 'google'
                 ? 'bg-blue-600/30 text-blue-400 border border-blue-500/40'
                 : 'text-slate-400 hover:text-slate-200'
@@ -1361,9 +1363,9 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           <button
             id="btn-mode-control-radar"
             onClick={() => setMapMode('radar')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors flex items-center gap-1.5 ${
+            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
               mapMode === 'radar'
-                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -1375,10 +1377,22 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
         <button
           onClick={() => setShowConfigModal(true)}
           title="Configure Google Maps & Earth Engine Overlays"
-          className="p-2 rounded-lg bg-slate-900/90 backdrop-blur-md border border-slate-700/80 text-slate-400 hover:text-cyan-400 transition-colors"
+          className="dashboard-icon-control rounded-lg bg-slate-900/90 backdrop-blur-md border border-slate-700/80 text-slate-400 hover:text-slate-200 transition-colors"
         >
           <Sliders className="w-4 h-4" />
         </button>
+
+        {onToggleLayer && (
+          <MapLayerMenu
+            layerToggles={layerToggles}
+            onToggleLayer={onToggleLayer}
+            mode={mode}
+            hasActiveCyclone={hasActiveCyclone}
+            trackPointCount={effectiveTrack.track_points?.length || 0}
+            isAmphan={isAmphan}
+            amphanTileUrl={amphanTileUrl}
+          />
+        )}
       </div>
 
       {/* Main Map Canvas */}
@@ -1390,6 +1404,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
               defaultZoom={6.5}
               gestureHandling={'greedy'}
               disableDefaultUI={false}
+              colorScheme="DARK"
               styles={darkMapStyles}
               className="w-full h-full rounded-xl overflow-hidden border border-slate-800"
             >
@@ -1491,43 +1506,43 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
           />
         )}
 
-        {/* Rainfall Risk Legend (Workstream 2) */}
-        {isRainfallActive && (
+        {(isRainfallActive || effectiveShowAiForecast) && (
           <div
-            id="rainfall-hazard-legend"
-            className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 p-3 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-2xl text-xs font-mono select-none"
+            id="map-legend-panel"
+            className="map-legend-panel absolute bottom-4 right-4 z-20 flex max-h-[45%] w-[min(22rem,90vw)] flex-col gap-3 overflow-y-auto border border-slate-700/80 bg-slate-950/85 p-3 text-xs font-mono shadow-2xl backdrop-blur-md select-none"
           >
-            <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
-              <CloudRain className="w-3.5 h-3.5 text-blue-400" />
-              <span>Rainfall Risk (24h)</span>
-            </div>
-            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded" style={{ backgroundColor: '#87ceeb' }}></span>
-                <span className="text-slate-300">LOW (&lt;50mm)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded" style={{ backgroundColor: '#fbbf24' }}></span>
-                <span className="text-slate-300">MEDIUM (50-100)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded" style={{ backgroundColor: '#f97316' }}></span>
-                <span className="text-slate-300">HIGH (100-200)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded" style={{ backgroundColor: '#dc2626' }}></span>
-                <span className="text-slate-300">CRITICAL (&gt;200)</span>
-              </div>
-            </div>
-          </div>
-        )}
+            {isRainfallActive && (
+              <section id="rainfall-hazard-legend" className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-1.5 border-b border-slate-800 pb-1 text-[11px] font-semibold text-slate-200">
+                  <CloudRain className="h-3.5 w-3.5 text-blue-400" />
+                  <span>Rainfall Risk (24h)</span>
+                </div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#87ceeb' }} />
+                    <span className="text-slate-300">LOW (&lt;50mm)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#fbbf24' }} />
+                    <span className="text-slate-300">MEDIUM (50-100)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#f97316' }} />
+                    <span className="text-slate-300">HIGH (100-200)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#dc2626' }} />
+                    <span className="text-slate-300">CRITICAL (&gt;200)</span>
+                  </div>
+                </div>
+              </section>
+            )}
 
-        {/* 5. Corner Legend: IMD Official vs AI Forecast / Linear Extrapolation */}
-        {effectiveShowAiForecast && (
-          <div
-            id="forecast-comparison-legend"
-            className="absolute bottom-6 left-6 z-20 flex flex-col gap-1.5 p-3 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-2xl text-xs font-mono select-none"
-          >
+            {effectiveShowAiForecast && (
+              <section
+                id="forecast-comparison-legend"
+                className="flex flex-col gap-1.5 border-t border-slate-800 pt-2"
+              >
             {effectiveTrack.track_points && effectiveTrack.track_points.length < 4 ? (
               <>
                 <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
@@ -1568,9 +1583,11 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
                 </div>
                 <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 flex items-center justify-between">
                   <span>RMSE: 85.6 km @ 24h</span>
-                  <span className="text-emerald-400 font-semibold">119K Params</span>
+                  <span className="text-slate-400 font-semibold">119K Params</span>
                 </div>
               </>
+            )}
+              </section>
             )}
           </div>
         )}

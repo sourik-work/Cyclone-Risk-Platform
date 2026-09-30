@@ -16,9 +16,13 @@
   --text-secondary: #a1a1aa;
   --text-tertiary: #71717a;
   
-  --accent-cyan: #00e5ff;
+  --accent-cyan: #3b82f6;
   --accent-blue: #3b82f6;
-  --accent-gradient: linear-gradient(135deg, #00e5ff 0%, #3b82f6 100%);
+  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --control-height: 2rem;
+  --control-padding-x: 0.75rem;
+  --control-font-size: 0.75rem;
+  --control-radius: 6px;
   
   --success: #10b981;
   --warning: #f59e0b;
@@ -33,7 +37,6 @@
   /* Shadows */
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
   --shadow-elevated: 0 12px 48px rgba(0, 0, 0, 0.5);
-  --shadow-glow-cyan: 0 0 32px rgba(0, 229, 255, 0.15);
   
   /* Transitions */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
@@ -56,8 +59,12 @@
   --color-text-primary: #f5f5f7;
   --color-text-secondary: #a1a1aa;
   --color-text-tertiary: #71717a;
-  --color-accent-cyan: #00e5ff;
+  --color-accent-cyan: #3b82f6;
   --color-accent-blue: #3b82f6;
+  --color-cyan-300: #93c5fd;
+  --color-cyan-400: #60a5fa;
+  --color-cyan-500: #3b82f6;
+  --color-cyan-600: #2563eb;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -76,13 +83,75 @@ html, body {
   min-height: 100vh;
 }
 
+/* Global UI flattening: use square corners across dashboard controls/cards */
+[class*='rounded-'] {
+  border-radius: 0 !important;
+}
+
+.storm-metric-card {
+  border-radius: 8px !important;
+}
+
+.dashboard-control {
+  box-sizing: border-box;
+  height: var(--control-height);
+  min-height: var(--control-height);
+  padding-inline: var(--control-padding-x);
+  border-radius: var(--control-radius) !important;
+  font-size: var(--control-font-size);
+  line-height: 1.25;
+}
+
+.dashboard-icon-control {
+  box-sizing: border-box;
+  width: var(--control-height);
+  min-width: var(--control-height);
+  height: var(--control-height);
+  min-height: var(--control-height);
+  padding: 0 !important;
+  border-radius: var(--control-radius) !important;
+}
+
+.dashboard-menu-item {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--control-height);
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: var(--control-padding-x);
+  border-radius: var(--control-radius) !important;
+  font-size: var(--control-font-size);
+  line-height: 1.25;
+  text-align: left;
+}
+
+.dashboard-accordion-enter {
+  animation: accordion-enter 180ms ease-out both;
+}
+
+@keyframes accordion-enter {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-accordion-enter {
+    animation: none;
+  }
+}
+
+.map-legend-panel {
+  border-radius: 8px !important;
+}
+
 /* Apple-style frosted glass card */
 .card-glass {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   box-shadow: var(--shadow-card);
   transition: border-color var(--transition-standard), box-shadow var(--transition-standard);
 }
@@ -118,7 +187,7 @@ html, body {
 
 /* Focus rings (accessibility) */
 *:focus-visible {
-  outline: 2px solid var(--accent-cyan);
+  outline: 2px solid var(--accent-blue);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -162,5 +231,45 @@ button:active:not(:disabled) {
 }
 .animate-spin-slow {
   animation: spin-slow 3s linear infinite;
+}
+
+/* Keep Google Maps' built-in controls legible against the dark map canvas. */
+.gm-style .gm-style-mtc > div,
+.gm-style .gm-style-mtc button,
+.gm-style .gm-style-mtc label {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+.gm-style .gm-style-mtc > div:hover,
+.gm-style .gm-style-mtc button:hover,
+.gm-style .gm-style-mtc label:hover {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.gm-style button.gm-control-active[title='Zoom in'],
+.gm-style button.gm-control-active[title='Zoom out'],
+.gm-style button.gm-control-active[aria-label='Zoom in'],
+.gm-style button.gm-control-active[aria-label='Zoom out'] {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 35%) !important;
+}
+
+.gm-style button.gm-control-active[title='Zoom in']:hover,
+.gm-style button.gm-control-active[title='Zoom out']:hover,
+.gm-style button.gm-control-active[aria-label='Zoom in']:hover,
+.gm-style button.gm-control-active[aria-label='Zoom out']:hover {
+  background-color: #1e293b !important;
+}
+
+.gm-style button.gm-control-active[title='Zoom in'] img,
+.gm-style button.gm-control-active[title='Zoom out'] img,
+.gm-style button.gm-control-active[aria-label='Zoom in'] img,
+.gm-style button.gm-control-active[aria-label='Zoom out'] img {
+  filter: invert(0.85);
 }
 

@@ -56,7 +56,7 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
           onClick={() => onSelectIndex(0)}
           disabled={activePointIndex === 0}
           title="Jump to Genesis"
-          className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200 disabled:opacity-30 transition-colors"
+          className="dashboard-icon-control rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200 disabled:opacity-30 transition-colors"
         >
           <SkipBack className="w-4 h-4" />
         </button>
@@ -64,7 +64,7 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
         <button
           onClick={() => setIsPlaying(!isPlaying)}
           title={isPlaying ? 'Pause Simulation' : 'Play Trajectory'}
-          className="px-3 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold flex items-center gap-1.5 transition-colors shadow-lg shadow-cyan-500/20 text-xs"
+          className="dashboard-control rounded-lg bg-blue-600/25 text-blue-100 border border-blue-500/40 font-medium flex items-center gap-1.5 transition-colors hover:bg-blue-600/35"
         >
           {isPlaying ? (
             <>
@@ -83,7 +83,7 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
           onClick={() => onSelectIndex(Math.min(totalPoints - 1, activePointIndex + 1))}
           disabled={activePointIndex >= totalPoints - 1}
           title="Step Forward"
-          className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200 disabled:opacity-30 transition-colors"
+          className="dashboard-icon-control rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200 disabled:opacity-30 transition-colors"
         >
           <SkipForward className="w-4 h-4" />
         </button>
@@ -95,7 +95,7 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
           <span className="text-slate-400">
             Genesis: {formatDate(track.genesis_time)}
           </span>
-          <span className="font-bold text-cyan-300">
+          <span className="font-bold text-slate-200">
             Current: {formatDate(currentPoint.timestamp)}
             {currentPoint.is_forecast && (
               <span className="ml-2 text-amber-400 font-normal">
@@ -114,7 +114,7 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
           max={totalPoints - 1}
           value={activePointIndex}
           onChange={(e) => onSelectIndex(parseInt(e.target.value, 10))}
-          className="w-full accent-cyan-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+          className="w-full accent-blue-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
         />
       </div>
     </div>

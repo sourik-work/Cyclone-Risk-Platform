@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { TriageAsset, TriageResponse, ScenarioOverride } from '../map/types';
 import { getAuthHeader } from '../../lib/api';
+import { getBackendUrl } from '../../lib/config';
 
 interface TriageRankingCardProps {
   cycloneId: string;
@@ -57,7 +58,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
   const [noteModalAsset, setNoteModalAsset] = useState<TriageAsset | null>(null);
   const [customNote, setCustomNote] = useState<string>('');
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+  const backendUrl = getBackendUrl();
 
   // Load live asset statuses from backend
   useEffect(() => {
@@ -471,7 +472,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
                     <button
                       id={`btn-menu-${asset.asset_id}`}
                       onClick={() => setActiveMenuAssetId(isMenuOpen ? null : asset.asset_id)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700 transition-all cursor-pointer"
+                      className="dashboard-icon-control rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700 transition-colors cursor-pointer"
                       title="Update Runtime Status"
                     >
                       <MoreVertical className="w-4 h-4" />
@@ -488,21 +489,21 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
                         </div>
                         <button
                           onClick={() => handleUpdateStatus(asset.asset_id, 'OPERATIONAL')}
-                          className="w-full text-left px-2.5 py-1.5 hover:bg-emerald-950/50 hover:text-emerald-300 text-slate-200 flex items-center gap-2 cursor-pointer"
+                          className="dashboard-menu-item hover:bg-slate-800 hover:text-slate-100 text-slate-200 cursor-pointer"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                           <span>Mark Operational</span>
                         </button>
                         <button
                           onClick={() => handleUpdateStatus(asset.asset_id, 'OFFLINE')}
-                          className="w-full text-left px-2.5 py-1.5 hover:bg-red-950/50 hover:text-red-300 text-slate-200 flex items-center gap-2 cursor-pointer"
+                          className="dashboard-menu-item hover:bg-slate-800 hover:text-slate-100 text-slate-200 cursor-pointer"
                         >
                           <XCircle className="w-3.5 h-3.5 text-red-400" />
                           <span>Mark Offline</span>
                         </button>
                         <button
                           onClick={() => handleUpdateStatus(asset.asset_id, 'DAMAGED')}
-                          className="w-full text-left px-2.5 py-1.5 hover:bg-amber-950/50 hover:text-amber-300 text-slate-200 flex items-center gap-2 cursor-pointer"
+                          className="dashboard-menu-item hover:bg-slate-800 hover:text-slate-100 text-slate-200 cursor-pointer"
                         >
                           <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
                           <span>Mark Damaged</span>
@@ -513,7 +514,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
                             setNoteModalAsset(asset);
                             setCustomNote(assetStatuses[asset.asset_id]?.reason || '');
                           }}
-                          className="w-full text-left px-2.5 py-1.5 hover:bg-cyan-950/50 hover:text-cyan-300 text-slate-200 flex items-center gap-2 border-t border-slate-800 cursor-pointer"
+                          className="dashboard-menu-item border-t border-slate-800 hover:bg-slate-800 hover:text-slate-100 text-slate-200 cursor-pointer"
                         >
                           <MessageSquare className="w-3.5 h-3.5 text-cyan-400" />
                           <span>Add Note...</span>
@@ -558,7 +559,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setNoteModalAsset(null)}
-                className="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 cursor-pointer"
+                className="dashboard-control rounded-lg font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 cursor-pointer"
               >
                 Cancel
               </button>
@@ -568,7 +569,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
                   handleUpdateStatus(noteModalAsset.asset_id, currentSt, customNote);
                   setNoteModalAsset(null);
                 }}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 cursor-pointer"
+                className="dashboard-control rounded-lg font-medium text-blue-100 bg-blue-600/25 hover:bg-blue-600/35 border border-blue-500/40 cursor-pointer"
               >
                 Save Note
               </button>

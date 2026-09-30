@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import { LogIn, LogOut, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { auth } from '../../lib/firebase';
+import { getBackendUrl } from '../../lib/config';
 
 export const SignInButton: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -24,7 +25,7 @@ export const SignInButton: React.FC = () => {
       if (currentUser) {
         try {
           const idToken = await currentUser.getIdToken();
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+          const backendUrl = getBackendUrl();
           const resp = await fetch(`${backendUrl}/api/auth/verify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -58,8 +59,8 @@ export const SignInButton: React.FC = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-      
+      const backendUrl = getBackendUrl();
+
       const resp = await fetch(`${backendUrl}/api/auth/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,7 +98,7 @@ export const SignInButton: React.FC = () => {
   return (
     <div className="relative inline-flex items-center">
       {user ? (
-        <div className="flex items-center gap-2 card-glass border-border-subtle rounded-md px-2.5 py-1.5 shadow-sm">
+        <div className="dashboard-control flex items-center gap-2 rounded-md border border-border-subtle bg-surface-1/60 shadow-sm">
           {user.photoURL ? (
             <img
               src={user.photoURL}
@@ -127,7 +128,7 @@ export const SignInButton: React.FC = () => {
           <button
             onClick={handleSignOut}
             title="Sign out"
-            className="text-text-tertiary hover:text-red-400 transition-colors p-1 hover:bg-white/5 rounded-sm cursor-pointer ml-1"
+            className="dashboard-icon-control ml-1 inline-flex items-center justify-center rounded text-text-tertiary transition-colors hover:bg-white/5 hover:text-red-400"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>
@@ -136,7 +137,7 @@ export const SignInButton: React.FC = () => {
         <button
           onClick={handleSignIn}
           disabled={loading}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold card-glass hover:border-accent-cyan/50 text-text-primary transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50"
+          className="dashboard-control flex items-center gap-2 rounded-md border border-border-subtle bg-surface-1/60 font-medium text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary disabled:opacity-50"
           title="Sign in with Google"
         >
           {loading ? (

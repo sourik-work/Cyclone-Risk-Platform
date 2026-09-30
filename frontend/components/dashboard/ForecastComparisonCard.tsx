@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Brain, Cpu, Sparkles, Loader2, CheckCircle2, AlertTriangle, Info, RefreshCw } from 'lucide-react';
 import { CycloneTrack, ScenarioOverride } from '../map/types';
 import { getAuthHeader } from '../../lib/api';
+import { getBackendUrl } from '../../lib/config';
 
 interface LstmForecastPoint {
   lat?: number;
@@ -107,7 +108,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
     setLstm(null);
     setGemini(null);
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
 
     try {
       // Dynamic index calculation based on track length
@@ -236,8 +237,8 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
     <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-xl space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-        <div className="flex items-center gap-2 text-cyan-400">
-          <Brain className="w-4 h-4 text-cyan-400" />
+        <div className="flex items-center gap-2 text-slate-300">
+          <Brain className="w-4 h-4 text-slate-400" />
           <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
             🧠 MODEL FORECAST COMPARISON
           </h3>
@@ -245,7 +246,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
         <button
           onClick={fetchForecasts}
           disabled={isLoading}
-          className="text-slate-400 hover:text-cyan-400 p-1 rounded transition-colors disabled:opacity-50"
+          className="dashboard-icon-control text-slate-400 hover:text-slate-200 rounded transition-colors disabled:opacity-50"
           title="Refresh comparison"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
@@ -254,7 +255,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
 
       {isLoading ? (
         <div className="py-6 flex flex-col items-center justify-center gap-2 text-slate-400 text-xs font-mono">
-          <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
+          <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
           <span className="text-slate-300 font-semibold">
             {isLongLoading
               ? 'Still loading — backend may be warming up. This is expected on first visit.'
@@ -266,11 +267,11 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
           {/* Row 1: TrackLSTM (trained) */}
           <div className="bg-slate-950/70 border border-slate-800/90 rounded-lg p-3 space-y-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs font-mono font-semibold text-yellow-400">
-                <Cpu className="w-3.5 h-3.5 text-yellow-400" />
+              <div className="flex items-center gap-2 text-xs font-mono font-semibold text-slate-300">
+                <Cpu className="w-3.5 h-3.5 text-slate-400" />
                 <span>TrackLSTM (trained)</span>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 font-semibold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800/80 text-slate-300 border border-slate-700 font-semibold">
                 PRIMARY (LSTM)
               </span>
             </div>

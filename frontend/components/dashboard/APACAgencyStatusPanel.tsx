@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Globe2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Globe2, RefreshCw, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
+import { AccordionPanel } from './DashboardAccordion';
 
 export interface AgencyStatusItem {
   agency: string;
@@ -59,7 +60,6 @@ const FALLBACK_AGENCIES: AgencyStatusItem[] = [
 
 export const APACAgencyStatusPanel: React.FC = () => {
   const [agencies, setAgencies] = useState<AgencyStatusItem[]>(FALLBACK_AGENCIES);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchAgencyStatus = useCallback(async () => {
@@ -85,40 +85,29 @@ export const APACAgencyStatusPanel: React.FC = () => {
   }, [fetchAgencyStatus]);
 
   return (
-    <div
-      id="apac-agency-status-panel"
-      className="card-glass border border-white/[0.08] rounded-2xl p-4 shadow-xl space-y-3 transition-all"
+    <AccordionPanel
+      id="apac-met-agencies"
+      title="APAC Met Agencies"
+      action={
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-mono text-slate-400">5 normalized</span>
+          <button
+            id="btn-refresh-agencies"
+            type="button"
+            onClick={fetchAgencyStatus}
+            disabled={isLoading}
+            className="dashboard-icon-control inline-flex items-center justify-center rounded text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors disabled:opacity-50"
+            title="Refresh agency adapter statuses"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      }
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="flex items-center gap-2 text-left text-xs font-mono font-bold uppercase tracking-wider text-text-primary hover:text-indigo-300 transition-colors cursor-pointer"
-        >
-          <span className="text-base">🌏</span>
-          <span>APAC MET AGENCIES</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-            5 Normalized
-          </span>
-          {isOpen ? (
-            <ChevronUp className="w-3.5 h-3.5 text-text-tertiary" />
-          ) : (
-            <ChevronDown className="w-3.5 h-3.5 text-text-tertiary" />
-          )}
-        </button>
-
-        <button
-          id="btn-refresh-agencies"
-          onClick={fetchAgencyStatus}
-          disabled={isLoading}
-          className="p-1 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-white/[0.05] transition-colors cursor-pointer disabled:opacity-50"
-          title="Refresh agency adapter statuses"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-        </button>
-      </div>
-
-      {isOpen && (
+      <div
+        id="apac-agency-status-panel"
+        className="card-glass border border-white/[0.08] rounded-2xl p-4 shadow-xl space-y-3 transition-all"
+      >
         <div className="space-y-2 pt-1 animate-fadeIn">
           {/* Agency list */}
           <div className="space-y-1.5">
@@ -178,7 +167,7 @@ export const APACAgencyStatusPanel: React.FC = () => {
             Real adapter pattern — each agency normalized to a common interface
           </p>
         </div>
-      )}
-    </div>
+      </div>
+    </AccordionPanel>
   );
 };

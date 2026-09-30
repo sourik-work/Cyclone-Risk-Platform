@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { AccordionPanel } from './DashboardAccordion';
 import { Bell, BellRing, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { getToken } from 'firebase/messaging';
 import { getFirebaseMessaging } from '../../lib/firebase';
+import { getBackendUrl } from '../../lib/config';
 
 interface AlertSubscriptionProps {
   currentState?: string;
@@ -88,7 +90,7 @@ export const AlertSubscription: React.FC<AlertSubscriptionProps> = ({
         throw new Error('Failed to retrieve FCM device token.');
       }
 
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const resp = await fetch(`${backendUrl}/api/alerts/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -122,6 +124,7 @@ export const AlertSubscription: React.FC<AlertSubscriptionProps> = ({
   };
 
   return (
+    <AccordionPanel id="emergency-push-alerts" title="Emergency Push Alerts">
     <div
       id="fcm-alert-subscription-card"
       className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-3 shadow-md"
@@ -138,9 +141,6 @@ export const AlertSubscription: React.FC<AlertSubscriptionProps> = ({
             {subscribed ? <BellRing className="w-4 h-4 animate-pulse" /> : <Bell className="w-4 h-4" />}
           </div>
           <div>
-            <h4 className="text-xs font-mono font-bold text-slate-200 tracking-wide">
-              EMERGENCY PUSH ALERTS
-            </h4>
             <p className="text-[11px] text-slate-400">Direct FCM web notifications</p>
           </div>
         </div>
@@ -149,10 +149,10 @@ export const AlertSubscription: React.FC<AlertSubscriptionProps> = ({
         <button
           onClick={handleToggle}
           disabled={loading}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 cursor-pointer disabled:opacity-50 ${
+          className={`dashboard-control rounded-lg font-medium flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 ${
             subscribed
               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
-              : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
+              : 'bg-blue-600/25 hover:bg-blue-600/35 text-blue-100 border border-blue-500/40'
           }`}
           title={subscribed ? 'Click to unsubscribe' : `Subscribe to ${currentState} alerts`}
         >
@@ -196,5 +196,6 @@ export const AlertSubscription: React.FC<AlertSubscriptionProps> = ({
         </div>
       )}
     </div>
+    </AccordionPanel>
   );
 };

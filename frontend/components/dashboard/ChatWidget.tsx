@@ -11,6 +11,7 @@ import {
   Minimize2,
 } from 'lucide-react';
 import { getAuthHeader } from '../../lib/api';
+import { getBackendUrl } from '../../lib/config';
 
 interface ChatItem {
   id: string;
@@ -80,7 +81,7 @@ export const ChatWidget: React.FC = () => {
     setInputValue('');
     setIsLoading(true);
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
 
     try {
       const authHeader = await getAuthHeader();

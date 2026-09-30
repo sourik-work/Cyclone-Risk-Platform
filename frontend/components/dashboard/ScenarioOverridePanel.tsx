@@ -1,22 +1,40 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { CycloneTrack, ScenarioOverride } from '../map/types';
-import { Sliders, RotateCcw, Zap, ChevronDown, ChevronUp, AlertTriangle, Play, ShieldAlert } from 'lucide-react';
+import { Sliders, RotateCcw, AlertTriangle, Play, ShieldAlert } from 'lucide-react';
+import { AccordionPanel } from './DashboardAccordion';
+
+export interface ScenarioImpactPreviewData {
+  baseline: {
+    peakWind: number;
+    minPressure: number;
+    landfallLat: number;
+    landfallLon: number;
+  };
+  preview: {
+    overriddenPeakWind: number;
+    overriddenPressure: number;
+    overriddenLat: number;
+    overriddenLon: number;
+    estimatedPayoutCr: number;
+    payoutDiffPct: number;
+  };
+}
 
 interface ScenarioOverridePanelProps {
   scenario: ScenarioOverride | null;
   onApplyScenario: (scenario: ScenarioOverride | null) => void;
   track: CycloneTrack;
+  onPreviewChange?: (preview: ScenarioImpactPreviewData) => void;
 }
 
 export const ScenarioOverridePanel: React.FC<ScenarioOverridePanelProps> = ({
   scenario,
   onApplyScenario,
   track,
+  onPreviewChange,
 }) => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
-
   // Local state for interactive editing before clicking "Apply Scenario"
   const [enabled, setEnabled] = useState<boolean>(scenario?.enabled ?? false);
   const [windMultiplier, setWindMultiplier] = useState<number>(scenario?.wind_multiplier ?? 1.0);
@@ -86,6 +104,10 @@ export const ScenarioOverridePanel: React.FC<ScenarioOverridePanelProps> = ({
     };
   }, [baseline, windMultiplier, pressureOffset, shiftLat, shiftLon]);
 
+  useEffect(() => {
+    onPreviewChange?.({ baseline, preview });
+  }, [baseline, preview, onPreviewChange]);
+
   const handleApply = () => {
     const override: ScenarioOverride = {
       cyclone_id: track.name ? track.name.toLowerCase() : track.id,
@@ -111,37 +133,8 @@ export const ScenarioOverridePanel: React.FC<ScenarioOverridePanelProps> = ({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-700/80 rounded-xl overflow-hidden shadow-xl backdrop-blur-md">
-      {/* Header */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-3.5 bg-slate-800/60 hover:bg-slate-800/80 transition-colors text-left"
-      >
-        <div className="flex items-center gap-2.5">
-          <div className={`p-1.5 rounded-lg ${enabled ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'bg-slate-700/50 text-slate-400'}`}>
-            <Sliders className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
-                🎚️ WHAT-IF SCENARIO
-              </span>
-              {enabled && (
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
-                  ACTIVE
-                </span>
-              )}
-            </div>
-            <p className="text-[11px] text-slate-400">Hypothetical parameter testing</p>
-          </div>
-        </div>
-        <div className="text-slate-400">
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </div>
-      </button>
-
-      {/* Panel Body */}
-      {isExpanded && (
+    <AccordionPanel id="scenario-override" title="Scenario Override">
+      <div className="bg-slate-900/90 border border-slate-700/80 rounded-xl overflow-hidden shadow-xl backdrop-blur-md">
         <div className="p-3.5 space-y-3.5 text-xs">
           {/* Master Enable Checkbox */}
           <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
@@ -287,49 +280,6 @@ export const ScenarioOverridePanel: React.FC<ScenarioOverridePanelProps> = ({
             </div>
           </div>
 
-          {/* Preview Section */}
-          <div className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 space-y-2">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
-              <span>Downstream Impact Preview</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
-              <div className="bg-slate-900/80 p-2 rounded border border-slate-800/80">
-                <span className="text-[10px] text-slate-500 block">Peak Wind</span>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-slate-400">{baseline.peakWind}</span>
-                  <span className="text-slate-600">→</span>
-                  <span className="text-amber-300 font-bold">{preview.overriddenPeakWind} km/h</span>
-                </div>
-              </div>
-              <div className="bg-slate-900/80 p-2 rounded border border-slate-800/80">
-                <span className="text-[10px] text-slate-500 block">Min Pressure</span>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-slate-400">{baseline.minPressure}</span>
-                  <span className="text-slate-600">→</span>
-                  <span className="text-cyan-300 font-bold">{preview.overriddenPressure} hPa</span>
-                </div>
-              </div>
-              <div className="bg-slate-900/80 p-2 rounded border border-slate-800/80">
-                <span className="text-[10px] text-slate-500 block">Landfall Lat/Lon</span>
-                <div className="flex items-baseline gap-1 text-[10px]">
-                  <span className="text-slate-400">{baseline.landfallLat}°, {baseline.landfallLon}°</span>
-                  <span className="text-slate-600">→</span>
-                  <span className="text-emerald-300 font-bold">{preview.overriddenLat}°, {preview.overriddenLon}°</span>
-                </div>
-              </div>
-              <div className="bg-slate-900/80 p-2 rounded border border-slate-800/80">
-                <span className="text-[10px] text-slate-500 block">Est. Insurance Payout</span>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-indigo-300 font-bold">₹{preview.estimatedPayoutCr} Cr</span>
-                  <span className={`text-[10px] ${preview.payoutDiffPct >= 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
-                    ({preview.payoutDiffPct >= 0 ? `+${preview.payoutDiffPct}` : preview.payoutDiffPct}%)
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Action Buttons */}
           <div className="flex items-center gap-2 pt-1">
             <button
@@ -349,7 +299,55 @@ export const ScenarioOverridePanel: React.FC<ScenarioOverridePanelProps> = ({
             </button>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </AccordionPanel>
   );
 };
+
+export const ScenarioImpactPreviewPanel: React.FC<{
+  data: ScenarioImpactPreviewData | null;
+}> = ({ data }) => (
+  <AccordionPanel id="downstream-impact-preview" title="Downstream Impact Preview">
+    <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2.5">
+      {data ? (
+        <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+          <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
+            <span className="block text-[10px] text-slate-500">Peak Wind</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-slate-400">{data.baseline.peakWind}</span>
+              <span className="text-slate-600">→</span>
+              <span className="font-bold text-amber-300">{data.preview.overriddenPeakWind} km/h</span>
+            </div>
+          </div>
+          <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
+            <span className="block text-[10px] text-slate-500">Min Pressure</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-slate-400">{data.baseline.minPressure}</span>
+              <span className="text-slate-600">→</span>
+              <span className="font-bold text-cyan-300">{data.preview.overriddenPressure} hPa</span>
+            </div>
+          </div>
+          <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
+            <span className="block text-[10px] text-slate-500">Landfall Lat/Lon</span>
+            <div className="flex items-baseline gap-1 text-[10px]">
+              <span className="text-slate-400">{data.baseline.landfallLat}°, {data.baseline.landfallLon}°</span>
+              <span className="text-slate-600">→</span>
+              <span className="font-bold text-emerald-300">{data.preview.overriddenLat}°, {data.preview.overriddenLon}°</span>
+            </div>
+          </div>
+          <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
+            <span className="block text-[10px] text-slate-500">Est. Insurance Payout</span>
+            <div className="flex items-baseline gap-1">
+              <span className="font-bold text-indigo-300">₹{data.preview.estimatedPayoutCr} Cr</span>
+              <span className={`text-[10px] ${data.preview.payoutDiffPct >= 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                ({data.preview.payoutDiffPct >= 0 ? `+${data.preview.payoutDiffPct}` : data.preview.payoutDiffPct}%)
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <p className="text-xs text-slate-400">Scenario projections are initializing.</p>
+      )}
+    </div>
+  </AccordionPanel>
+);

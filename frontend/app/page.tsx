@@ -52,6 +52,7 @@ export const COUNTRIES = [
 import { collection, onSnapshot, query, limit } from 'firebase/firestore';
 import { firestore } from '../lib/firebase';
 import { getAuthHeader } from '../lib/api';
+import { getBackendUrl } from '../lib/config';
 
 // Standby track representing quiescent Bay of Bengal for continuous monitoring
 const STANDBY_MONITORING_TRACK: CycloneTrack = {
@@ -129,8 +130,8 @@ export default function Home() {
   const [warmingMessage, setWarmingMessage] = useState('');
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-    let timeoutId: NodeJS.Timeout;
+    const backendUrl = getBackendUrl();
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const warmupTimeout = setTimeout(() => {
       setIsWarmingUp(true);
@@ -183,7 +184,7 @@ export default function Home() {
 
   // TASK 1 & TASK 6: Parallelize all API calls on mount with Promise.allSettled & 1-hour localStorage cache
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
 
     const bootstrapData = async () => {
       // Fire all non-blocking initial fetches in parallel — NO sequential awaits
@@ -212,7 +213,7 @@ export default function Home() {
   const fetchLiveCyclone = useCallback(async (forceRefresh = false) => {
     setIsLoadingLive(true);
     setLiveError(null);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
     try {
       const res = await fetch(`${backendUrl}/api/cyclone/live${forceRefresh ? '?refresh=true' : ''}`);
       if (!res.ok) {
@@ -420,7 +421,7 @@ export default function Home() {
       signal?: AbortSignal
     ) => {
       setIsLoadingAdvisory(true);
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
 
       // TASK 5: 120-second timeout for Gemini advisory generation
       const timeoutController = new AbortController();
@@ -653,8 +654,6 @@ export default function Home() {
 
         {/* Layer and System Control Bar */}
         <MapControls
-          layerToggles={layerToggles}
-          onToggleLayer={handleToggleLayer}
           selectedStormId={selectedStormId}
           onSelectStorm={handleSelectStorm}
           mode={mode}
@@ -666,14 +665,42 @@ export default function Home() {
                 : 'Bay of Bengal (Continuous Monitoring)'
               : undefined
           }
-          trackPointCount={activeTrack?.track_points?.length || 0}
         />
 
-        {/* Dynamic Display Grid: Map (Left) & Telemetry/Advisories (Right) */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-[640px]">
-          {/* Left Column: Interactive Map & Simulation Scrubber */}
-          <div className="flex-1 flex flex-col gap-4">
-            <div className="flex-1 min-h-[500px] h-[600px] relative rounded-xl overflow-hidden shadow-2xl border border-slate-800">
+        {/* Dynamic Display Grid: Telemetry/Advisories (Left) & Map (Right) */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] gap-2 min-h-[640px] lg:h-[calc(100vh-260px)] overflow-hidden">
+          {/* Left Column: Storm Telemetry, District Risk & Gemini Multilingual Advisory */}
+          <div className="w-full min-w-0 min-h-0 overflow-hidden order-1">
+            <div className="h-full max-h-[calc(100vh-260px)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+              <TelemetrySidebar
+                track={activeTrack}
+                activePointIndex={activePointIndex}
+                selectedDistrict={selectedDistrict}
+                currentLanguage={currentLanguage}
+                advisory={advisory}
+                isLoadingAdvisory={isLoadingAdvisory}
+                selectedState={selectedState}
+                onSelectState={handleSelectState}
+                allDistricts={SEED_ALL_COASTAL_VULNERABILITY.features.map((f) => f.properties)}
+                onSelectDistrict={setSelectedDistrict}
+                onLanguageChange={setCurrentLanguage}
+                infrastructureData={infrastructureData}
+                mode={mode}
+                hasActiveCyclone={mode === 'live' && !!liveData?.active_cyclone}
+                liveData={liveData}
+                selectedStormId={selectedStormId}
+                selectedCountry={selectedCountry}
+                onSelectCountry={handleSelectCountry}
+                countries={COUNTRIES}
+                scenario={scenario}
+                onApplyScenario={setScenario}
+              />
+            </div>
+          </div>
+
+          {/* Right Column: Interactive Map & Simulation Scrubber */}
+          <div className="flex min-w-0 flex-col gap-4 min-h-0 order-2">
+            <div className="flex-1 min-h-[500px] h-[600px] lg:h-full relative rounded-xl overflow-hidden shadow-2xl border border-slate-800">
               <CycloneMap
                 track={activeTrack}
                 activePointIndex={activePointIndex}
@@ -712,31 +739,6 @@ export default function Home() {
               />
             )}
           </div>
-
-          {/* Right Column: Storm Telemetry, District Risk & Gemini Multilingual Advisory */}
-          <TelemetrySidebar
-            track={activeTrack}
-            activePointIndex={activePointIndex}
-            selectedDistrict={selectedDistrict}
-            currentLanguage={currentLanguage}
-            advisory={advisory}
-            isLoadingAdvisory={isLoadingAdvisory}
-            selectedCountry={selectedCountry}
-            onSelectCountry={handleSelectCountry}
-            countries={COUNTRIES}
-            selectedState={selectedState}
-            onSelectState={handleSelectState}
-            allDistricts={activeVulnerability.features.map((f) => f.properties)}
-            onSelectDistrict={setSelectedDistrict}
-            onLanguageChange={setCurrentLanguage}
-            infrastructureData={infrastructureData}
-            mode={mode}
-            hasActiveCyclone={mode === 'live' && !!liveData?.active_cyclone}
-            liveData={liveData}
-            selectedStormId={selectedStormId}
-            scenario={scenario}
-            onApplyScenario={setScenario}
-          />
         </div>
       </div>
 

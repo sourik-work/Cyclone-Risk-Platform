@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Brain, Sparkles, Loader2, AlertCircle, CheckCircle2, ShieldAlert, RefreshCw } from 'lucide-react';
 import { getAuthHeader } from '../../lib/api';
 import { ScenarioOverride } from '../map/types';
+import { getBackendUrl } from '../../lib/config';
 
 interface CriticalAsset {
   name: string;
@@ -53,7 +54,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
     setError(null);
     setData(null);
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
 
     // TASK 5: 120-second timeout for Gemini exposure reasoning
     const controller = new AbortController();
@@ -133,13 +134,13 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+          <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-blue-300">
             <Brain className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1.5">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
               <span>GEMINI EXPOSURE REASONING</span>
-              <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" />
+              <Sparkles className="w-3 h-3 text-slate-500" />
             </h3>
           </div>
         </div>
@@ -149,7 +150,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
             onClick={fetchExposureReasoning}
             disabled={isLoading}
             title="Re-analyze exposure"
-            className="p-1 rounded text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors disabled:opacity-40"
+            className="dashboard-icon-control rounded text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors disabled:opacity-40"
           >
             <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
@@ -159,7 +160,7 @@ export const ExposureReasoningCard: React.FC<ExposureReasoningCardProps> = ({
       {/* Loading State */}
       {isLoading && (
         <div className="py-6 flex flex-col items-center justify-center gap-2.5 text-center">
-          <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
+          <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
           <p className="text-xs text-slate-300 font-mono font-semibold">
             {isLongLoading
               ? 'Still loading — backend may be warming up. This is expected on first visit.'

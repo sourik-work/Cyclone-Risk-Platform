@@ -11,6 +11,7 @@ import {
   Loader2,
   Sparkles,
 } from 'lucide-react';
+import { getBackendUrl } from '../../lib/config';
 
 interface ReportDamageModalProps {
   isOpen: boolean;
@@ -124,7 +125,7 @@ export const ReportDamageModal: React.FC<ReportDamageModalProps> = ({
     setSubmitting(true);
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const payload = {
         description: description.trim(),
         latitude: latNum,
@@ -265,14 +266,14 @@ export const ReportDamageModal: React.FC<ReportDamageModalProps> = ({
               <button
                 type="button"
                 onClick={handleReset}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer"
+                className="dashboard-control rounded-xl font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer"
               >
                 Submit Another Report
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-md shadow-cyan-500/20 cursor-pointer"
+                className="dashboard-control rounded-xl font-medium bg-blue-600/25 hover:bg-blue-600/35 text-blue-100 border border-blue-500/40 cursor-pointer"
               >
                 Done
               </button>
@@ -432,14 +433,14 @@ export const ReportDamageModal: React.FC<ReportDamageModalProps> = ({
                 type="button"
                 onClick={onClose}
                 disabled={submitting}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
+                className="dashboard-control rounded-xl font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting || !imagePreview || !description.trim()}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-md shadow-cyan-500/30 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="dashboard-control flex items-center gap-2 rounded-xl font-medium bg-blue-600/25 hover:bg-blue-600/35 text-blue-100 border border-blue-500/40 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <>

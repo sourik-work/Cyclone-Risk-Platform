@@ -21,6 +21,20 @@ import { ReportDamageModal } from './ReportDamageModal';
 
 export type DashboardMode = 'historical' | 'live';
 
+const LANGUAGE_ALIASES: Record<string, SupportedLanguage> = {
+  en: 'english',
+  or: 'odia',
+  bn: 'bengali',
+  hi: 'hindi',
+  te: 'telugu',
+  ta: 'tamil',
+  gu: 'gujarati',
+  mr: 'marathi',
+  kn: 'kannada',
+  ml: 'malayalam',
+  kok: 'konkani',
+};
+
 interface ControlHeaderProps {
   currentLanguage: SupportedLanguage;
   onLanguageChange: (lang: SupportedLanguage) => void;
@@ -66,6 +80,7 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
     0
   );
   const formattedPopulationAtRisk = `${Math.floor(totalVulnerablePopulation / 1_000_000)}M+`;
+  const selectedLanguage = LANGUAGE_ALIASES[currentLanguage.toLowerCase()] ?? currentLanguage;
 
   useEffect(() => {
     const updateTime = () => {
@@ -89,16 +104,16 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
   return (
     <>
       <header className="w-full min-h-[72px] bg-surface-1/80 backdrop-blur-xl border-b border-subtle px-6 py-5 flex flex-wrap items-center justify-between gap-4 select-none z-30">
-        {/* Platform Brand & Status */}
+        {/* Platform Brand & Operational Status */}
         <div className="flex items-center gap-3.5">
           <div
             className={`p-2.5 rounded-md border ${
-              mode === 'live'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : 'bg-red-500/10 border-red-500/20 text-red-400'
+              mode === 'live' && liveStatus === 'active'
+                ? 'bg-red-500/10 border-red-500/20 text-red-400'
+                : 'bg-slate-800/60 border-slate-700/70 text-blue-300'
             }`}
           >
-            <ShieldAlert className="w-5 h-5 animate-pulse" />
+            <ShieldAlert className={`w-5 h-5 ${mode === 'live' && liveStatus === 'active' ? 'animate-pulse' : ''}`} />
           </div>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
@@ -124,38 +139,10 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                 </span>
               )}
 
-              {/* Demo Mode Pill */}
-              <span
-                className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 cursor-help"
-                title="Backend runs on Render free tier (0.1 CPU, 512MB). First request after inactivity takes 30-60s. Demo deployment: 10 concurrent users tested. Production path is Cloud Run autoscaling (documented in README)."
-              >
-                DEMO · Render free tier
-              </span>
-
-              {/* India-Scale Two-Tier Coverage Badges */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span
-                  id="platform-coverage-badge-core"
-                  title="Full infrastructure + insurance + advisory + forecast pipeline"
-                  className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 cursor-help"
-                >
-                  ✅ FULL PIPELINE · 4 states · 16 districts
-                </span>
-                <span
-                  id="platform-coverage-badge-forecast"
-                  title="Vulnerability + storm track + advisory active. Infrastructure asset layer not yet populated."
-                  className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/15 text-blue-300 border border-blue-500/30 cursor-help"
-                >
-                  📡 FORECAST ONLY · +5 states · +4 UTs
-                </span>
-              </div>
             </div>
             <p className="text-xs text-text-secondary mt-0.5">
               India Coastal Predictive Vulnerability & Pre-Landfall Evacuation Engine
             </p>
-            <div className="text-[10px] text-text-tertiary mt-1">
-              Demo deployment · 4 states full pipeline · 9 states + 4 UTs forecast coverage · Illustrative coefficients (see README)
-            </div>
           </div>
         </div>
 
@@ -165,12 +152,12 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           <button
             id="btn-apac-scale"
             onClick={() => setShowApacModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium card-glass hover:bg-white/5 text-indigo-300 border-border-subtle transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+            className="dashboard-control flex items-center gap-1.5 rounded-md card-glass text-slate-300 border-border-subtle transition-colors hover:bg-white/5 cursor-pointer"
             title="Preview Phase 2 Asia-Pacific Regional Scale Expansion"
           >
-            <Globe2 className="w-3.5 h-3.5 text-indigo-400" />
+            <Globe2 className="w-3.5 h-3.5 text-slate-400" />
             <span>APAC Scale</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-indigo-500/20 text-indigo-200 border border-indigo-400/30 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-slate-800 text-slate-300 border border-slate-700 font-mono">
               Phase 2
             </span>
           </button>
@@ -180,9 +167,9 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
             <button
               id="mode-toggle-historical"
               onClick={() => onModeChange('historical')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`dashboard-control flex items-center gap-1.5 rounded-md font-medium transition-colors cursor-pointer ${
                 mode === 'historical'
-                  ? 'bg-accent-cyan text-slate-950 shadow-md shadow-cyan-500/20 scale-[1.02] border border-cyan-300'
+                  ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                   : 'text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent'
               }`}
               title="Historical Cyclone Replays (Fani, Amphan)"
@@ -193,88 +180,57 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
             <button
               id="mode-toggle-live"
               onClick={() => onModeChange('live')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`dashboard-control flex items-center gap-1.5 rounded-md font-medium transition-colors cursor-pointer ${
                 mode === 'live'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20 scale-[1.02] border border-emerald-300'
+                  ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                   : 'text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent'
               }`}
               title="Live IMD RSMC New Delhi Feed"
             >
-              <Radio className={`w-3.5 h-3.5 ${mode === 'live' ? '' : 'text-emerald-400 animate-pulse'}`} />
+              <Radio className={`w-3.5 h-3.5 ${mode === 'live' ? '' : 'text-slate-400'}`} />
               <span>Live Feed</span>
             </button>
           </div>
 
-          {/* UTC / IST Digital Clock */}
-          <div className="hidden xl:flex items-center gap-2 card-glass border-border-subtle px-3 py-1.5 rounded-md font-mono text-xs text-text-secondary">
-            <Activity className="w-3.5 h-3.5 text-accent-cyan" />
-            <span className="text-accent-cyan">{timeUtc}</span>
-            <span className="text-text-tertiary">•</span>
-            <span className="text-amber-300">{timeIst}</span>
-          </div>
+          <label className="dashboard-control inline-flex items-center gap-2 rounded-md border border-border-subtle bg-surface-2/70 text-text-secondary">
+            <Globe2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>Language</span>
+            <select
+              aria-label="Language"
+              value={selectedLanguage}
+              onChange={(event) => onLanguageChange(event.currentTarget.value as SupportedLanguage)}
+              className="h-full min-w-24 cursor-pointer bg-transparent text-text-primary outline-none"
+            >
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <option key={lang.code} value={lang.code} className="bg-slate-900 text-slate-100">
+                  {lang.name} · {lang.nativeName}
+                </option>
+              ))}
+            </select>
+          </label>
 
-          {/* Multilingual Selector */}
-          <div className="flex items-center gap-1.5 card-glass border-border-subtle p-1 rounded-md shadow-inner flex-wrap max-w-xl">
-            <Globe2 className="w-4 h-4 text-text-tertiary ml-1 mr-0.5 shrink-0" />
-            {SUPPORTED_LANGUAGES.map((lang) => {
-              const c = currentLanguage.toLowerCase();
-              const target = lang.code.toLowerCase();
-              const isSelected =
-                c === target ||
-                (target === 'odia' && c === 'or') ||
-                (target === 'or' && c === 'odia') ||
-                (target === 'bengali' && c === 'bn') ||
-                (target === 'bn' && c === 'bengali') ||
-                (target === 'hindi' && c === 'hi') ||
-                (target === 'hi' && c === 'hindi') ||
-                (target === 'telugu' && c === 'te') ||
-                (target === 'te' && c === 'telugu') ||
-                (target === 'tamil' && c === 'ta') ||
-                (target === 'ta' && c === 'tamil') ||
-                (target === 'gujarati' && c === 'gu') ||
-                (target === 'gu' && c === 'gujarati') ||
-                (target === 'marathi' && c === 'mr') ||
-                (target === 'mr' && c === 'marathi') ||
-                (target === 'kannada' && c === 'kn') ||
-                (target === 'kn' && c === 'kannada') ||
-                (target === 'malayalam' && c === 'ml') ||
-                (target === 'ml' && c === 'malayalam') ||
-                (target === 'konkani' && c === 'kok') ||
-                (target === 'kok' && c === 'konkani') ||
-                (target === 'english' && c === 'en') ||
-                (target === 'en' && c === 'english');
-
-              return (
-                <button
-                  key={lang.code}
-                  id={`lang-btn-${lang.code}`}
-                  onClick={() => onLanguageChange(lang.code)}
-                  className={`px-2 py-0.5 rounded-sm text-xs font-medium transition-all duration-200 cursor-pointer ${
-                    isSelected
-                      ? 'bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/40 shadow-[0_0_12px_rgba(0,229,255,0.2)] font-semibold'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent'
-                  }`}
-                  title={`${lang.name} (${lang.nativeName})`}
-                >
-                  {lang.nativeName}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Citizen Damage Report Button */}
-          <button
-            id="report-damage-btn"
-            onClick={() => setShowReportDamage(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium card-glass text-amber-300 hover:border-amber-400/50 hover:bg-white/5 transition-all duration-200 cursor-pointer shadow-sm"
-            title="Submit Citizen Cyclone Damage Photo"
+          <div
+            role="toolbar"
+            aria-label="Dashboard actions"
+            className="flex h-10 items-center gap-1 rounded-md border border-border-subtle bg-surface-2/70 p-1"
           >
-            <Camera className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Report Damage</span>
-          </button>
-
-          {/* Google Firebase Auth */}
-          <SignInButton />
+            <div className="flex h-8 items-center gap-2 px-2 font-mono text-[11px] text-text-secondary">
+              <Activity className="h-3.5 w-3.5 text-text-tertiary" aria-hidden="true" />
+              <span>{timeUtc}</span>
+              <span className="text-text-tertiary" aria-hidden="true">·</span>
+              <span>{timeIst}</span>
+            </div>
+            <button
+              id="report-damage-btn"
+              onClick={() => setShowReportDamage(true)}
+              className="dashboard-control inline-flex items-center gap-1.5 rounded text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
+              title="Submit Citizen Cyclone Damage Photo"
+            >
+              <Camera className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Report</span>
+            </button>
+            <SignInButton />
+          </div>
         </div>
       </header>
 

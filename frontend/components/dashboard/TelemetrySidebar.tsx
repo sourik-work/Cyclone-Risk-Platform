@@ -58,9 +58,15 @@ import { RainfallDamagePanel } from './RainfallDamagePanel';
 import { TriageRankingCard } from './TriageRankingCard';
 import { AuditLogPanel } from './AuditLogPanel';
 import { APACAgencyStatusPanel } from './APACAgencyStatusPanel';
-import { ScenarioOverridePanel } from './ScenarioOverridePanel';
+import {
+  ScenarioImpactPreviewData,
+  ScenarioImpactPreviewPanel,
+  ScenarioOverridePanel,
+} from './ScenarioOverridePanel';
 import { ScenarioOverride } from '../map/types';
+import { AccordionPanel, DashboardAccordionProvider } from './DashboardAccordion';
 import { getAuthHeader } from '../../lib/api';
+import { getBackendUrl } from '../../lib/config';
 
 interface TelemetrySidebarProps {
   track: CycloneTrack;
@@ -97,6 +103,14 @@ const COASTAL_STATES = [
   ...EASTERN_COASTAL_STATES,
   ...WESTERN_COASTAL_STATES,
   ...UNION_TERRITORIES_LIST,
+];
+
+type SidebarTabId = 'telemetry-scenario' | 'forecast-impact' | 'system-audit';
+
+const SIDEBAR_TABS: Array<{ id: SidebarTabId; label: string }> = [
+  { id: 'telemetry-scenario', label: 'Telemetry & Scenario' },
+  { id: 'forecast-impact', label: 'Forecast & Impact' },
+  { id: 'system-audit', label: 'System & Audit' },
 ];
 
 function pcmToWav(
@@ -285,6 +299,33 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   ];
   const activeCountry = selectedCountry || 'india';
   const availableStates = currentCountries.find((c) => c.id === activeCountry)?.states || COASTAL_STATES;
+  const [activeSidebarTab, setActiveSidebarTab] = useState<SidebarTabId>('telemetry-scenario');
+  const [scenarioPreview, setScenarioPreview] = useState<ScenarioImpactPreviewData | null>(null);
+  const tabButtonRefs = useRef<Record<SidebarTabId, HTMLButtonElement | null>>({
+    'telemetry-scenario': null,
+    'forecast-impact': null,
+    'system-audit': null,
+  });
+
+  const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, currentTab: SidebarTabId) => {
+    const currentIndex = SIDEBAR_TABS.findIndex((tab) => tab.id === currentTab);
+    let nextIndex = currentIndex;
+
+    if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % SIDEBAR_TABS.length;
+    else if (event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + SIDEBAR_TABS.length) % SIDEBAR_TABS.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = SIDEBAR_TABS.length - 1;
+    else return;
+
+    event.preventDefault();
+    const nextTab = SIDEBAR_TABS[nextIndex].id;
+    setActiveSidebarTab(nextTab);
+    tabButtonRefs.current[nextTab]?.focus();
+  };
+
+  const handleScenarioPreviewChange = useCallback((preview: ScenarioImpactPreviewData) => {
+    setScenarioPreview(preview);
+  }, []);
 
   const currentPoint: TrackPoint = track.track_points[activePointIndex] || track.track_points[0];
   const [localAdvisoryOverride, setLocalAdvisoryOverride] = useState<AnticipatoryAdvisory | null>(null);
@@ -315,7 +356,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
     if (!currentAdvisory?.advisory_id) return;
     setIsApprovalActionLoading(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const authHeader = await getAuthHeader();
       const res = await fetch(`${backendUrl}/api/advisories/${currentAdvisory.advisory_id}/approve`, {
         method: 'POST',
@@ -343,7 +384,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
     if (!currentAdvisory?.advisory_id) return;
     setIsApprovalActionLoading(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const authHeader = await getAuthHeader();
       const res = await fetch(`${backendUrl}/api/advisories/${currentAdvisory.advisory_id}/reject`, {
         method: 'POST',
@@ -739,7 +780,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
   // Auto-refresh rainfall + surge hazard data whenever district, state, or storm track changes
   useEffect(() => {
     let isMounted = true;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
     const cycloneId = track.name ? track.name.toLowerCase() : track.id;
     const targetDistrictName = selectedDistrict?.district_name || 'Puri';
     const targetState = selectedDistrict?.state_name || activeState;
@@ -965,7 +1006,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
     setTtsState('loading');
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/advisories/synthesize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1027,18 +1068,55 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
   return (
     <>
+      <DashboardAccordionProvider>
       <aside className="w-full lg:w-96 flex flex-col gap-4 overflow-y-auto pr-1 select-none">
+      <div
+        role="tablist"
+        aria-label="Sidebar sections"
+        className="grid grid-cols-3 gap-1 rounded-lg border border-slate-700/70 bg-slate-950/80 p-1"
+      >
+        {SIDEBAR_TABS.map((tab) => {
+          const isActive = activeSidebarTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              ref={(element) => { tabButtonRefs.current[tab.id] = element; }}
+              id={`sidebar-tab-${tab.id}`}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`sidebar-tabpanel-${tab.id}`}
+              tabIndex={isActive ? 0 : -1}
+              onClick={() => setActiveSidebarTab(tab.id)}
+              onKeyDown={(event) => handleTabKeyDown(event, tab.id)}
+              className={`min-h-10 rounded-md px-1.5 py-1 text-[10px] font-medium leading-tight transition-colors ${
+                isActive
+                  ? 'border border-blue-500/45 bg-blue-600/25 text-blue-100'
+                  : 'border border-transparent bg-slate-900/50 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        id="sidebar-tabpanel-telemetry-scenario"
+        role="tabpanel"
+        aria-labelledby="sidebar-tab-telemetry-scenario"
+        hidden={activeSidebarTab !== 'telemetry-scenario'}
+        className="space-y-4"
+      >
       {/* 1. Storm Telemetry Card */}
+      <AccordionPanel id="storm-telemetry" title="Storm Telemetry">
       <div className="card-glass p-4 space-y-3">
         <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-          <div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-text-secondary">
-              STORM TELEMETRY • {track.basin}
-            </span>
-            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2 tracking-tight">
-              <span>CYCLONE {track.name.toUpperCase()}</span>
-              <span className="text-xs font-mono font-normal text-text-tertiary">({track.id})</span>
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base font-semibold text-text-primary tracking-tight">
+              Cyclone {track.name}
             </h2>
+            <span className="text-xs font-mono text-slate-400">{track.id}</span>
           </div>
           <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
             {currentPoint.category}
@@ -1047,70 +1125,72 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
         {/* Telemetry Metrics Grid */}
         <div className="grid grid-cols-2 gap-2.5 text-xs">
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-text-secondary">
+          <div className="storm-metric-card rounded-lg border border-slate-700/60 bg-[#1e1e2e] p-3 space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-400">
               <Wind className="w-3.5 h-3.5 text-accent-cyan" />
               <span>Sustained Wind</span>
             </div>
-            <div className="metric-display text-base font-bold text-text-primary">
+            <div className="metric-display text-lg font-bold text-text-primary">
               {windKmph}{' '}
-              <span className="text-[11px] font-normal text-text-secondary">km/h</span>
+              <span className="text-xs font-medium text-slate-400">km/h</span>
             </div>
-            <div className="text-[10px] text-text-tertiary mono-data">
+            <div className="text-[10px] text-slate-400 mono-data">
               Gusts to {gustKmph} km/h ({currentPoint.wind_speed_knots} kts)
             </div>
           </div>
 
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-text-secondary">
+          <div className="storm-metric-card rounded-lg border border-slate-700/60 bg-[#1e1e2e] p-3 space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-400">
               <Gauge className="w-3.5 h-3.5 text-purple-400" />
               <span>Central Pressure</span>
             </div>
-            <div className="metric-display text-base font-bold text-text-primary">
+            <div className="metric-display text-lg font-bold text-text-primary">
               {currentPoint.central_pressure_hpa}{' '}
-              <span className="text-[11px] font-normal text-text-secondary">hPa</span>
+              <span className="text-xs font-medium text-slate-400">hPa</span>
             </div>
-            <div className="text-[10px] text-text-tertiary mono-data">
+            <div className="text-[10px] text-slate-400 mono-data">
               {currentPoint.central_pressure_hpa < 950 ? 'Extremely Intense' : 'Standard Depression'}
             </div>
           </div>
 
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-text-secondary">
+          <div className="storm-metric-card rounded-lg border border-slate-700/60 bg-[#1e1e2e] p-3 space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-400">
               <Compass className="w-3.5 h-3.5 text-amber-400" />
-              <span>Position (Lat/Lon)</span>
+              <span>Position</span>
             </div>
-            <div className="mono-data text-xs font-semibold text-text-primary">
+            <div className="mono-data text-sm font-bold text-text-primary">
               {currentPoint.latitude.toFixed(2)}°N, {currentPoint.longitude.toFixed(2)}°E
             </div>
-            <div className="text-[10px] text-text-tertiary mono-data">
+            <div className="text-[10px] text-slate-400 mono-data">
               {currentPoint.is_forecast ? `Lead: +${currentPoint.forecast_lead_hours}h` : 'Observed RSMC'}
             </div>
           </div>
 
-          <div className="bg-surface-2 border border-white/[0.06] rounded-xl p-2.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-text-secondary">
+          <div className="storm-metric-card rounded-lg border border-slate-700/60 bg-[#1e1e2e] p-3 space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-400">
               <Navigation className="w-3.5 h-3.5 text-emerald-400" />
               <span>Movement</span>
             </div>
-            <div className="mono-data text-xs font-semibold text-text-primary">
-              {currentPoint.forward_speed_kmph || 18} km/h @ {currentPoint.heading_degrees || 35}°
+            <div className="metric-display flex items-baseline gap-1.5 text-base font-bold text-text-primary">
+              {currentPoint.forward_speed_kmph || 18}
+              <span className="text-[11px] font-medium text-slate-400">km/h</span>
+              <span className="text-slate-500">·</span>
+              {currentPoint.heading_degrees || 35}°
             </div>
-            <div className="text-[10px] text-text-tertiary mono-data">Bearing: North-Northeast</div>
+            <div className="text-[10px] text-slate-400 mono-data">Bearing: North-Northeast</div>
           </div>
         </div>
       </div>
+      </AccordionPanel>
 
       {/* 2. Coastal District Vulnerability Card */}
+      <AccordionPanel
+        id="coastal-impact-assessment"
+        title="Coastal Impact Assessment"
+        summary={`Selected: ${activeState}`}
+      >
       <div className="card-glass p-4 space-y-3.5">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-          <div className="flex items-center gap-2">
-            <Waves className="w-4 h-4 text-accent-cyan" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
-              COASTAL IMPACT ASSESSMENT
-            </h3>
-          </div>
+        <div className="flex items-center justify-end border-b border-white/[0.06] pb-2">
           <span className="text-[10px] text-text-secondary font-mono">
             {activeState.toUpperCase()} RISK GRID
           </span>
@@ -1123,7 +1203,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
               <Globe2 className="w-3.5 h-3.5 text-indigo-400" />
               <span>Operational Country:</span>
             </span>
-            <span className="text-indigo-400 font-bold font-mono">
+            <span className="text-blue-300 font-bold font-mono">
               {activeCountry === 'bangladesh' ? 'Bangladesh (Live Demo)' : 'India (Default)'}
             </span>
           </div>
@@ -1135,11 +1215,12 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                   key={c.id}
                   id={`btn-country-${c.id}`}
                   onClick={() => onSelectCountry && onSelectCountry(c.id)}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-center truncate cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`dashboard-control rounded-lg font-medium transition-colors text-center truncate cursor-pointer flex items-center justify-center gap-1.5 ${
                     isSelected
-                      ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-500/20 scale-[1.02] border border-indigo-400/50'
-                      : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                      ? 'bg-blue-600/25 text-blue-200 border border-blue-500/50'
+                      : 'text-slate-300 bg-slate-950/70 hover:text-slate-100 hover:bg-slate-800/80 border border-slate-700/70'
                   }`}
+                  aria-pressed={isSelected}
                   title={`Switch to ${c.name}`}
                 >
                   <span>{c.id === 'bangladesh' ? '🇧🇩' : '🇮🇳'}</span>
@@ -1150,51 +1231,37 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         </div>
 
-        {/* State Selector: Coastal States/Divisions Dropdown */}
+        {/* Coastal State Segmented Controls */}
         <div className="space-y-1.5">
           <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between">
-            <label htmlFor="state-selector-dropdown" className="flex items-center gap-1.5 cursor-pointer">
+            <span className="flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{activeCountry === 'bangladesh' ? 'Select Coastal Division:' : 'Select Coastal State:'}</span>
-            </label>
-            <span className="text-cyan-400 font-bold font-mono">{activeState}</span>
+              <span>{activeCountry === 'bangladesh' ? 'Coastal Division' : 'Coastal State'}</span>
+            </span>
+            <span className="text-blue-300 font-bold font-mono">{activeState}</span>
           </div>
-          <div className="relative">
-            <select
-              id="state-selector-dropdown"
-              name="state-selector-dropdown"
-              value={activeState}
-              onChange={(e) => handleStateClick(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] text-text-primary font-medium text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-accent-cyan transition-all cursor-pointer shadow-inner"
-            >
-              {availableStates.map((state) => (
-                <option key={state} value={state} className="bg-slate-900 text-slate-100 py-1">
-                  {state}
-                </option>
-              ))}
-            </select>
-          </div>
-          {/* Quick-switch state buttons grouped by coast */}
           {activeCountry === 'india' ? (
             <div className="space-y-2 pt-1">
               {/* Eastern Coast Row */}
               <div>
-                <div className="text-[9px] font-mono text-cyan-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                <div className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
                   <span>Eastern Coast (Bay of Bengal)</span>
                   <span className="text-[9px] text-slate-500">4 States</span>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5">
+                <div role="group" aria-label="Eastern coast states" className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-700/70 bg-slate-700/70 p-px">
                   {EASTERN_COASTAL_STATES.map((state) => {
                     const isSelected = activeState.toLowerCase() === state.toLowerCase();
                     return (
                       <button
                         key={state}
                         id={`btn-state-${state.toLowerCase().replace(/\s+/g, '-')}`}
+                        type="button"
+                        aria-pressed={isSelected}
                         onClick={() => handleStateClick(state)}
-                        className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-all text-center truncate cursor-pointer ${
+                        className={`dashboard-control text-center truncate cursor-pointer transition-colors ${
                           isSelected
-                            ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20 scale-[1.02]'
-                            : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                            ? 'bg-blue-600/35 text-blue-100 font-semibold'
+                            : 'bg-slate-950 text-slate-300 hover:text-slate-100 hover:bg-slate-800'
                         }`}
                         title={`Switch to ${state} coastal districts`}
                       >
@@ -1207,22 +1274,24 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
               {/* Western Coast Row */}
               <div>
-                <div className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                <div className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
                   <span>Western Coast (Arabian Sea)</span>
                   <span className="text-[9px] text-slate-500">5 States</span>
                 </div>
-                <div className="grid grid-cols-3 gap-1">
+                <div role="group" aria-label="Western coast states" className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-700/70 bg-slate-700/70 p-px">
                   {WESTERN_COASTAL_STATES.map((state) => {
                     const isSelected = activeState.toLowerCase() === state.toLowerCase();
                     return (
                       <button
                         key={state}
                         id={`btn-state-${state.toLowerCase().replace(/\s+/g, '-')}`}
+                        type="button"
+                        aria-pressed={isSelected}
                         onClick={() => handleStateClick(state)}
-                        className={`px-1.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all text-center truncate cursor-pointer ${
+                        className={`dashboard-control text-center truncate cursor-pointer transition-colors ${
                           isSelected
-                            ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20 scale-[1.02]'
-                            : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                            ? 'bg-blue-600/35 text-blue-100 font-semibold'
+                            : 'bg-slate-950 text-slate-300 hover:text-slate-100 hover:bg-slate-800'
                         }`}
                         title={`Switch to ${state} coastal districts`}
                       >
@@ -1235,34 +1304,40 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
               {/* Union Territories Row */}
               <div>
-                <button
-                  id="btn-state-union-territories"
-                  onClick={() => handleStateClick('Union Territories')}
-                  className={`w-full px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
-                    isUTSelected
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20 scale-[1.02]'
-                      : 'text-amber-300 hover:text-white bg-slate-950/80 hover:bg-amber-950/40 border border-amber-500/30'
-                  }`}
-                  title="Switch to 4 Coastal & Island Union Territories"
-                >
-                  <MapPin className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Union Territories (4 UTs)</span>
-                </button>
+                <div role="group" aria-label="Union territories" className="overflow-hidden rounded-lg border border-slate-700/70 bg-slate-700/70 p-px">
+                  <button
+                    id="btn-state-union-territories"
+                    type="button"
+                    aria-pressed={isUTSelected}
+                    onClick={() => handleStateClick('Union Territories')}
+                    className={`dashboard-control flex w-full items-center justify-center gap-1.5 transition-colors ${
+                      isUTSelected
+                        ? 'bg-blue-600/35 text-blue-100 font-semibold'
+                        : 'bg-slate-950 text-slate-300 hover:text-slate-100 hover:bg-slate-800'
+                    }`}
+                    title="Switch to 4 Coastal & Island Union Territories"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>Union Territories (4 UTs)</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-1.5 pt-1">
+            <div role="group" aria-label="Coastal divisions" className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-700/70 bg-slate-700/70 p-px">
               {availableStates.map((state) => {
                 const isSelected = activeState.toLowerCase() === state.toLowerCase();
                 return (
                   <button
                     key={state}
                     id={`btn-state-${state.toLowerCase().replace(/\s+/g, '-')}`}
+                    type="button"
+                    aria-pressed={isSelected}
                     onClick={() => handleStateClick(state)}
-                    className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-center truncate cursor-pointer ${
+                    className={`dashboard-control text-center truncate cursor-pointer transition-colors ${
                       isSelected
-                        ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20 scale-[1.02]'
-                        : 'text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800'
+                        ? 'bg-blue-600/35 text-blue-100 font-semibold'
+                        : 'bg-slate-950 text-slate-300 hover:text-slate-100 hover:bg-slate-800'
                     }`}
                     title={`Switch to ${state} coastal districts`}
                   >
@@ -1392,14 +1467,24 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         )}
       </div>
+      </AccordionPanel>
 
       {/* 2.45 What-If Scenario Override Panel (Workstream 25) */}
       <ScenarioOverridePanel
         scenario={scenario || null}
         onApplyScenario={onApplyScenario || (() => {})}
         track={track}
+        onPreviewChange={handleScenarioPreviewChange}
       />
+      </div>
 
+      <div
+        id="sidebar-tabpanel-forecast-impact"
+        role="tabpanel"
+        aria-labelledby="sidebar-tab-forecast-impact"
+        hidden={activeSidebarTab !== 'forecast-impact'}
+        className="space-y-4"
+      >
       {/* 2.5 Infrastructure Exposure Card (Phase 1, Workstream 1) */}
       {stateAssetCount === 0 ? (
         <div className="card-glass p-4 space-y-2 border border-white/[0.06]">
@@ -1620,19 +1705,20 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
         scenario={scenario}
       />
 
+      <ScenarioImpactPreviewPanel data={scenarioPreview} />
+
       {/* 2.6 Hazard Forecast Card (Workstream 2: Rainfall Damage Pathway & Storm Surge Modeling) */}
+      <AccordionPanel
+        id="hazard-forecast"
+        title="Hazard Forecast"
+        summary={`Rainfall: ${Math.round(rainfall24h)}mm | Surge: ${Number(surgeHeight).toFixed(1)}m`}
+      >
       <div
         id="hazard-forecast-card"
         className="card-glass p-4 space-y-3.5 transition-all duration-300"
       >
-        {/* Header with Title, Loading, and Overall Risk Badge */}
-        <div className="flex items-center justify-between gap-2 border-b border-white/[0.06] pb-2.5">
-          <div className="flex items-center gap-2 text-accent-cyan">
-            <Waves className="w-4 h-4 text-accent-cyan" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
-              HAZARD FORECAST
-            </h3>
-          </div>
+        {/* Overall Risk Badge */}
+        <div className="flex items-center justify-end gap-2 border-b border-white/[0.06] pb-2.5">
           <div className="flex items-center gap-2">
             {isLoadingHazards && <Loader2 className="w-3.5 h-3.5 text-cyan-400 animate-spin" />}
             <span
@@ -1733,6 +1819,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           </div>
         </div>
       </div>
+      </AccordionPanel>
 
       {/* 2.65 Distinct Terrain-Aware Rainfall Damage Pathway Model (Workstream 15) */}
       <RainfallDamagePanel
@@ -1761,6 +1848,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
       />
 
       {/* 3. Gemini Multilingual Anticipatory Action Early Warning */}
+      <AccordionPanel id="anticipatory-advisory" title="Anticipatory Advisory">
       <div className="card-glass bg-gradient-to-b from-red-950/30 to-transparent border-red-500/20 p-4 space-y-3 relative overflow-hidden transition-all duration-300">
         {/* Top subtle glow bar when loading */}
         {isLoadingAdvisory && (
@@ -1769,13 +1857,10 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
 
         {/* Header with Title, Powered by Badge, and Window Badge */}
         <div className="flex items-center justify-between gap-2 border-b border-red-500/20 pb-2.5" >
-          <div className="flex items-center gap-2 text-red-400 min-w-0">
+          <div className="flex items-center gap-2 text-slate-300 min-w-0">
             <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-red-300 truncate">
-                  ANTICIPATORY ADVISORY
-                </h3>
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 whitespace-nowrap">
                   Powered by Gemini 3.7 Flash
                 </span>
@@ -1816,7 +1901,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                 id="advisory-lang-select"
                 value={currentLanguage}
                 onChange={(e) => onLanguageChange && onLanguageChange(e.target.value as SupportedLanguage)}
-                className="bg-slate-950 border border-slate-700 hover:border-slate-600 text-slate-200 text-xs font-medium rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 cursor-pointer shadow-inner"
+                className="dashboard-control bg-slate-950 border border-slate-700 hover:border-slate-600 text-slate-200 font-medium rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer shadow-inner"
               >
                 {SUPPORTED_LANGUAGES.map((l) => (
                   <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100">
@@ -1831,16 +1916,16 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
               id="btn-play-advisory"
               onClick={handlePlayAdvisory}
               disabled={ttsState === 'loading' || isLoadingAdvisory || !advisory}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer select-none ${
+              className={`dashboard-control rounded-lg font-medium transition-colors flex items-center gap-1.5 cursor-pointer select-none ${
                 ttsState === 'playing'
-                  ? 'bg-[#00e5ff] text-slate-950 border border-[#00e5ff] shadow-[0_0_16px_rgba(0,229,255,0.6)]'
+                  ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
                   : ttsState === 'loading'
-                  ? 'bg-slate-950 border border-slate-700 text-cyan-400/60 cursor-not-allowed opacity-70'
+                  ? 'bg-slate-950 border border-slate-700 text-slate-500 cursor-not-allowed opacity-70'
                   : ttsState === 'error'
-                  ? `bg-red-950/40 border border-red-500 text-red-400 shadow-[0_0_12px_rgba(239,68,68,0.3)] ${
+                  ? `bg-rose-950/30 border border-rose-500/35 text-rose-300 ${
                       isShaking ? 'animate-shake' : ''
                     }`
-                  : 'bg-slate-950/90 hover:bg-cyan-950/40 border border-cyan-500/50 hover:border-cyan-400 text-[#00e5ff] shadow-[0_0_12px_rgba(0,229,255,0.2)]'
+                  : 'bg-slate-950/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-slate-100'
               }`}
               title="Synthesize and play pre-landfall voice advisory via Gemini Flash TTS"
             >
@@ -1856,7 +1941,7 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                 </>
               ) : (
                 <>
-                  <Volume2 className="w-3.5 h-3.5 text-[#00e5ff]" />
+                  <Volume2 className="w-3.5 h-3.5" />
                   <span>Play Advisory</span>
                 </>
               )}
@@ -1870,10 +1955,10 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                 id="voice-source-badge"
                 className={`text-[10px] font-mono px-2 py-0.5 rounded-md border inline-flex items-center gap-1 shadow-sm transition-colors ${
                   voiceSource === 'gemini'
-                    ? 'bg-cyan-950/60 text-[#00e5ff] border-cyan-500/40 shadow-[0_0_8px_rgba(0,229,255,0.15)]'
+                    ? 'bg-blue-500/10 text-blue-200 border-blue-500/30'
                     : voiceSource === 'browser-hindi' || voiceSource === 'browser-english'
                     ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
-                    : 'bg-amber-950/60 text-[#f59e0b] border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.15)]'
+                    : 'bg-slate-800/80 text-slate-300 border-slate-700'
                 }`}
               >
                 {voiceSource === 'gemini'
@@ -2021,11 +2106,8 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
             </p>
 
             {/* Recommended Immediate Actions */}
+            <AccordionPanel id="actionable-mechanism" title="Actionable Mechanism">
             <div className="space-y-1.5 pt-1">
-              <div className="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 uppercase font-mono">
-                <AlertTriangle className="w-3.5 h-3.5" />
-                TRIGGER PROTOCOL:
-              </div>
               {actions.length > 0 ? (
                 <div className="space-y-1.5">
                   {actions.map((act, idx) => (
@@ -2048,20 +2130,42 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
                 </div>
               )}
             </div>
+            </AccordionPanel>
           </>
         )}
       </div>
+      </AccordionPanel>
+
+      <ForecastComparisonCard
+        key={`forecast-comp-${track?.id || selectedStormId}`}
+        cycloneId={track?.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
+        track={track}
+        activePointIndex={activePointIndex}
+        currentTimeIndex={activePointIndex}
+        scenario={scenario}
+      />
+      </div>
+
+      <div
+        id="sidebar-tabpanel-system-audit"
+        role="tabpanel"
+        aria-labelledby="sidebar-tab-system-audit"
+        hidden={activeSidebarTab !== 'system-audit'}
+        className="space-y-4"
+      >
+      <AccordionPanel id="retrospective-analysis" title="Retrospective Analysis">
+        <div className="rounded border border-slate-700/70 bg-slate-900/70 px-3 py-2 text-xs font-mono leading-relaxed text-slate-300">
+          {mode === 'historical'
+            ? `Simulated trigger evaluation for ${track.name || 'Cyclone'}`
+            : 'Select a historical storm to review retrospective trigger evaluation.'}
+        </div>
+      </AccordionPanel>
 
       {/* 4. TrackLSTM Model Validation Card */}
+      <AccordionPanel id="model-validation" title="Model Validation">
       <div className="card-glass p-4 space-y-3">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-          <div className="flex items-center gap-2 text-yellow-400">
-            <Cpu className="w-4 h-4 text-yellow-400" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-text-primary">
-              MODEL VALIDATION (ILLUSTRATIVE)
-            </h3>
-          </div>
+        <div className="flex items-center justify-end border-b border-white/[0.06] pb-2">
           <span className="text-[10px] mono-data px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 font-semibold">
             TrackLSTM v1
           </span>
@@ -2112,23 +2216,16 @@ export const TelemetrySidebar: React.FC<TelemetrySidebarProps> = ({
           Trained on 2 historical cases. Not validated across a broader test set. See README for methodology.
         </div>
       </div>
-
-      {/* 5. Dual Model Forecast Comparison Card */}
-      <ForecastComparisonCard
-        key={`forecast-comp-${track?.id || selectedStormId}`}
-        cycloneId={track?.id || (selectedStormId === 'amphan' ? 'BOB-01-2020' : 'BOB-02-2019')}
-        track={track}
-        activePointIndex={activePointIndex}
-        currentTimeIndex={activePointIndex}
-        scenario={scenario}
-      />
+      </AccordionPanel>
 
       {/* 6. Human-in-the-Loop & System Audit Log (Workstream 19) */}
       <AuditLogPanel />
 
       {/* 7. APAC Meteorological Agency Adapters (Workstream 22) */}
       <APACAgencyStatusPanel />
+      </div>
     </aside>
+      </DashboardAccordionProvider>
 
     {/* Multi-Channel Last-Mile Advisory Dispatch Modal (Workstream 20) */}
     {showBroadcastModal && (

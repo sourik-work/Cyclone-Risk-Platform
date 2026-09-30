@@ -4,6 +4,7 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getMessaging, Messaging, isSupported } from 'firebase/messaging';
+import { hasFirebaseConfig } from './config';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -19,7 +20,7 @@ let auth: Auth | null = null;
 let firestore: Firestore | null = null;
 
 try {
-  if (typeof window !== 'undefined' || process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+  if (typeof window !== 'undefined' && hasFirebaseConfig()) {
     app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     auth = getAuth(app);
     firestore = getFirestore(app);

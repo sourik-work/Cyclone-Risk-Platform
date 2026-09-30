@@ -5,6 +5,7 @@ import { ShieldCheck, Coins, CheckCircle2, XCircle, Clock, RefreshCw, Zap, Loade
 import { fetchWithCache } from '../../lib/cache';
 import { getAuthHeader } from '../../lib/api';
 import { ScenarioOverride } from '../map/types';
+import { getBackendUrl } from '../../lib/config';
 
 export interface InsuranceTriggerResult {
   contract_id: string;
@@ -142,7 +143,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
     setError(null);
     setData(null);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const targetId =
         mode === 'live' && !hasActiveCyclone ? 'calm-baseline' : cycloneId || 'BOB-02-2019';
       const authHeader = await getAuthHeader();
@@ -183,7 +184,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
   const approvePayout = async () => {
     setIsActionInProgress(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const authHeader = await getAuthHeader();
       const res = await fetch(`${backendUrl}/api/insurance/approve`, {
         method: 'POST',
@@ -210,7 +211,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
   const rejectPayout = async () => {
     setIsActionInProgress(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = getBackendUrl();
       const authHeader = await getAuthHeader();
       const res = await fetch(`${backendUrl}/api/insurance/reject`, {
         method: 'POST',
@@ -239,7 +240,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
 
   // TASK 6: Cache stable contract data in localStorage with 1-hour TTL
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
     fetchWithCache<any[]>(`${backendUrl}/api/insurance/contracts`, 'cache_insurance_contracts')
       .catch((err) => console.warn('Failed to cache insurance contracts:', err));
   }, []);
@@ -312,12 +313,6 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
         ) : (
         <>
           {/* TASK 2: Context Banner — Explains why numbers are what they are */}
-          {mode === 'historical' && (
-            <div className="bg-cyan-900/30 border border-cyan-700 text-cyan-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
-              📊 RETROSPECTIVE ANALYSIS — Simulated trigger evaluation for {cycloneName || 'Cyclone'}
-            </div>
-          )}
-
           {mode === 'live' && hasActiveCyclone && (
             <div className="bg-amber-900/30 border border-amber-700 text-amber-300 px-3 py-2 rounded text-xs font-mono leading-relaxed">
               ⚠️ LIVE EVALUATION — {cycloneCategory || 'System'} &ldquo;{cycloneName || 'Active Cyclone'}&rdquo; detected.{' '}
@@ -347,7 +342,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
               id="btn-approve-insurance"
               onClick={approvePayout}
               disabled={isActionInProgress}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+              className="dashboard-control rounded font-medium bg-blue-600/25 hover:bg-blue-600/35 text-blue-100 border border-blue-500/40 cursor-pointer transition-colors flex items-center gap-1 disabled:opacity-50"
             >
               {isActionInProgress ? <Loader2 className="w-3 h-3 animate-spin" /> : '✓'} Approve & Disburse
             </button>
@@ -355,7 +350,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
               id="btn-reject-insurance"
               onClick={rejectPayout}
               disabled={isActionInProgress}
-              className="px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors shadow flex items-center gap-1 disabled:opacity-50"
+              className="dashboard-control rounded font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer transition-colors flex items-center gap-1 disabled:opacity-50"
             >
               ✕ Reject
             </button>
