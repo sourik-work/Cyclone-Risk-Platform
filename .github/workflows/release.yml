@@ -1,0 +1,51 @@
+name: Release & Multi-Cloud Deployment
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    name: Build, Tag & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies & Run Tests
+        run: |
+          pip install -r requirements.txt
+          pytest backend/tests/
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+      - name: Build Docker Container
+        run: |
+          docker build -t cyclone-risk-platform:${{ github.ref_name }} -f backend/Dockerfile .
+
+      - name: Publish GitHub Release with Scorecard
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: SCORECARD.md
+          draft: false
+          prerelease: false
+          files: |
+            ml/loso_results.json
+            backend/data/infrastructure_assets.json
