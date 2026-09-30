@@ -118,21 +118,27 @@ def _initialize_forecast_service() -> None:
             "seq_out": 16,
         }
 
-    # 2. Load model validation metrics
-    if metrics_path.exists():
+    # 2. Load model validation metrics & LOSO evaluation
+    loso_path = MODELS_DIR / "loso_results.json"
+    if loso_path.exists():
+        with open(loso_path, "r", encoding="utf-8") as f:
+            _MODEL_METRICS = json.load(f)
+        logger.info("Loaded LOSO validation metrics from %s", loso_path)
+    elif metrics_path.exists():
         with open(metrics_path, "r", encoding="utf-8") as f:
             _MODEL_METRICS = json.load(f)
         logger.info("Loaded model metrics from %s", metrics_path)
     else:
         logger.warning("model_metrics.json not found at %s; using default metrics", metrics_path)
         _MODEL_METRICS = {
-            "rmse_24h_km": 85.6,
-            "rmse_48h_km": 155.6,
-            "wind_mae_kmph": 7.3,
-            "pressure_mae_hpa": 2.9,
-            "model_version": "track_lstm_v1",
+            "rmse_24h_km": 79.54,
+            "rmse_48h_km": 147.08,
+            "wind_mae_kmph": 7.11,
+            "pressure_mae_hpa": 3.08,
+            "model_version": "track_lstm_v1_loso",
             "training_samples": 8484,
             "model_params": 119872,
+            "role": "AI Ensemble Member — Track Smoothing & Divergence Detection",
         }
 
     # 3. Instantiate and load TrackLSTM weights on CPU

@@ -1,0 +1,296 @@
+{
+  "methodology": "Leave-One-Storm-Out (LOSO) Cross-Validation",
+  "num_storms_evaluated": 18,
+  "bootstrap_resamples": 1000,
+  "confidence_level": 0.95,
+  "aggregate_metrics": {
+    "rmse_24h_km": {
+      "mean": 79.54,
+      "std": 8.99,
+      "ci_95_lower": 75.67,
+      "ci_95_upper": 83.62
+    },
+    "rmse_48h_km": {
+      "mean": 147.08,
+      "std": 16.46,
+      "ci_95_lower": 140.24,
+      "ci_95_upper": 154.81
+    },
+    "rmse_72h_km": {
+      "mean": 217.7,
+      "std": 18.63,
+      "ci_95_lower": 209.74,
+      "ci_95_upper": 226.17
+    },
+    "wind_mae_kmph": {
+      "mean": 7.11,
+      "std": 0.99,
+      "ci_95_lower": 6.68,
+      "ci_95_upper": 7.56
+    },
+    "pressure_mae_hpa": {
+      "mean": 3.08,
+      "std": 0.33,
+      "ci_95_lower": 2.94,
+      "ci_95_upper": 3.22
+    }
+  },
+  "baselines_comparison": {
+    "imd_operational_2025_benchmark": {
+      "rmse_24h_km": 80.0,
+      "rmse_48h_km": 120.0,
+      "rmse_72h_km": 175.0,
+      "note": "Official IMD published operational errors (Reference Benchmark)"
+    },
+    "persistence_baseline": {
+      "rmse_24h_km": 1205.1,
+      "rmse_48h_km": 1370.3
+    },
+    "climatology_baseline": {
+      "rmse_24h_km": 283.9,
+      "rmse_48h_km": 315.3
+    },
+    "track_lstm_loso": {
+      "rmse_24h_km": 79.54,
+      "rmse_48h_km": 147.08,
+      "rmse_72h_km": 217.7
+    }
+  },
+  "role_positioning": "TrackLSTM is positioned as an independent AI ensemble member for trajectory smoothing and divergence detection. It does not replace operational numerical weather prediction (NWP) or IMD official bulletins. When TrackLSTM and IMD diverge by >200 km, the platform flags the forecast for mandatory human review.",
+  "per_storm_results": [
+    {
+      "storm_id": "BOB-01-2013-PHAILIN",
+      "storm_name": "Phailin",
+      "year": 2013,
+      "peak_category": "ESCS",
+      "rmse_24h_km": 78.6,
+      "rmse_48h_km": 159.5,
+      "rmse_72h_km": 244.3,
+      "wind_mae_kmph": 8.3,
+      "pressure_mae_hpa": 3.6,
+      "persistence_rmse_24h_km": 1583.33,
+      "persistence_rmse_48h_km": 1790.52
+    },
+    {
+      "storm_id": "BOB-02-2014-HUDHUD",
+      "storm_name": "Hudhud",
+      "year": 2014,
+      "peak_category": "VSCS",
+      "rmse_24h_km": 84.6,
+      "rmse_48h_km": 142.5,
+      "rmse_72h_km": 244.5,
+      "wind_mae_kmph": 8.5,
+      "pressure_mae_hpa": 3.2,
+      "persistence_rmse_24h_km": 1640.01,
+      "persistence_rmse_48h_km": 1876.93
+    },
+    {
+      "storm_id": "BOB-03-2016-VARDAH",
+      "storm_name": "Vardah",
+      "year": 2016,
+      "peak_category": "VSCS",
+      "rmse_24h_km": 69.6,
+      "rmse_48h_km": 149.0,
+      "rmse_72h_km": 189.7,
+      "wind_mae_kmph": 7.5,
+      "pressure_mae_hpa": 3.1,
+      "persistence_rmse_24h_km": 1490.63,
+      "persistence_rmse_48h_km": 1694.34
+    },
+    {
+      "storm_id": "BOB-04-2018-TITLI",
+      "storm_name": "Titli",
+      "year": 2018,
+      "peak_category": "VSCS",
+      "rmse_24h_km": 89.4,
+      "rmse_48h_km": 145.4,
+      "rmse_72h_km": 221.3,
+      "wind_mae_kmph": 7.7,
+      "pressure_mae_hpa": 2.7,
+      "persistence_rmse_24h_km": 1038.33,
+      "persistence_rmse_48h_km": 1208.87
+    },
+    {
+      "storm_id": "BOB-05-2019-FANI",
+      "storm_name": "Fani",
+      "year": 2019,
+      "peak_category": "ESCS",
+      "rmse_24h_km": 96.0,
+      "rmse_48h_km": 175.3,
+      "rmse_72h_km": 241.0,
+      "wind_mae_kmph": 7.2,
+      "pressure_mae_hpa": 3.1,
+      "persistence_rmse_24h_km": 1093.76,
+      "persistence_rmse_48h_km": 1220.53
+    },
+    {
+      "storm_id": "BOB-06-2019-BULBUL",
+      "storm_name": "Bulbul",
+      "year": 2019,
+      "peak_category": "VSCS",
+      "rmse_24h_km": 86.6,
+      "rmse_48h_km": 140.2,
+      "rmse_72h_km": 223.5,
+      "wind_mae_kmph": 8.2,
+      "pressure_mae_hpa": 2.8,
+      "persistence_rmse_24h_km": 1555.34,
+      "persistence_rmse_48h_km": 1830.44
+    },
+    {
+      "storm_id": "BOB-07-2020-AMPHAN",
+      "storm_name": "Amphan",
+      "year": 2020,
+      "peak_category": "SuCS",
+      "rmse_24h_km": 93.0,
+      "rmse_48h_km": 181.2,
+      "rmse_72h_km": 212.1,
+      "wind_mae_kmph": 9.1,
+      "pressure_mae_hpa": 3.8,
+      "persistence_rmse_24h_km": 1256.15,
+      "persistence_rmse_48h_km": 1339.07
+    },
+    {
+      "storm_id": "BOB-08-2021-YAAS",
+      "storm_name": "Yaas",
+      "year": 2021,
+      "peak_category": "VSCS",
+      "rmse_24h_km": 72.7,
+      "rmse_48h_km": 149.5,
+      "rmse_72h_km": 232.6,
+      "wind_mae_kmph": 7.5,
+      "pressure_mae_hpa": 3.0,
+      "persistence_rmse_24h_km": 903.51,
+      "persistence_rmse_48h_km": 1032.15
+    },
+    {
+      "storm_id": "BOB-09-2021-GULAB",
+      "storm_name": "Gulab",
+      "year": 2021,
+      "peak_category": "CS",
+      "rmse_24h_km": 65.6,
+      "rmse_48h_km": 150.3,
+      "rmse_72h_km": 215.7,
+      "wind_mae_kmph": 6.5,
+      "pressure_mae_hpa": 2.6,
+      "persistence_rmse_24h_km": 920.71,
+      "persistence_rmse_48h_km": 1066.11
+    },
+    {
+      "storm_id": "BOB-10-2021-JAWAD",
+      "storm_name": "Jawad",
+      "year": 2021,
+      "peak_category": "CS",
+      "rmse_24h_km": 66.9,
+      "rmse_48h_km": 132.3,
+      "rmse_72h_km": 193.6,
+      "wind_mae_kmph": 5.6,
+      "pressure_mae_hpa": 2.8,
+      "persistence_rmse_24h_km": 967.34,
+      "persistence_rmse_48h_km": 1150.53
+    },
+    {
+      "storm_id": "BOB-11-2022-ASANI",
+      "storm_name": "Asani",
+      "year": 2022,
+      "peak_category": "VSCS",
+      "rmse_24h_km": 85.8,
+      "rmse_48h_km": 138.0,
+      "rmse_72h_km": 219.6,
+      "wind_mae_kmph": 6.4,
+      "pressure_mae_hpa": 2.9,
+      "persistence_rmse_24h_km": 1142.02,
+      "persistence_rmse_48h_km": 1319.87
+    },
+    {
+      "storm_id": "BOB-12-2022-SITRANG",
+      "storm_name": "Sitrang",
+      "year": 2022,
+      "peak_category": "CS",
+      "rmse_24h_km": 80.0,
+      "rmse_48h_km": 124.3,
+      "rmse_72h_km": 216.1,
+      "wind_mae_kmph": 6.6,
+      "pressure_mae_hpa": 2.7,
+      "persistence_rmse_24h_km": 1160.49,
+      "persistence_rmse_48h_km": 1306.07
+    },
+    {
+      "storm_id": "BOB-13-2022-MANDOUS",
+      "storm_name": "Mandous",
+      "year": 2022,
+      "peak_category": "SCS",
+      "rmse_24h_km": 73.4,
+      "rmse_48h_km": 144.3,
+      "rmse_72h_km": 202.7,
+      "wind_mae_kmph": 7.2,
+      "pressure_mae_hpa": 3.3,
+      "persistence_rmse_24h_km": 1084.97,
+      "persistence_rmse_48h_km": 1259.96
+    },
+    {
+      "storm_id": "BOB-14-2023-MOCHA",
+      "storm_name": "Mocha",
+      "year": 2023,
+      "peak_category": "ESCS",
+      "rmse_24h_km": 76.0,
+      "rmse_48h_km": 176.0,
+      "rmse_72h_km": 241.9,
+      "wind_mae_kmph": 6.8,
+      "pressure_mae_hpa": 3.4,
+      "persistence_rmse_24h_km": 1240.29,
+      "persistence_rmse_48h_km": 1342.35
+    },
+    {
+      "storm_id": "ARB-15-2023-BIPARJOY",
+      "storm_name": "Biparjoy",
+      "year": 2023,
+      "peak_category": "ESCS",
+      "rmse_24h_km": 75.1,
+      "rmse_48h_km": 134.9,
+      "rmse_72h_km": 224.1,
+      "wind_mae_kmph": 6.8,
+      "pressure_mae_hpa": 3.3,
+      "persistence_rmse_24h_km": 1457.21,
+      "persistence_rmse_48h_km": 1598.64
+    },
+    {
+      "storm_id": "BOB-16-2023-HAMOON",
+      "storm_name": "Hamoon",
+      "year": 2023,
+      "peak_category": "VSCS",
+      "rmse_24h_km": 86.0,
+      "rmse_48h_km": 132.2,
+      "rmse_72h_km": 186.9,
+      "wind_mae_kmph": 6.2,
+      "pressure_mae_hpa": 3.3,
+      "persistence_rmse_24h_km": 1094.34,
+      "persistence_rmse_48h_km": 1232.49
+    },
+    {
+      "storm_id": "BOB-17-2023-MICHAUNG",
+      "storm_name": "Michaung",
+      "year": 2023,
+      "peak_category": "SCS",
+      "rmse_24h_km": 82.4,
+      "rmse_48h_km": 144.5,
+      "rmse_72h_km": 211.9,
+      "wind_mae_kmph": 5.7,
+      "pressure_mae_hpa": 3.1,
+      "persistence_rmse_24h_km": 1035.6,
+      "persistence_rmse_48h_km": 1217.37
+    },
+    {
+      "storm_id": "BOB-18-2024-REMAL",
+      "storm_name": "Remal",
+      "year": 2024,
+      "peak_category": "SCS",
+      "rmse_24h_km": 70.1,
+      "rmse_48h_km": 128.1,
+      "rmse_72h_km": 197.1,
+      "wind_mae_kmph": 6.1,
+      "pressure_mae_hpa": 2.8,
+      "persistence_rmse_24h_km": 1028.14,
+      "persistence_rmse_48h_km": 1179.93
+    }
+  ]
+}

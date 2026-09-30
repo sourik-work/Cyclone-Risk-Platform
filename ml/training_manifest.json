@@ -1,0 +1,20 @@
+{
+  "git_sha": "296cba6c78fbd7e0bff95245f11ad33fcebb0ec1",
+  "random_seed": 42,
+  "real_samples": 1420,
+  "synthetic_samples": 7100,
+  "total_samples": 8520,
+  "real_to_synthetic_ratio": "1:5.0 (Real:Synthetic)",
+  "dataset_hash": "41233523e29c58a7",
+  "seq_in": 4,
+  "seq_out": 16,
+  "input_dim": 4,
+  "hidden_dim": 96,
+  "model_params": 119872,
+  "learning_rate": 0.001,
+  "epochs": 1,
+  "batch_size": 32,
+  "best_val_loss": 0.007908,
+  "rmse_24h_km": 85.6,
+  "rmse_48h_km": 155.6
+}

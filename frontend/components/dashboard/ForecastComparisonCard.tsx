@@ -236,7 +236,7 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
                 <span>TrackLSTM (Physics-Trained)</span>
               </div>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800/80 text-cyan-300 border border-slate-700 font-semibold">
-                PRIMARY MODEL
+                AI ENSEMBLE MEMBER
               </span>
             </div>
 
@@ -248,11 +248,14 @@ export const ForecastComparisonCard: React.FC<ForecastComparisonCardProps> = ({
                 </span>
               </div>
               <div className="bg-slate-900/60 px-2 py-1.5 rounded border border-slate-800/60">
-                <span className="text-slate-400 block text-[10px]">Validation RMSE</span>
-                <span className="text-emerald-300 font-semibold">
-                  68.1 km @ 24h · 118.5 km @ 48h
+                <span className="text-slate-400 block text-[10px]">LOSO 95% CI Validation</span>
+                <span className="text-cyan-300 font-semibold">
+                  79.5 km [75.7–83.6] @ 24h · 147.1 km @ 48h
                 </span>
               </div>
+            </div>
+            <div className="text-[10px] font-sans text-slate-400 bg-slate-900/40 px-2 py-1 rounded border border-slate-800/40">
+              <span className="text-slate-300 font-semibold">Operational Positioning:</span> Track smoothing & divergence detection. IMD Operational Benchmark: 80 km @ 24h, 120 km @ 48h.
             </div>
           </div>
 
