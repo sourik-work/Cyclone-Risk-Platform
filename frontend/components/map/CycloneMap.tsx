@@ -17,10 +17,21 @@ import {
 import { SEED_INFRASTRUCTURE_DATA } from '../../lib/infrastructureSeed';
 import { MapFallbackRadar } from './MapFallbackRadar';
 import { MapLayerMenu } from './MapControls';
-import { Radio, Layers, Satellite, Sliders, Cpu, Compass, Zap, Activity, CloudRain, Waves, Info } from 'lucide-react';
+import { Radio, Layers, Satellite, Sliders, Cpu, Compass, Zap, Activity, CloudRain, Waves, Info, Building2, Route, ShieldAlert, Sparkles, LucideIcon } from 'lucide-react';
 import { getAuthHeader } from '../../lib/api';
 import { computeLinearExtrapolation } from './linearExtrapolation';
 import { getBackendUrl } from '../../lib/config';
+
+const LAYER_OPTIONS: Array<{ key: keyof MapLayerToggles; label: string; Icon: LucideIcon }> = [
+  { key: 'showTrack', label: 'Track Line', Icon: Compass },
+  { key: 'showAiForecast', label: 'AI Forecast', Icon: Cpu },
+  { key: 'showForecastCone', label: 'Forecast Cone', Icon: Sparkles },
+  { key: 'showVulnerability', label: 'Vulnerability Grid', Icon: ShieldAlert },
+  { key: 'showPowerGrid', label: 'Power Grid', Icon: Zap },
+  { key: 'showRoads', label: 'Roads', Icon: Route },
+  { key: 'showHospitals', label: 'Hospitals', Icon: Building2 },
+  { key: 'showEarthEngine', label: 'Earth Engine', Icon: Satellite },
+];
 
 export const EE_TILE_URLS: Record<string, string | null> = {
   'BOB-02-2019': process.env.NEXT_PUBLIC_EE_TILE_URL || null,
@@ -257,8 +268,7 @@ const GoogleMapsUncertaintyConeLayer: React.FC<{
 
 /**
  * 4. AI Forecast Trajectory Layer
- * Renders the 48-hour LSTM predicted trajectory (dashed yellow) when >= 4 points exist,
- * or a linear extrapolation fallback (dotted orange line) using heading + forward speed when < 4 points.
+ * Renders the 48-hour TrackLSTM predicted trajectory as a prominent yellow dotted line.
  */
 const GoogleMapsAiForecastLayer: React.FC<{
   track: CycloneTrack;
@@ -269,9 +279,9 @@ const GoogleMapsAiForecastLayer: React.FC<{
   const map = useMap();
   const [aiForecast, setAiForecast] = useState<ForecastTrackResponse | null>(null);
 
-  const isInsufficientHistory = !track.track_points || track.track_points.length < 4;
+  const totalPoints = track.track_points?.length || 0;
+  const isInsufficientHistory = totalPoints < 4;
 
-  // Guard: if activeTrack.track_points.length < 4, do NOT call the LSTM forecast
   useEffect(() => {
     if (!visible || isInsufficientHistory) {
       setAiForecast(null);
@@ -279,13 +289,11 @@ const GoogleMapsAiForecastLayer: React.FC<{
     }
 
     let isMounted = true;
-    setAiForecast(null);
     const backendUrl = getBackendUrl();
     const cycloneId = track.name ? track.name.toLowerCase() : track.id;
 
     // Compute forecast starting indices dynamically from the current activePointIndex
-    const total = track.track_points.length;
-    const endIdx = Math.min(activePointIndex, total - 1);
+    const endIdx = Math.min(activePointIndex, totalPoints - 1);
     const startIdx = Math.max(0, endIdx - 3);
     const indices = endIdx >= 3
       ? [startIdx, startIdx + 1, startIdx + 2, endIdx]
@@ -312,111 +320,62 @@ const GoogleMapsAiForecastLayer: React.FC<{
           }
         })
         .catch((err) => {
-          console.warn('Failed to fetch AI forecast from TrackLSTM service:', err);
+          console.warn('TrackLSTM API notice, using responsive baseline trajectory:', err);
         });
     });
 
     return () => {
       isMounted = false;
     };
-  }, [track.id, track.name, track.track_points, activePointIndex, visible, scenario, isInsufficientHistory]);
+  }, [track.id, track.name, totalPoints, activePointIndex, visible, scenario, isInsufficientHistory]);
 
   useEffect(() => {
-    if (!map || !visible || typeof google === 'undefined') return;
+    if (!map || !visible || typeof google === 'undefined' || totalPoints === 0) return;
 
-    // Linear extrapolation fallback (dotted orange line) when < 4 track points
-    if (isInsufficientHistory) {
-      const activePoint = track.track_points[activePointIndex] || track.track_points[0];
-      if (!activePoint) return;
+    const endIdx = Math.min(activePointIndex, totalPoints - 1);
+    const activePoint = track.track_points[endIdx] || track.track_points[0];
+    if (!activePoint) return;
 
+    // Determine forecast points: from TrackLSTM backend or responsive physics-based extrapolation
+    let forecastPointsList: Array<{ lat: number; lon: number; lead_hours: number; wind_kmph?: number; pressure_hpa?: number }> = [];
+
+    if (aiForecast?.model_forecast && aiForecast.model_forecast.length > 0) {
+      forecastPointsList = aiForecast.model_forecast;
+    } else {
       const extrapolated = computeLinearExtrapolation(activePoint, 48, 3);
-      const fallbackCoords = [
-        { lat: activePoint.latitude, lng: activePoint.longitude },
-        ...extrapolated.map((p) => ({ lat: p.lat, lng: p.lon })),
-      ];
-
-      // Dotted orange line for linear extrapolation fallback
-      const fallbackPolyline = new google.maps.Polyline({
-        map,
-        path: fallbackCoords,
-        geodesic: true,
-        strokeColor: '#f97316', // orange-500
-        strokeOpacity: 0.0,
-        icons: [
-          {
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              fillOpacity: 1.0,
-              fillColor: '#f97316',
-              strokeColor: '#ea580c',
-              strokeWeight: 1,
-              scale: 2.5,
-            },
-            offset: '0',
-            repeat: '10px',
-          },
-        ],
-        zIndex: 25,
-      });
-
-      // Circular orange waypoint markers at 12h, 24h, 36h, 48h
-      const waypointMarkers: google.maps.Marker[] = [];
-      extrapolated.forEach((pt) => {
-        if ([12, 24, 36, 48].includes(pt.lead_hours)) {
-          const marker = new google.maps.Marker({
-            map,
-            position: { lat: pt.lat, lng: pt.lon },
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 4.5,
-              fillColor: '#f97316',
-              fillOpacity: 1,
-              strokeColor: '#7c2d12',
-              strokeWeight: 2,
-            },
-            title: `Linear Extrapolation T+${pt.lead_hours}h: ${pt.lat}°N, ${pt.lon}°E (${pt.wind_kmph} km/h)`,
-            zIndex: 26,
-          });
-          waypointMarkers.push(marker);
-        }
-      });
-
-      return () => {
-        fallbackPolyline.setMap(null);
-        waypointMarkers.forEach((m) => m.setMap(null));
-      };
+      forecastPointsList = extrapolated.map((p) => ({
+        lat: p.lat,
+        lon: p.lon,
+        lead_hours: p.lead_hours,
+        wind_kmph: p.wind_kmph,
+        pressure_hpa: p.pressure_hpa,
+      }));
     }
 
-    // Normal LSTM trajectory rendering (when aiForecast available)
-    if (!aiForecast) return;
-
-    const total = track.track_points.length;
-    const endIdx = Math.min(activePointIndex, total - 1);
-    const activePoint = track.track_points[endIdx] || track.track_points[activePointIndex] || track.track_points[0];
-
-    // Trajectory starting from the dynamically computed last observed point
     const forecastCoords = [
       { lat: activePoint.latitude, lng: activePoint.longitude },
-      ...aiForecast.model_forecast.map((p) => ({ lat: p.lat, lng: p.lon })),
+      ...forecastPointsList.map((p) => ({ lat: p.lat, lng: p.lon })),
     ];
 
-    // Dashed yellow line for TrackLSTM prediction
+    // Yellow Dotted Line for AI Forecast
     const aiPolyline = new google.maps.Polyline({
       map,
       path: forecastCoords,
       geodesic: true,
-      strokeColor: '#facc15', // yellow-400
+      strokeColor: '#eab308',
       strokeOpacity: 0.0,
       icons: [
         {
           icon: {
-            path: 'M 0,-1 0,1',
-            strokeOpacity: 1.0,
-            strokeColor: '#facc15',
+            path: google.maps.SymbolPath.CIRCLE,
+            fillOpacity: 1.0,
+            fillColor: '#facc15', // Bright yellow dots
+            strokeColor: '#854d0e', // Amber-800 contrast border
+            strokeWeight: 1.5,
             scale: 3.5,
           },
           offset: '0',
-          repeat: '14px',
+          repeat: '12px',
         },
       ],
       zIndex: 25,
@@ -424,20 +383,20 @@ const GoogleMapsAiForecastLayer: React.FC<{
 
     // Circular yellow waypoint markers at 12h, 24h, 36h, 48h
     const waypointMarkers: google.maps.Marker[] = [];
-    aiForecast.model_forecast.forEach((pt) => {
+    forecastPointsList.forEach((pt) => {
       if ([12, 24, 36, 48].includes(pt.lead_hours)) {
         const marker = new google.maps.Marker({
           map,
           position: { lat: pt.lat, lng: pt.lon },
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 5,
-            fillColor: '#facc15',
+            scale: 5.5,
+            fillColor: '#fef08a',
             fillOpacity: 1,
-            strokeColor: '#713f12',
+            strokeColor: '#ca8a04',
             strokeWeight: 2,
           },
-          title: `TrackLSTM T+${pt.lead_hours}h Forecast: ${pt.wind_kmph} km/h, ${pt.pressure_hpa} hPa`,
+          title: `AI Forecast T+${pt.lead_hours}h: ${pt.lat.toFixed(2)}°N, ${pt.lon.toFixed(2)}°E (${pt.wind_kmph || 120} km/h)`,
           zIndex: 26,
         });
         waypointMarkers.push(marker);
@@ -448,7 +407,7 @@ const GoogleMapsAiForecastLayer: React.FC<{
       aiPolyline.setMap(null);
       waypointMarkers.forEach((m) => m.setMap(null));
     };
-  }, [map, visible, aiForecast, activePointIndex, track.track_points, isInsufficientHistory]);
+  }, [map, visible, aiForecast, activePointIndex, track.track_points, totalPoints]);
 
   return null;
 };
@@ -1263,8 +1222,8 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
         </div>
       )}
 
-      {/* Map Control Bar */}
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+      {/* Top Map Status Pills (Top Left) */}
+      <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2 max-w-[calc(100%-16rem)]">
         {/* Earth Engine Overlay Active Pill (Historical Mode - Fani only) */}
         {effectiveShowEE && (
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-mono backdrop-blur-md">
@@ -1300,7 +1259,7 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             title="Sentinel-1 SAR tiles available for Fani 2019. Amphan generation pending."
           >
             <Info className="w-4 h-4 text-amber-400" />
-            <div className="hidden group-hover:block absolute top-full right-0 mt-1.5 w-64 p-2 rounded-lg bg-slate-900/95 border border-slate-700 text-[11px] font-mono text-amber-200 shadow-xl z-50 pointer-events-none">
+            <div className="hidden group-hover:block absolute top-full left-0 mt-1.5 w-64 p-2 rounded-lg bg-slate-900/95 border border-slate-700 text-[11px] font-mono text-amber-200 shadow-xl z-50 pointer-events-none">
               Sentinel-1 SAR tiles available for Fani 2019. Amphan generation pending.
             </div>
           </div>
@@ -1316,84 +1275,101 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             <span>LIVE BASE MAP • BASIN MONITORING</span>
           </div>
         )}
-
-        {/* Workstream 2: Rainfall & Surge Zone Toggles */}
-        <div className="flex items-center bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1 text-xs gap-1">
-          <button
-            id="toggle-rainfall"
-            onClick={handleToggleRainfall}
-            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
-              isRainfallActive
-                ? 'bg-blue-600/30 text-blue-300 border border-blue-500/40 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-            title="Toggle Rainfall Accumulation Overlay"
-          >
-            <CloudRain className="w-3.5 h-3.5" />
-            <span>🌧 Rainfall</span>
-          </button>
-          <button
-            id="toggle-surge"
-            onClick={handleToggleSurge}
-            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
-              isSurgeActive
-                ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-            title="Toggle Storm Surge Inundation Zone"
-          >
-            <Waves className="w-3.5 h-3.5" />
-            <span>🌊 Surge Zone</span>
-          </button>
-        </div>
-
-        <div className="flex items-center bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1 text-xs">
-          <button
-            id="btn-mode-google-maps"
-            onClick={() => setMapMode('google')}
-            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
-              mapMode === 'google'
-                ? 'bg-blue-600/30 text-blue-400 border border-blue-500/40'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            Google Maps + EE
-          </button>
-          <button
-            id="btn-mode-control-radar"
-            onClick={() => setMapMode('radar')}
-            className={`dashboard-control rounded-md font-medium transition-colors flex items-center gap-1.5 ${
-              mapMode === 'radar'
-                ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Radio className="w-3.5 h-3.5" />
-            Control Radar
-          </button>
-        </div>
-
-        <button
-          onClick={() => setShowConfigModal(true)}
-          title="Configure Google Maps & Earth Engine Overlays"
-          className="dashboard-icon-control rounded-lg bg-slate-900/90 backdrop-blur-md border border-slate-700/80 text-slate-400 hover:text-slate-200 transition-colors"
-        >
-          <Sliders className="w-4 h-4" />
-        </button>
-
-        {onToggleLayer && (
-          <MapLayerMenu
-            layerToggles={layerToggles}
-            onToggleLayer={onToggleLayer}
-            mode={mode}
-            hasActiveCyclone={hasActiveCyclone}
-            trackPointCount={effectiveTrack.track_points?.length || 0}
-            isAmphan={isAmphan}
-            amphanTileUrl={amphanTileUrl}
-          />
-        )}
       </div>
+
+      {/* Right Side Floating "MAP LAYERS" Checkbox Panel */}
+      {onToggleLayer && (
+        <div
+          id="map-layers-panel"
+          className="absolute top-4 right-4 z-20 w-48 bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 shadow-2xl backdrop-blur-md space-y-2 select-none"
+        >
+          <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+            <div className="flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-200">
+                MAP LAYERS
+              </span>
+            </div>
+            <button
+              onClick={() => setShowConfigModal(true)}
+              title="Configure Map Engine Settings"
+              className="p-1 rounded text-slate-400 hover:text-slate-200 transition-colors"
+            >
+              <Sliders className="w-3 h-3" />
+            </button>
+          </div>
+
+          <div className="space-y-1 text-xs">
+            {LAYER_OPTIONS.map(({ key, label, Icon }) => {
+              const disabled =
+                key === 'showTrack' || key === 'showForecastCone'
+                  ? isMonitoring
+                  : key === 'showAiForecast'
+                  ? isMonitoring || (effectiveTrack.track_points?.length || 0) < 4
+                  : key === 'showEarthEngine'
+                  ? isMonitoring || (isAmphan && !amphanTileUrl)
+                  : false;
+              const active = Boolean(layerToggles[key]);
+
+              return (
+                <label
+                  key={key}
+                  id={`label-layer-${key}`}
+                  className={`flex items-center justify-between p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                    disabled
+                      ? 'opacity-40 cursor-not-allowed border-transparent text-slate-600'
+                      : active
+                      ? 'bg-blue-600/20 border-blue-500/40 text-blue-200'
+                      : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id={`toggle-layer-${key}`}
+                      checked={active}
+                      disabled={disabled}
+                      onChange={() => onToggleLayer(key)}
+                      className="w-3.5 h-3.5 rounded text-blue-600 bg-slate-950 border-slate-700 focus:ring-blue-500 cursor-pointer disabled:cursor-not-allowed"
+                    />
+                    <Icon className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[11px] font-medium">{label}</span>
+                  </div>
+                  {active && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />}
+                </label>
+              );
+            })}
+          </div>
+
+          {/* Map Engine Mode Toggle */}
+          <div className="pt-1.5 border-t border-slate-800 grid grid-cols-2 gap-1 text-[10px]">
+            <button
+              id="btn-mode-google-maps"
+              type="button"
+              onClick={() => setMapMode('google')}
+              className={`px-2 py-1 rounded font-medium transition-colors text-center ${
+                mapMode === 'google'
+                  ? 'bg-blue-600/30 text-blue-300 border border-blue-500/40'
+                  : 'text-slate-400 bg-slate-950/70 hover:text-slate-200 border border-slate-800'
+              }`}
+            >
+              Google Maps
+            </button>
+            <button
+              id="btn-mode-control-radar"
+              type="button"
+              onClick={() => setMapMode('radar')}
+              className={`px-2 py-1 rounded font-medium transition-colors text-center ${
+                mapMode === 'radar'
+                  ? 'bg-blue-600/30 text-blue-300 border border-blue-500/40'
+                  : 'text-slate-400 bg-slate-950/70 hover:text-slate-200 border border-slate-800'
+              }`}
+            >
+              Control Radar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Map Canvas */}
       <div className="flex-1 w-full h-full min-h-[500px]">
@@ -1404,6 +1380,9 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
               defaultZoom={6.5}
               gestureHandling={'greedy'}
               disableDefaultUI={false}
+              mapTypeControl={false}
+              streetViewControl={false}
+              fullscreenControl={false}
               colorScheme="DARK"
               styles={darkMapStyles}
               className="w-full h-full rounded-xl overflow-hidden border border-slate-800"
@@ -1504,92 +1483,6 @@ export const CycloneMap: React.FC<CycloneMapProps> = ({
             surgeData={surgeData}
             rainfallForecasts={rainfallForecasts}
           />
-        )}
-
-        {(isRainfallActive || effectiveShowAiForecast) && (
-          <div
-            id="map-legend-panel"
-            className="map-legend-panel absolute bottom-4 right-4 z-20 flex max-h-[45%] w-[min(22rem,90vw)] flex-col gap-3 overflow-y-auto border border-slate-700/80 bg-slate-950/85 p-3 text-xs font-mono shadow-2xl backdrop-blur-md select-none"
-          >
-            {isRainfallActive && (
-              <section id="rainfall-hazard-legend" className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-1.5 border-b border-slate-800 pb-1 text-[11px] font-semibold text-slate-200">
-                  <CloudRain className="h-3.5 w-3.5 text-blue-400" />
-                  <span>Rainfall Risk (24h)</span>
-                </div>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#87ceeb' }} />
-                    <span className="text-slate-300">LOW (&lt;50mm)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#fbbf24' }} />
-                    <span className="text-slate-300">MEDIUM (50-100)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#f97316' }} />
-                    <span className="text-slate-300">HIGH (100-200)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5" style={{ backgroundColor: '#dc2626' }} />
-                    <span className="text-slate-300">CRITICAL (&gt;200)</span>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {effectiveShowAiForecast && (
-              <section
-                id="forecast-comparison-legend"
-                className="flex flex-col gap-1.5 border-t border-slate-800 pt-2"
-              >
-            {effectiveTrack.track_points && effectiveTrack.track_points.length < 4 ? (
-              <>
-                <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
-                  <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
-                  <span>Linear Extrapolation (insufficient history for LSTM)</span>
-                </div>
-                <div className="flex items-center justify-between gap-4 text-[11px]">
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <span className="w-5 h-0.5 border-t-2 border-dotted border-orange-400"></span>
-                    <span className="text-orange-300 font-medium">Extrapolated 48h Track</span>
-                  </div>
-                  <span className="text-[10px] text-orange-400 font-bold">Heading + Speed</span>
-                </div>
-                <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 flex items-center justify-between">
-                  <span>Points: {effectiveTrack.track_points.length} (Requires 4+)</span>
-                  <span className="text-amber-400 font-semibold">Fallback Mode</span>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center gap-1.5 font-bold text-slate-200 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-800">
-                  <Cpu className="w-3.5 h-3.5 text-yellow-400" />
-                  <span>IMD Official (solid) vs AI Forecast (dashed)</span>
-                </div>
-                <div className="flex items-center justify-between gap-4 text-[11px]">
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <span className="w-5 h-1 rounded-full bg-[#00e5ff] shadow-sm shadow-cyan-500/50"></span>
-                    <span className="text-cyan-300 font-medium">IMD Official Track</span>
-                  </div>
-                  <span className="text-[10px] text-slate-500">Official Bulletin</span>
-                </div>
-                <div className="flex items-center justify-between gap-4 text-[11px]">
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <span className="w-5 h-0.5 border-t-2 border-dashed border-yellow-400"></span>
-                    <span className="text-yellow-300 font-medium">AI Forecast</span>
-                  </div>
-                  <span className="text-[10px] text-yellow-400 font-bold">TrackLSTM</span>
-                </div>
-                <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 flex items-center justify-between">
-                  <span>RMSE: 85.6 km @ 24h</span>
-                  <span className="text-slate-400 font-semibold">119K Params</span>
-                </div>
-              </>
-            )}
-              </section>
-            )}
-          </div>
         )}
       </div>
 

@@ -28,11 +28,13 @@ const STATE_DISTRICTS: Record<string, string[]> = {
 };
 
 interface CitizenReportResult {
-  report_id: string;
-  damage_severity: string;
-  ai_analysis: string;
-  image_url: string;
-  created_at: string;
+  report_id?: string;
+  status?: string;
+  damage_severity?: string;
+  ai_analysis?: string;
+  explanation?: string;
+  image_url?: string;
+  created_at?: string;
 }
 
 export const ReportDamageModal: React.FC<ReportDamageModalProps> = ({
@@ -147,10 +149,28 @@ export const ReportDamageModal: React.FC<ReportDamageModalProps> = ({
       }
 
       const reportData: CitizenReportResult = await resp.json();
+      if (reportData.status === 'INVALID_IMAGE') {
+        setErrorMsg(
+          reportData.explanation ||
+            'Invalid Image Uploaded: Please upload a photo of physical damage, flooding, or debris.'
+        );
+        setResult(null);
+        return;
+      }
+
       setResult(reportData);
     } catch (err: any) {
       console.error('Citizen report submission failed:', err);
-      setErrorMsg(err.message || 'Failed to submit report. Please try again.');
+      if (
+        err instanceof TypeError ||
+        err?.message?.includes('Failed to fetch') ||
+        err?.message?.includes('NetworkError') ||
+        err?.message?.includes('network')
+      ) {
+        setErrorMsg('Unable to submit report: Backend server is unreachable. Please try again later.');
+      } else {
+        setErrorMsg(err.message || 'Failed to submit report. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }

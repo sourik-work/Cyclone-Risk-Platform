@@ -74,17 +74,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
             >
               Amphan (2020 - Bay of Bengal)
             </button>
-            <button
-              id="btn-storm-sidr"
-              onClick={() => onSelectStorm('sidr')}
-              className={`dashboard-control rounded-lg font-medium transition-colors ${
-                selectedStormId === 'sidr'
-                  ? 'bg-blue-600/25 text-blue-100 border border-blue-500/40'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              Cyclone Sidr 2007 (Bangladesh)
-            </button>
           </div>
         )}
       </div>

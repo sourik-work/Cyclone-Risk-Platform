@@ -160,7 +160,7 @@ export const RainfallDamagePanel: React.FC<RainfallDamagePanelProps> = ({
 
   return (
     <AccordionPanel id="rainfall-damage-pathway" title="Rainfall Damage Pathway">
-    <div className="bg-gradient-to-b from-slate-900 to-slate-950 border border-teal-800/50 rounded-xl p-4 shadow-xl text-slate-100">
+    <div id="rainfall-damage-card" className="card-glass p-4 space-y-3.5 text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">

@@ -59,8 +59,14 @@ export const AccordionPanel: React.FC<AccordionPanelProps> = ({ id, title, child
   const contentId = `${id}-accordion-content`;
 
   return (
-    <section className="space-y-2">
-      <div className="flex min-h-10 items-center gap-2 rounded-md border border-slate-700/70 bg-slate-900/70 px-3">
+    <section className={`dashboard-accordion-item ${isOpen ? 'is-open' : ''}`}>
+      <div
+        className={`dashboard-accordion-header flex min-h-10 items-center gap-2 rounded-xl border px-3.5 transition-all ${
+          isOpen
+            ? 'is-open border-blue-500/50 bg-slate-900/90 shadow-md shadow-blue-500/5'
+            : 'border-slate-700/70 bg-slate-900/70 hover:border-slate-600 hover:bg-slate-900/90'
+        }`}
+      >
         <button
           id={triggerId}
           type="button"
@@ -76,8 +82,8 @@ export const AccordionPanel: React.FC<AccordionPanelProps> = ({ id, title, child
             </span>
           )}
           <ChevronDown
-            className={`h-4 w-4 shrink-0 text-slate-400 transition-transform duration-300 ease-out motion-reduce:transition-none ${
-              isOpen ? 'rotate-180' : ''
+            className={`h-4 w-4 shrink-0 transition-transform duration-300 ease-out motion-reduce:transition-none ${
+              isOpen ? 'rotate-180 text-blue-400' : 'text-slate-400'
             }`}
             aria-hidden="true"
           />
@@ -90,7 +96,7 @@ export const AccordionPanel: React.FC<AccordionPanelProps> = ({ id, title, child
           role="region"
           aria-labelledby={triggerId}
           hidden={!isOpen}
-          className="space-y-2 dashboard-accordion-enter"
+          className="dashboard-accordion-content space-y-2 dashboard-accordion-enter"
         >
           {children}
         </div>

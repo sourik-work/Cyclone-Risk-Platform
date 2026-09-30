@@ -1385,6 +1385,117 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         "type": "LineString",
         "coordinates": [
           [
+            85.82,
+            20.27
+          ],
+          [
+            85.83,
+            20.12
+          ],
+          [
+            85.83,
+            19.98
+          ],
+          [
+            85.82,
+            19.81
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-ROAD-001",
+        "road_id": "NH-316-OD-01",
+        "name": "NH-316 (Bhubaneswar-Pipili-Puri 4-Lane Highway)",
+        "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
+        "state": "Odisha",
+        "district": "Puri",
+        "districts_served": [
+          "Puri",
+          "Khordha"
+        ],
+        "length_km": 60,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            85.83,
+            19.81
+          ],
+          [
+            85.95,
+            19.84
+          ],
+          [
+            86.09,
+            19.89
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-ROAD-002",
+        "road_id": "SH-OD-01",
+        "name": "OD-SH-60 (Puri-Konark Coastal Marine Drive)",
+        "road_class": "SH",
+        "asset_type": "ARTERIAL_ROAD",
+        "state": "Odisha",
+        "district": "Puri",
+        "districts_served": [
+          "Puri"
+        ],
+        "length_km": 36,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            85.82,
+            19.81
+          ],
+          [
+            85.68,
+            19.80
+          ],
+          [
+            85.50,
+            19.72
+          ],
+          [
+            85.35,
+            19.65
+          ]
+        ]
+      },
+      "properties": {
+        "asset_id": "OD-ROAD-003",
+        "road_id": "NH-203-OD-01",
+        "name": "NH-203A (Puri-Brahmagiri-Satapada Chilika Arterial)",
+        "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
+        "state": "Odisha",
+        "district": "Puri",
+        "districts_served": [
+          "Puri"
+        ],
+        "length_km": 50,
+        "criticality": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
             86.93,
             21.49
           ],
@@ -1403,10 +1514,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "OD-ROAD-004",
         "road_id": "NH-16-OD-01",
         "name": "NH-16 (Balasore-Bhadrak Segment)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Odisha",
+        "district": "Balasore",
         "districts_served": [
           "Balasore",
           "Bhadrak"
@@ -1439,10 +1553,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "OD-ROAD-005",
         "road_id": "NH-16-OD-02",
         "name": "NH-16 (Bhadrak-Kendrapara Corridor)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Odisha",
+        "district": "Kendrapara",
         "districts_served": [
           "Bhadrak",
           "Kendrapara"
@@ -1479,10 +1596,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "OD-ROAD-006",
         "road_id": "NH-16-OD-03",
         "name": "NH-16 (Puri Coastal-Ganjam Segment)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Odisha",
+        "district": "Puri",
         "districts_served": [
           "Puri",
           "Ganjam"
@@ -1515,46 +1635,18 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "OD-ROAD-007",
         "road_id": "NH-516-OD-01",
         "name": "NH-516A (Paradeep Port Express Link)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Odisha",
+        "district": "Jagatsinghpur",
         "districts_served": [
           "Jagatsinghpur",
           "Kendrapara"
         ],
         "length_km": 82,
-        "criticality": "HIGH"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            85.83,
-            19.81
-          ],
-          [
-            85.95,
-            19.84
-          ],
-          [
-            86.09,
-            19.89
-          ]
-        ]
-      },
-      "properties": {
-        "road_id": "SH-OD-01",
-        "name": "OD-SH-60 (Puri-Konark Coastal Marine Drive)",
-        "road_class": "SH",
-        "state": "Odisha",
-        "districts_served": [
-          "Puri"
-        ],
-        "length_km": 36,
         "criticality": "HIGH"
       }
     },
@@ -1582,10 +1674,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "WB-ROAD-001",
         "road_id": "NH-16-WB-01",
         "name": "NH-16 (Kolaghat-Dantan Corridor)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "West Bengal",
+        "district": "Purba Medinipur",
         "districts_served": [
           "Purba Medinipur"
         ],
@@ -1617,10 +1712,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "WB-ROAD-002",
         "road_id": "NH-116-WB-01",
         "name": "NH-116 (Haldia Port Expressway)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "West Bengal",
+        "district": "Purba Medinipur",
         "districts_served": [
           "Purba Medinipur"
         ],
@@ -1652,10 +1750,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "WB-ROAD-003",
         "road_id": "NH-116B-WB-01",
         "name": "NH-116B (Contai-Digha Coastal Highway)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "West Bengal",
+        "district": "Purba Medinipur",
         "districts_served": [
           "Purba Medinipur"
         ],
@@ -1691,10 +1792,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "WB-ROAD-004",
         "road_id": "NH-12-WB-01",
         "name": "NH-12 (Diamond Harbour-Kakdwip Arterial Road)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "West Bengal",
+        "district": "South 24 Parganas",
         "districts_served": [
           "South 24 Parganas"
         ],
@@ -1726,10 +1830,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "WB-ROAD-005",
         "road_id": "SH-03-WB-01",
         "name": "WB-SH-3 (Barasat-Basirhat-Hasnabad Link)",
         "road_class": "SH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "West Bengal",
+        "district": "North 24 Parganas",
         "districts_served": [
           "North 24 Parganas"
         ],
@@ -1765,10 +1872,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "AP-ROAD-001",
         "road_id": "NH-16-AP-01",
         "name": "NH-16 (Srikakulam-Visakhapatnam Coastal Highway)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
         "districts_served": [
           "Srikakulam",
           "Vizianagaram",
@@ -1806,10 +1916,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "AP-ROAD-002",
         "road_id": "NH-216-AP-01",
         "name": "NH-216 (Kakinada-Amalapuram Coastal Highway)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Andhra Pradesh",
+        "district": "East Godavari",
         "districts_served": [
           "Visakhapatnam",
           "East Godavari"
@@ -1838,10 +1951,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "AP-ROAD-003",
         "road_id": "NH-516E-AP-01",
         "name": "NH-516E (Ghat-Coast Arterial Corridor)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Andhra Pradesh",
+        "district": "Visakhapatnam",
         "districts_served": [
           "Visakhapatnam"
         ],
@@ -1873,10 +1989,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "TN-ROAD-001",
         "road_id": "NH-16-TN-01",
         "name": "NH-16 (Chennai-Ennore Trunk Highway)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Tamil Nadu",
+        "district": "Chennai",
         "districts_served": [
           "Chennai"
         ],
@@ -1920,10 +2039,13 @@ export const SEED_INFRASTRUCTURE_DATA: InfrastructureFeatureCollection = {
         ]
       },
       "properties": {
+        "asset_id": "TN-ROAD-002",
         "road_id": "NH-32-TN-01",
         "name": "NH-32 (East Coast Road - Chennai to Nagapattinam)",
         "road_class": "NH",
+        "asset_type": "ARTERIAL_ROAD",
         "state": "Tamil Nadu",
+        "district": "Cuddalore",
         "districts_served": [
           "Chennai",
           "Cuddalore",

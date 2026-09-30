@@ -49,6 +49,7 @@ export interface InsuranceTriggerPanelProps {
   cycloneCategory?: string | null; // e.g., "DEPRESSION", "SEVERE CYCLONIC STORM"
   currentState?: string;
   scenario?: ScenarioOverride | null;
+  className?: string;
 }
 
 const FALLBACK_EVALUATION: InsuranceEvaluateResponse = {
@@ -120,6 +121,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
   cycloneCategory,
   currentState,
   scenario,
+  className,
 }) => {
   const [data, setData] = useState<InsuranceEvaluateResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -251,7 +253,7 @@ export const InsuranceTriggerPanel: React.FC<InsuranceTriggerPanelProps> = ({
   return (
     <div
       id="parametric-insurance-panel"
-      className="bg-slate-900/90 backdrop-blur-md border border-cyan-500/30 rounded-xl p-4 shadow-xl space-y-3 relative overflow-hidden transition-all duration-300"
+      className={`bg-slate-900/80 p-4 space-y-3 relative overflow-hidden transition-all duration-300 select-none ${className || ''}`}
     >
       {/* Watermark overlay */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center z-10 overflow-hidden">

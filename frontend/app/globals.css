@@ -126,6 +126,154 @@ html, body {
   text-align: left;
 }
 
+/* Horizontal Sidebar Navigation Tabs (Side-by-Side) */
+.sidebar-tab-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.375rem;
+  padding: 0.375rem;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.sidebar-tab-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.25rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: all 150ms ease;
+  user-select: none;
+}
+
+.sidebar-tab-button:hover:not(.is-active) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f1f5f9;
+}
+
+.sidebar-tab-button.is-active {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.35);
+}
+
+/* Merged Vertical Sidebar Accordion Group (Continuous Block) */
+.sidebar-accordion-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+}
+
+.sidebar-accordion-group > * {
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Shared horizontal divider between vertical accordion items */
+.sidebar-accordion-group > *:not(:first-child) {
+  border-top: 1px solid rgba(51, 65, 85, 0.7) !important;
+}
+
+/* Accordion Item inside group */
+.sidebar-accordion-group .dashboard-accordion-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Header inside group */
+.sidebar-accordion-group .dashboard-accordion-header {
+  border: none !important;
+  border-radius: 0 !important;
+  background: rgba(15, 23, 42, 0.6);
+  min-height: 2.6rem;
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.sidebar-accordion-group .dashboard-accordion-header:hover:not(.is-open) {
+  background: rgba(30, 41, 59, 0.65);
+}
+
+/* Active / expanded state connecting seamlessly without creating a gap */
+.sidebar-accordion-group .dashboard-accordion-header.is-open {
+  background: rgba(30, 58, 138, 0.28) !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.35) !important;
+  border-radius: 0 !important;
+  color: #bfdbfe;
+}
+
+/* Content region inside group */
+.sidebar-accordion-group .dashboard-accordion-content {
+  border-radius: 0 !important;
+  border: none !important;
+  background: rgba(10, 15, 30, 0.5);
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.sidebar-accordion-group .card-glass {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Specific card overrides when placed inside sidebar-accordion-group */
+.sidebar-accordion-group #gemini-exposure-reasoning-card,
+.sidebar-accordion-group #triage-ranking-card,
+.sidebar-accordion-group #parametric-insurance-panel,
+.sidebar-accordion-group #model-forecast-comparison-card,
+.sidebar-accordion-group #hazard-forecast-card,
+.sidebar-accordion-group #rainfall-damage-card,
+.sidebar-accordion-group #operational-alert-dispatch-card {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  margin: 0 !important;
+}
+
+.sidebar-accordion-group > :first-child .dashboard-accordion-header {
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+}
+
+.sidebar-accordion-group > :last-child:not(.is-open) .dashboard-accordion-header {
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
+.sidebar-accordion-group > :last-child.is-open .dashboard-accordion-content,
+.sidebar-accordion-group > :last-child.is-open > div:last-child {
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
 .dashboard-accordion-enter {
   animation: accordion-enter 180ms ease-out both;
 }

@@ -27,6 +27,7 @@ interface TriageRankingCardProps {
   cycloneId: string;
   stormName?: string | null;
   scenario?: ScenarioOverride | null;
+  className?: string;
 }
 
 type AssetStatus = 'OPERATIONAL' | 'OFFLINE' | 'DAMAGED' | 'FULL' | 'EVACUATING';
@@ -35,6 +36,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
   cycloneId,
   stormName,
   scenario,
+  className,
 }) => {
   const [triageAssets, setTriageAssets] = useState<TriageAsset[]>([]);
   const [totalCount, setTotalCount] = useState<number>(105);
@@ -379,7 +381,7 @@ export const TriageRankingCard: React.FC<TriageRankingCardProps> = ({
   return (
     <div
       id="triage-ranking-card"
-      className="relative bg-gradient-to-b from-slate-900 to-slate-950 border border-rose-800/40 rounded-xl p-4 shadow-xl text-slate-100 space-y-3"
+      className={`relative bg-slate-900/80 p-4 text-slate-100 space-y-3 select-none ${className || ''}`}
     >
       {/* Toast notification */}
       {toastMessage && (

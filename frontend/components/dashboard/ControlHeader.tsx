@@ -18,6 +18,9 @@ import {
 } from 'lucide-react';
 import { SignInButton } from '../auth/SignInButton';
 import { ReportDamageModal } from './ReportDamageModal';
+import { HowItWorksModal } from '../modals/HowItWorksModal';
+import { ValidationMetricsModal } from '../modals/ValidationMetricsModal';
+import { Brain, BarChart3 } from 'lucide-react';
 
 export type DashboardMode = 'historical' | 'live';
 
@@ -54,18 +57,13 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
   liveStatus,
   districts,
 }) => {
-  const [timeUtc, setTimeUtc] = useState<string>(() => new Date().toUTCString().slice(17, 25) + ' UTC');
-  const [timeIst, setTimeIst] = useState<string>(() =>
-    new Date().toLocaleTimeString('en-IN', {
-      timeZone: 'Asia/Kolkata',
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    }) + ' IST'
-  );
+  const [timeUtc, setTimeUtc] = useState<string>('--:--:-- UTC');
+  const [timeIst, setTimeIst] = useState<string>('--:--:-- IST');
+  const [mounted, setMounted] = useState<boolean>(false);
   const [showApacModal, setShowApacModal] = useState<boolean>(false);
   const [showReportDamage, setShowReportDamage] = useState<boolean>(false);
+  const [showHowItWorksModal, setShowHowItWorksModal] = useState<boolean>(false);
+  const [showValidationModal, setShowValidationModal] = useState<boolean>(false);
 
   // Compute dynamic India-scale coverage metrics
   const coverageDistricts =
@@ -80,9 +78,9 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
     0
   );
   const formattedPopulationAtRisk = `${Math.floor(totalVulnerablePopulation / 1_000_000)}M+`;
-  const selectedLanguage = LANGUAGE_ALIASES[currentLanguage.toLowerCase()] ?? currentLanguage;
 
   useEffect(() => {
+    setMounted(true);
     const updateTime = () => {
       const now = new Date();
       setTimeUtc(now.toUTCString().slice(17, 25) + ' UTC');
@@ -147,7 +145,29 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
         </div>
 
         {/* Clock, APAC Button, Mode Toggle & Language Controls */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* How It Works Pipeline Button */}
+          <button
+            id="btn-how-it-works"
+            onClick={() => setShowHowItWorksModal(true)}
+            className="dashboard-control flex items-center gap-1.5 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-blue-200 border border-blue-500/40 transition-colors cursor-pointer"
+            title="View end-to-end AI pipeline architecture and Gemini multimodal reasoning flow"
+          >
+            <Brain className="w-3.5 h-3.5 text-blue-400" />
+            <span className="font-semibold">How It Works</span>
+          </button>
+
+          {/* Model Validation & Benchmarks Button */}
+          <button
+            id="btn-validation-metrics"
+            onClick={() => setShowValidationModal(true)}
+            className="dashboard-control flex items-center gap-1.5 rounded-md bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-200 border border-emerald-500/40 transition-colors cursor-pointer"
+            title="View quantitative accuracy metrics (RMSE vs IMD baselines) and train/test holdouts"
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="font-semibold">Validation</span>
+          </button>
+
           {/* APAC Scale Preview Button */}
           <button
             id="btn-apac-scale"
@@ -192,23 +212,6 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
             </button>
           </div>
 
-          <label className="dashboard-control inline-flex items-center gap-2 rounded-md border border-border-subtle bg-surface-2/70 text-text-secondary">
-            <Globe2 className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>Language</span>
-            <select
-              aria-label="Language"
-              value={selectedLanguage}
-              onChange={(event) => onLanguageChange(event.currentTarget.value as SupportedLanguage)}
-              className="h-full min-w-24 cursor-pointer bg-transparent text-text-primary outline-none"
-            >
-              {SUPPORTED_LANGUAGES.map((lang) => (
-                <option key={lang.code} value={lang.code} className="bg-slate-900 text-slate-100">
-                  {lang.name} · {lang.nativeName}
-                </option>
-              ))}
-            </select>
-          </label>
-
           <div
             role="toolbar"
             aria-label="Dashboard actions"
@@ -216,9 +219,9 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           >
             <div className="flex h-8 items-center gap-2 px-2 font-mono text-[11px] text-text-secondary">
               <Activity className="h-3.5 w-3.5 text-text-tertiary" aria-hidden="true" />
-              <span>{timeUtc}</span>
+              <span>{mounted ? timeUtc : '--:--:-- UTC'}</span>
               <span className="text-text-tertiary" aria-hidden="true">·</span>
-              <span>{timeIst}</span>
+              <span>{mounted ? timeIst : '--:--:-- IST'}</span>
             </div>
             <button
               id="report-damage-btn"
@@ -262,16 +265,11 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                   <Globe2 className="w-6 h-6 animate-spin-slow" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-bold text-slate-100 font-mono tracking-wide">
-                      APAC SCALABILITY (DESIGNED, NOT DEPLOYED) &amp; ARCHITECTURAL PORTABILITY
-                    </h2>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      Live Bangladesh Demo
-                    </span>
-                  </div>
+                  <h2 className="text-lg font-bold text-slate-100 font-mono tracking-wide">
+                    APAC SCALABILITY (DESIGNED, NOT DEPLOYED) &amp; ARCHITECTURAL PORTABILITY
+                  </h2>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Genuine modular portability across Asia-Pacific cyclone basins — from Bay of Bengal to Western Pacific.
+                    Genuine modular portability designed for Asia-Pacific cyclone basins, with a fully operational Live India Demo.
                   </p>
                 </div>
               </div>
@@ -282,27 +280,6 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
                 title="Close modal"
               >
                 <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Live Demonstrated Expansion: Bangladesh */}
-            <div className="bg-emerald-950/40 border border-emerald-500/50 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">🇧🇩</span>
-                  <span className="font-bold text-emerald-300 text-sm font-mono">
-                    Bangladesh: Live demo available — switch country in sidebar
-                  </span>
-                </div>
-                <p className="text-xs text-slate-300">
-                  4 districts (Cox&apos;s Bazar, Chittagong, Bhola, Khulna) with Sidr 2007 reference track — functionally working cross-country mode with full vulnerability grid and multilingual alerting.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowApacModal(false)}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 whitespace-nowrap transition-colors cursor-pointer shadow-sm"
-              >
-                Try in Sidebar
               </button>
             </div>
 
@@ -443,6 +420,18 @@ export const ControlHeader: React.FC<ControlHeaderProps> = ({
           </div>
         </div>
       )}
+
+      {/* Dedicated Pipeline Architecture Modal */}
+      <HowItWorksModal
+        isOpen={showHowItWorksModal}
+        onClose={() => setShowHowItWorksModal(false)}
+      />
+
+      {/* Quantitative Model Validation & Benchmarks Modal */}
+      <ValidationMetricsModal
+        isOpen={showValidationModal}
+        onClose={() => setShowValidationModal(false)}
+      />
     </>
   );
 };

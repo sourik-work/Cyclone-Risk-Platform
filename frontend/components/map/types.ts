@@ -131,6 +131,7 @@ export interface InfrastructureProperties {
   length_km?: number;
   criticality?: 'HIGH' | 'MEDIUM' | 'LOW' | string;
   is_at_risk?: boolean;
+  feature_type?: string;
 }
 
 export interface InfrastructureFeature {
