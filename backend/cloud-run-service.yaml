@@ -1,0 +1,64 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: cyclone-risk-backend
+  namespace: default
+  labels:
+    cloud.google.com/location: asia-south1
+  annotations:
+    run.googleapis.com/launch-stage: GA
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/maxScale: '20'
+        run.googleapis.com/cpu-throttling: 'true'
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 60
+      serviceAccountName: cyclone-platform-runner@cyclone-risk-platform.iam.gserviceaccount.com
+      containers:
+        - image: gcr.io/cyclone-risk-platform/cyclone-risk-backend:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              cpu: '1000m'
+              memory: 512Mi
+          env:
+            - name: ENVIRONMENT
+              value: production
+            - name: RATE_LIMIT_LLM
+              value: '10/minute'
+            - name: RATE_LIMIT_PUBLIC_READ
+              value: '60/minute'
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: GEMINI_API_KEY
+            - name: FIREBASE_SERVICE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: FIREBASE_SERVICE_ACCOUNT
+            - name: INTERNAL_SERVICE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: INTERNAL_SERVICE_SECRET
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
