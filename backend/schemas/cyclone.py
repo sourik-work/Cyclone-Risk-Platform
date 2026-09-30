@@ -509,13 +509,15 @@ class CitizenReportRequest(BaseModel):
 
 
 class CitizenReportResponse(BaseModel):
-    """Processed citizen report with multimodal Gemini damage classification."""
+    """Processed citizen report with multimodal Gemini damage classification and verification status."""
 
-    report_id: str
-    damage_severity: str  # LOW, MEDIUM, HIGH, CRITICAL
-    ai_analysis: str
-    image_url: str
-    created_at: str
+    report_id: Optional[str] = None
+    status: str = "VALID"  # VALID | INVALID_IMAGE
+    damage_severity: Optional[str] = None  # LOW, MEDIUM, HIGH, CRITICAL
+    ai_analysis: Optional[str] = None
+    explanation: Optional[str] = None
+    image_url: Optional[str] = None
+    created_at: Optional[str] = None
 
 
 class AlertSubscribeRequest(BaseModel):

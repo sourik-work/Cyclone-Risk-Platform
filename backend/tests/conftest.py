@@ -1,4 +1,8 @@
+import os
 import pytest
+
+os.environ["TESTING"] = "true"
+
 from fastapi.testclient import TestClient
 from backend.main import app
 

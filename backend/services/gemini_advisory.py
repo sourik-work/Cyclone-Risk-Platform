@@ -413,17 +413,24 @@ def analyze_damage_photo(
     mime_type: str = "image/jpeg",
 ) -> Dict[str, Any]:
     """Analyzes cyclone damage photo using Gemini 3.7 Flash multimodal capabilities.
-
-    Prompt: Analyze this cyclone damage photo. Return JSON: {severity: LOW|MEDIUM|HIGH|CRITICAL, description: str, affected_infrastructure: [str]}
+    Includes strict guardrails to prevent hallucinated damage reports on non-cyclone images (equations, text, memes, selfies).
     """
     settings = get_settings()
     key = api_key or settings.gemini_api_key or os.getenv("GEMINI_API_KEY", "")
     model_name = settings.gemini_model or "gemini-3.7-flash"
     prompt = (
-        "Analyze this cyclone damage photo. "
-        "Return JSON: {severity: LOW|MEDIUM|HIGH|CRITICAL, description: str, affected_infrastructure: [str]}"
+        "You are an expert disaster damage assessor for cyclone and storm impact verification. "
+        "First, carefully verify if the uploaded image contains genuine physical cyclone, flood, or storm damage "
+        "(such as flooded roads, structural or roof damage, uprooted trees, downed utility lines, or storm debris). "
+        "Explicit guardrail instruction: If the image is unrelated to cyclone damage "
+        "(e.g., text documents, handwritten math equations, classroom notes, memes, selfies, indoor office photos without storm damage), "
+        "you must refuse to provide a damage assessment. "
+        'In that case, return strictly JSON: {"status": "INVALID_IMAGE", "explanation": "The uploaded image does not appear to show cyclone damage. Please upload a photo of physical storm damage, flooding, or debris."}\n'
+        "If the image DOES depict valid storm/cyclone damage, return strictly JSON: "
+        '{"status": "VALID", "severity": "LOW"|"MEDIUM"|"HIGH"|"CRITICAL", "description": "<detailed factual description of visible damage>", "affected_infrastructure": ["<item1>", "<item2>"]}'
     )
     default_fallback = {
+        "status": "VALID",
         "severity": "HIGH",
         "description": "Visual damage assessment indicates severe roofing damage, localized waterlogging, and fallen debris from storm winds.",
         "affected_infrastructure": ["power_lines", "roads", "residential_structures"],
@@ -446,7 +453,7 @@ def analyze_damage_photo(
             ],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                temperature=0.2,
+                temperature=0.1,
             ),
         )
         if response and response.text:
@@ -458,10 +465,20 @@ def analyze_damage_photo(
             if cleaned.endswith("```"):
                 cleaned = cleaned[:-3]
             parsed = json.loads(cleaned.strip())
+            status = str(parsed.get("status", "VALID")).upper()
+            if status == "INVALID_IMAGE":
+                return {
+                    "status": "INVALID_IMAGE",
+                    "explanation": str(parsed.get("explanation", "The uploaded image does not appear to show cyclone damage.")),
+                    "severity": None,
+                    "description": None,
+                    "affected_infrastructure": [],
+                }
             severity = str(parsed.get("severity", "MEDIUM")).upper()
             if severity not in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}:
                 severity = "MEDIUM"
             return {
+                "status": "VALID",
                 "severity": severity,
                 "description": str(parsed.get("description", default_fallback["description"])),
                 "affected_infrastructure": list(parsed.get("affected_infrastructure", [])),
@@ -482,7 +499,7 @@ def analyze_damage_photo(
                 ],
                 "generationConfig": {
                     "responseMimeType": "application/json",
-                    "temperature": 0.2,
+                    "temperature": 0.1,
                 },
             }
             resp = requests.post(url, json=payload, timeout=20)
@@ -497,10 +514,20 @@ def analyze_damage_photo(
                 if cleaned.endswith("```"):
                     cleaned = cleaned[:-3]
                 parsed = json.loads(cleaned.strip())
+                status = str(parsed.get("status", "VALID")).upper()
+                if status == "INVALID_IMAGE":
+                    return {
+                        "status": "INVALID_IMAGE",
+                        "explanation": str(parsed.get("explanation", "The uploaded image does not appear to show cyclone damage.")),
+                        "severity": None,
+                        "description": None,
+                        "affected_infrastructure": [],
+                    }
                 severity = str(parsed.get("severity", "MEDIUM")).upper()
                 if severity not in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}:
                     severity = "MEDIUM"
                 return {
+                    "status": "VALID",
                     "severity": severity,
                     "description": str(parsed.get("description", default_fallback["description"])),
                     "affected_infrastructure": list(parsed.get("affected_infrastructure", [])),

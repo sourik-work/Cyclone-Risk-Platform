@@ -978,6 +978,7 @@ def verify_auth_token(payload: AuthVerifyRequest) -> AuthVerifyResponse:
 
 
 @router.post("/citizen/report", response_model=CitizenReportResponse)
+@router.post("/api/citizen/report", response_model=CitizenReportResponse)
 def create_citizen_report(payload: CitizenReportRequest) -> CitizenReportResponse:
     """Accepts base64 damage photo, uploads to GCS, runs Gemini multimodal damage analysis, and stores in Firestore."""
     try:
@@ -990,21 +991,36 @@ def create_citizen_report(payload: CitizenReportRequest) -> CitizenReportRespons
 
     report_id = f"CR-{uuid.uuid4().hex[:8].upper()}"
     filename = f"{report_id}.jpg"
+    now_iso = datetime.now(timezone.utc).isoformat()
 
-    # 1. Upload to Cloud Storage
+    # 1. Call Gemini 3.7 Flash multimodal with anti-hallucination guardrails
+    ai_analysis_dict = analyze_damage_photo(image_bytes=image_bytes)
+
+    # 2. Check if image was rejected by guardrails (e.g. math equations, text documents, selfies)
+    if ai_analysis_dict.get("status") == "INVALID_IMAGE":
+        explanation = ai_analysis_dict.get(
+            "explanation",
+            "The uploaded image does not appear to show cyclone damage. Please upload a photo of physical damage, flooding, or debris.",
+        )
+        return CitizenReportResponse(
+            report_id=report_id,
+            status="INVALID_IMAGE",
+            explanation=explanation,
+            ai_analysis=explanation,
+            created_at=now_iso,
+        )
+
+    # 3. Valid damage photo: Upload to Cloud Storage
     try:
         image_url = upload_citizen_photo(image_bytes=image_bytes, filename=filename, report_id=report_id)
     except Exception as e:
         logger.error(f"Failed to upload photo to GCS: {e}")
         image_url = f"https://storage.googleapis.com/cyclone-risk-platform-citizen-reports/{report_id}/{filename}"
 
-    # 2. Call Gemini 3.7 Flash multimodal
-    ai_analysis_dict = analyze_damage_photo(image_bytes=image_bytes)
     damage_severity = ai_analysis_dict.get("severity", "MEDIUM")
     ai_desc = ai_analysis_dict.get("description", "Damage assessment complete.")
-    now_iso = datetime.now(timezone.utc).isoformat()
 
-    # 3. Write full report to Firestore
+    # 4. Write verified report to Firestore dispatch queue
     report_record = {
         "report_id": report_id,
         "description": payload.description,
@@ -1025,6 +1041,7 @@ def create_citizen_report(payload: CitizenReportRequest) -> CitizenReportRespons
 
     return CitizenReportResponse(
         report_id=report_id,
+        status="VALID",
         damage_severity=damage_severity,
         ai_analysis=ai_desc,
         image_url=image_url,
@@ -1033,6 +1050,7 @@ def create_citizen_report(payload: CitizenReportRequest) -> CitizenReportRespons
 
 
 @router.post("/alerts/subscribe", response_model=AlertSubscribeResponse)
+@router.post("/api/alerts/subscribe", response_model=AlertSubscribeResponse)
 def subscribe_alert_endpoint(payload: AlertSubscribeRequest) -> AlertSubscribeResponse:
     """Stores device FCM token in Firestore alert_subscriptions collection."""
     sub_id = subscribe_device(fcm_token=payload.fcm_token, state=payload.state)
@@ -1043,6 +1061,7 @@ def subscribe_alert_endpoint(payload: AlertSubscribeRequest) -> AlertSubscribeRe
 
 
 @router.post("/alerts/broadcast")
+@router.post("/api/alerts/broadcast")
 def broadcast_fcm_alert_endpoint(
     payload: FCMNotificationRequest,
     auth: dict = Depends(require_dispatcher),

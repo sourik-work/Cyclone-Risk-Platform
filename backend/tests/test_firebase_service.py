@@ -238,6 +238,45 @@ def test_api_citizen_report_endpoint():
         mock_write.assert_called_once()
 
 
+def test_api_citizen_report_invalid_image_guardrail():
+    """Test POST /api/citizen/report gracefully rejects irrelevant images (e.g. math equations, text documents)."""
+    raw_bytes = b"handwritten_math_equation_bytes"
+    b64_str = base64.b64encode(raw_bytes).decode("utf-8")
+
+    mock_invalid_ai_output = {
+        "status": "INVALID_IMAGE",
+        "explanation": "The uploaded image does not appear to show cyclone damage. Please upload a photo of physical damage, flooding, or debris.",
+        "severity": None,
+        "description": None,
+        "affected_infrastructure": [],
+    }
+
+    with patch("backend.api.routes.upload_citizen_photo") as mock_upload, \
+         patch("backend.api.routes.analyze_damage_photo") as mock_ai, \
+         patch("backend.api.routes.write_citizen_report") as mock_write:
+        mock_ai.return_value = mock_invalid_ai_output
+
+        payload = {
+            "description": "Uploaded handwritten notes by mistake",
+            "latitude": 19.80,
+            "longitude": 85.82,
+            "image_base64": b64_str,
+            "state": "Odisha",
+            "district": "Puri",
+        }
+        resp = client.post("/api/citizen/report", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["status"] == "INVALID_IMAGE"
+        assert "not appear to show cyclone damage" in data["explanation"].lower()
+        assert data["damage_severity"] is None
+
+        # Ensure no GCS upload and no Firestore queue write happened
+        mock_upload.assert_not_called()
+        mock_write.assert_not_called()
+        mock_ai.assert_called_once()
+
+
 def test_api_alerts_subscribe_endpoint():
     """Test POST /api/alerts/subscribe endpoint."""
     with patch("backend.api.routes.subscribe_device") as mock_sub:
