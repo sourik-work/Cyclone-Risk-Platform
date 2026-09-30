@@ -1608,10 +1608,16 @@ async def get_single_asset_status(asset_id: str) -> AssetStatusResponse:
 @router.get("/sentinel2/layers")
 @router.get("/api/sentinel2/layers")
 async def list_sentinel2_layers(cyclone_id: str | None = None):
-    """Returns available Sentinel-2 change detection layers."""
-    from backend.services.sentinel2_service import get_sentinel2_layers, SENTINEL2_LAYERS
+    """Returns available Sentinel-2 change detection layers with real GEE tile endpoints."""
+    from backend.services.sentinel2_service import get_sentinel2_layers, get_sentinel2_grouped_layers, SENTINEL2_LAYERS
 
-    return {"layers": get_sentinel2_layers(cyclone_id) if cyclone_id else list(SENTINEL2_LAYERS.values())}
+    grouped = get_sentinel2_grouped_layers()
+    layers = get_sentinel2_layers(cyclone_id) if cyclone_id else list(SENTINEL2_LAYERS.values())
+    return {
+        "layers": layers,
+        "fani_2019": grouped["fani_2019"],
+        "amphan_2020": grouped["amphan_2020"],
+    }
 
 
 

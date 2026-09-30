@@ -46,8 +46,7 @@ This platform provides **48-hour anticipatory lead time** by combining:
 | JTWC live warnings | ✅ LIVE | Fixed-width WMO bulletin parse (WTIO/WTPN) |
 | BMKG / DMH adapters | 🟡 STUB | Interface implemented, data models ready |
 | Sentinel-1 SAR (Fani 2019) | ✅ LIVE | Real GEE tile overlay on map |
-| Sentinel-1 SAR (Amphan 2020) | ✅ LIVE | Real GEE tile overlay on map |
-| Sentinel-2 NDVI/NDWI change | 🟡 DOCUMENTED | Scripts ready, tiles pending GEE export |
+| Sentinel-2 NDVI/NDWI change | ✅ LIVE | Deployed GEE change detection tiles (Fani & Amphan) |
 | Gemini multimodal exposure reasoning | ✅ LIVE | Real-time Gemini API calls |
 | Parametric insurance triggers | ✅ CALIBRATED | Calibrated against Kerala SDMA 2026 + Nagaland DRTPS |
 | Dialogflow chat | ✅ LIVE | Real webhook + Gemini classification |
@@ -351,14 +350,17 @@ The `/api/exposure/reason` endpoint sends the following context to **Gemini 3.7 
 
 ### Sentinel-1 + Sentinel-2 Integration
 
-| Satellite | Purpose | Availability |
-|-----------|---------|--------------|
-| Sentinel-1 SAR | All-weather flood extent (current) | ✅ Live |
-| Sentinel-2 Optical | Pre/post landfall change detection (NDVI/NDWI) | 🟡 Service + endpoint + generation script ready; tile deployment pending GEE asset export |
+| Satellite | Purpose | Availability | Deployed Endpoint |
+|-----------|---------|--------------|-------------------|
+| **Sentinel-1 SAR** | All-weather flood extent & water backscatter | ✅ LIVE | GEE SAR Composite Tiles (Fani & Amphan) |
+| **Sentinel-2 Optical** | Pre/post landfall change detection (NDVI/NDWI) | ✅ LIVE | `/api/sentinel2/layers` (Deployed XYZ GEE Tiles) |
 
-**Pre/post change detection** uses vegetation index (NDVI) and water index (NDWI) differences between pre-landfall and post-landfall imagery windows. Red overlay = vegetation loss; blue overlay = water extent gain.
-
-**Current status:** The `/api/sentinel2/layers` endpoint and Earth Engine generation scripts (`scripts/gee_sentinel2_change.py` + `.js`) are complete. Actual tile URLs will be populated once GEE asset export completes in a production environment.
+**Pre/post change detection** uses vegetation index (NDVI) and water index (NDWI) differences between pre-landfall and post-landfall imagery windows:
+- **Red overlay:** Negative NDVI difference representing vegetation and mangrove canopy loss.
+- **Blue overlay:** Positive NDWI difference representing flood extent and saline water intrusion.
+- **Deployed Tile Layers:**
+  - **Cyclone Fani (2019):** Pre-window `2019-04-01..2019-05-02`, Post-window `2019-05-04..2019-06-03` (Puri & coastal Odisha).
+  - **Cyclone Amphan (2020):** Pre-window `2020-04-15..2020-05-19`, Post-window `2020-05-21..2020-06-20` (Sundarbans & S 24 Parganas).
 
 ---
 
