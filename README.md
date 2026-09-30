@@ -15,7 +15,7 @@
 - **Frontend:** [https://cyclone-risk-platform.vercel.app](https://cyclone-risk-platform.vercel.app)
 - **Backend API:** [https://cyclone-risk-platform.onrender.com](https://cyclone-risk-platform.onrender.com)
 - **API Docs:** [https://cyclone-risk-platform.onrender.com/docs](https://cyclone-risk-platform.onrender.com/docs)
-- **Uptime:** UptimeRobot pinging `/api/health` every 5 minutes
+- **Uptime & Freshness Monitoring:** UptimeRobot pinging `/health/freshness` and `/health/live` every 5 minutes (alerts on status != "healthy" or age > threshold)
 
 ---
 

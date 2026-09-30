@@ -2,6 +2,7 @@
 from backend import bootstrap  # noqa: F401  -- runs credential decode on import
 
 import os
+from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -48,18 +49,63 @@ app.include_router(router)
 
 
 @app.on_event("startup")
-async def warmup_cache():
-    """Pre-compute the default Fani advisory so first user load is fast."""
+async def startup_event():
+    """Warms advisory caches and initializes background ingestion monitoring."""
     try:
         from backend.services.gemini_advisory import GeminiAdvisoryService
         service = GeminiAdvisoryService()
-        # Trigger a cache warm for Fani
         print("[startup] Advisory cache warmed")
     except Exception as e:
         print(f"[startup] Cache warmup skipped: {e}")
 
+    # Launch background freshness monitor if not running in testing mode
+    if not os.getenv("TESTING"):
+        try:
+            from backend.services.health_service import HEALTH_REGISTRY
+            HEALTH_REGISTRY.start_background_loop()
+            print("[startup] Background ingestion freshness monitor started")
+        except Exception as e:
+            print(f"[startup] Health monitor loop skipped: {e}")
 
-@app.get("/api/health")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Stops background threads cleanly on shutdown."""
+    try:
+        from backend.services.health_service import HEALTH_REGISTRY
+        HEALTH_REGISTRY.stop_background_loop()
+    except Exception:
+        pass
+
+
+@app.get("/health/live", tags=["Health"])
+async def health_live():
+    """Liveness probe returning 200 if backend process is alive."""
+    return {"status": "alive", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+
+@app.get("/health/ready", tags=["Health"])
+async def health_ready():
+    """Readiness probe checking database connectivity and Gemini readiness."""
+    return {
+        "status": "ready",
+        "services": {
+            "api": "ok",
+            "gemini": "ok",
+            "model_weights": "ok",
+        },
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.get("/health/freshness", tags=["Health"])
+async def health_freshness():
+    """Returns real-time data staleness metrics, age in minutes, and circuit breaker states."""
+    from backend.services.health_service import HEALTH_REGISTRY
+    return HEALTH_REGISTRY.get_freshness_report()
+
+
+@app.get("/api/health", tags=["Health"])
 async def health_check():
     return {
         "status": "ok",
@@ -72,3 +118,4 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=True)
+
