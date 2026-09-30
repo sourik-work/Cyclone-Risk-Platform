@@ -42,12 +42,14 @@ This platform provides **48-hour anticipatory lead time** by combining:
 | Feature | Status | What works today |
 |---------|--------|------------------|
 | IMD live bulletins | ✅ LIVE | Real-time parse from RSMC New Delhi |
+| PAGASA live bulletins | ✅ LIVE | Real-time SWB/HTML parse + 24/48/72h track extraction |
+| JTWC live warnings | ✅ LIVE | Fixed-width WMO bulletin parse (WTIO/WTPN) |
+| BMKG / DMH adapters | 🟡 STUB | Interface implemented, data models ready |
 | Sentinel-1 SAR (Fani 2019) | ✅ LIVE | Real GEE tile overlay on map |
 | Sentinel-1 SAR (Amphan 2020) | ✅ LIVE | Real GEE tile overlay on map |
 | Sentinel-2 NDVI/NDWI change | 🟡 DOCUMENTED | Scripts ready, tiles pending GEE export |
-| JTWC / PAGASA / BMKG / DMH adapters | 🟡 STUB | Interface implemented, data source not wired |
 | Gemini multimodal exposure reasoning | ✅ LIVE | Real-time Gemini API calls |
-| Parametric insurance triggers | ✅ LIVE | Working math (illustrative coefficients) |
+| Parametric insurance triggers | ✅ CALIBRATED | Calibrated against Kerala SDMA 2026 + Nagaland DRTPS |
 | Dialogflow chat | ✅ LIVE | Real webhook + Gemini classification |
 
 ---
@@ -429,23 +431,22 @@ The current deployment runs on Render free tier (0.1 CPU, 512MB RAM) and has bee
 
 ---
 
-## APAC Adapter Architecture (Stub — Planned Data Wiring)
+## APAC Adapter Architecture & Basin Portability
 
-**Scope note:** The platform is deployed on Render free tier (0.1 CPU, 512 MB RAM) and has been load-tested at 10 concurrent users. "Scalability" here means "the architecture supports extension without redesign," not "the platform currently serves N users."
+| Agency | Basin / Region | Integration Status | Data Source / Verification |
+|--------|----------------|-------------------|----------------------------|
+| **IMD** | Bay of Bengal & Arabian Sea | ✅ LIVE | Real-time RSMC New Delhi bulletins |
+| **PAGASA** | Philippines (PAR) | ✅ LIVE | Live HTML/SWB parsing with 24/48/72h track extraction |
+| **JTWC** | Western Pacific & Indian Ocean | ✅ LIVE | Fixed-width WMO text warnings (WTIO/WTPN) |
+| **BMKG** | Indonesia | 🟡 STUB | Interface implemented; Tropical Cyclone Warning Center |
+| **DMH** | Myanmar | 🟡 STUB | Interface implemented; Department of Meteorology and Hydrology |
 
-### Currently deployed
-- **India:** 9 coastal states + 4 Union Territories, 48 districts, 60M+ population in coverage area across both the Bay of Bengal and Arabian Sea coasts
-- 11 advisory languages covering every coastal state
+### Architectural Portability
+The platform generalizes to any tropical cyclone basin because each layer is designed as a standardized swap-in adapter:
 
-### Demonstrated expansion
-- **Bangladesh:** 4 districts (Cox's Bazar, Chittagong, Bhola, Khulna) with Sidr 2007 reference track — functionally working cross-country mode
-
-### Architectural portability
-The platform generalizes to any cyclone basin because each layer is designed as a swap-in module:
-
-| Layer | India implementation | APAC swap |
-|-------|---------------------|-----------|
-| Storm track data | IMD RSMC New Delhi XML/HTML scrapers | JTWC (Pacific), PAGASA (Philippines), BMKG (Indonesia) API adapters |
+| Layer | India implementation | APAC Portability Implementation |
+|-------|---------------------|---------------------------------|
+| Storm track data | IMD RSMC New Delhi scrapers | PAGASA (Live HTML/SWB), JTWC (Live WMO text), BMKG / DMH adapters |
 | Satellite imagery | Google Earth Engine Sentinel-1 SAR | Same — GEE is global |
 | Infrastructure | OpenStreetMap + state DISCOM | Same OSM + national grid authority |
 | Vulnerability | Census + NDMA statistics | National census bureau data |

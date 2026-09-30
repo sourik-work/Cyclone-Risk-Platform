@@ -634,6 +634,8 @@ def get_live_cyclone(refresh: bool = Query(default=False, description="Force re-
 
 @router.get("/agencies/status")
 @router.get("/api/agencies/status")
+@router.get("/adapters/status")
+@router.get("/api/adapters/status")
 def get_agency_status() -> Dict[str, Any]:
     """Returns integration status for all configured met agency adapters."""
     from backend.services.agency_adapters import AGENCY_ADAPTERS
