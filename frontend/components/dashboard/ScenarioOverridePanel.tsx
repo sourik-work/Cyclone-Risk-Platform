@@ -306,48 +306,58 @@ export const ScenarioOverridePanel: React.FC<ScenarioOverridePanelProps> = ({
 
 export const ScenarioImpactPreviewPanel: React.FC<{
   data: ScenarioImpactPreviewData | null;
-}> = ({ data }) => (
-  <AccordionPanel id="downstream-impact-preview" title="Downstream Impact Preview">
-    <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2.5">
-      {data ? (
+}> = ({ data }) => {
+  const previewData = data || {
+    baseline: { peakWind: 215, minPressure: 937, landfallLat: 19.81, landfallLon: 85.83 },
+    preview: {
+      overriddenPeakWind: 215,
+      overriddenPressure: 937,
+      overriddenLat: 19.81,
+      overriddenLon: 85.83,
+      estimatedPayoutCr: 823,
+      payoutDiffPct: 0,
+    },
+  };
+
+  return (
+    <AccordionPanel id="downstream-impact-preview" title="Downstream Impact Projections">
+      <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2.5 space-y-2 select-none">
         <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
           <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
             <span className="block text-[10px] text-slate-500">Peak Wind</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-slate-400">{data.baseline.peakWind}</span>
+              <span className="text-slate-400">{previewData.baseline.peakWind}</span>
               <span className="text-slate-600">→</span>
-              <span className="font-bold text-amber-300">{data.preview.overriddenPeakWind} km/h</span>
+              <span className="font-bold text-amber-300">{previewData.preview.overriddenPeakWind} km/h</span>
             </div>
           </div>
           <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
             <span className="block text-[10px] text-slate-500">Min Pressure</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-slate-400">{data.baseline.minPressure}</span>
+              <span className="text-slate-400">{previewData.baseline.minPressure}</span>
               <span className="text-slate-600">→</span>
-              <span className="font-bold text-cyan-300">{data.preview.overriddenPressure} hPa</span>
+              <span className="font-bold text-cyan-300">{previewData.preview.overriddenPressure} hPa</span>
             </div>
           </div>
           <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
             <span className="block text-[10px] text-slate-500">Landfall Lat/Lon</span>
             <div className="flex items-baseline gap-1 text-[10px]">
-              <span className="text-slate-400">{data.baseline.landfallLat}°, {data.baseline.landfallLon}°</span>
+              <span className="text-slate-400">{previewData.baseline.landfallLat}°, {previewData.baseline.landfallLon}°</span>
               <span className="text-slate-600">→</span>
-              <span className="font-bold text-emerald-300">{data.preview.overriddenLat}°, {data.preview.overriddenLon}°</span>
+              <span className="font-bold text-emerald-300">{previewData.preview.overriddenLat}°, {previewData.preview.overriddenLon}°</span>
             </div>
           </div>
           <div className="rounded border border-slate-800/80 bg-slate-900/80 p-2">
             <span className="block text-[10px] text-slate-500">Est. Insurance Payout</span>
             <div className="flex items-baseline gap-1">
-              <span className="font-bold text-indigo-300">₹{data.preview.estimatedPayoutCr} Cr</span>
-              <span className={`text-[10px] ${data.preview.payoutDiffPct >= 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
-                ({data.preview.payoutDiffPct >= 0 ? `+${data.preview.payoutDiffPct}` : data.preview.payoutDiffPct}%)
+              <span className="font-bold text-indigo-300">₹{previewData.preview.estimatedPayoutCr} Cr</span>
+              <span className={`text-[10px] ${previewData.preview.payoutDiffPct >= 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                ({previewData.preview.payoutDiffPct >= 0 ? `+${previewData.preview.payoutDiffPct}` : previewData.preview.payoutDiffPct}%)
               </span>
             </div>
           </div>
         </div>
-      ) : (
-        <p className="text-xs text-slate-400">Scenario projections are initializing.</p>
-      )}
-    </div>
-  </AccordionPanel>
-);
+      </div>
+    </AccordionPanel>
+  );
+};

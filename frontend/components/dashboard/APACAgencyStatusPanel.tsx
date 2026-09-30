@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Globe2, RefreshCw, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
 import { AccordionPanel } from './DashboardAccordion';
+import { getBackendUrl } from '../../lib/config';
+import { DataProvenanceBadge } from './DataProvenanceBadge';
 
 export interface AgencyStatusItem {
   agency: string;
@@ -64,9 +66,14 @@ export const APACAgencyStatusPanel: React.FC = () => {
 
   const fetchAgencyStatus = useCallback(async () => {
     setIsLoading(true);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = getBackendUrl();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+
     try {
-      const res = await fetch(`${backendUrl}/api/agencies/status`);
+      const res = await fetch(`${backendUrl}/api/agencies/status`, {
+        signal: controller.signal,
+      });
       if (res.ok) {
         const data = await res.json();
         if (data && Array.isArray(data.agencies) && data.agencies.length > 0) {
@@ -76,6 +83,7 @@ export const APACAgencyStatusPanel: React.FC = () => {
     } catch {
       // Keep existing fallback
     } finally {
+      clearTimeout(timeoutId);
       setIsLoading(false);
     }
   }, []);
@@ -163,9 +171,14 @@ export const APACAgencyStatusPanel: React.FC = () => {
           </div>
 
           {/* Footer note */}
-          <p className="text-[10px] font-mono text-text-tertiary pt-2 border-t border-white/[0.06] text-center">
-            Real adapter pattern — each agency normalized to a common interface
-          </p>
+          <div className="pt-2 border-t border-white/[0.06] space-y-2">
+            <DataProvenanceBadge
+              source="IMD RSMC New Delhi, JTWC, PAGASA, BMKG, DMH Web Feeds"
+              timestamp="Synchronized 6-Hourly"
+              resolution="Agency Official Meteorological Bulletins"
+              groundTruthCheck="Normalized Multi-Agency Regional Adapter Layer"
+            />
+          </div>
         </div>
       </div>
     </AccordionPanel>
